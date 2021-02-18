@@ -15,7 +15,7 @@ def register():
         password = request.form.get("password")
         confirm = request.form.get("confirm")
         if password != confirm:
-            #finish
+            flash("Password must equal confirmation", category="error")
         else:
             #add
     return render_template("register.html")
