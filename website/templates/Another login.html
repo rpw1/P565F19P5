@@ -1,0 +1,28 @@
+<!doctype htl>
+<html>
+<head>
+    <title>Home page</title>
+    <link href="login.css" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <div class="login">
+            <div class="header">Login / Register</div>
+                <form action="login.php" method="post">
+                    <li>
+                        Username: <br>
+                        <input type="text" name="username">
+                    </li>
+                    <li>
+                        Password: <br>
+                        <input type="password" name="password">
+                    </li>
+                    <li>
+                        <input type="submit" value="Log in">
+                    </li>
+            
+                <center>    <h3><a href="register.php">New account</a></h3>
+                <font size="1">- Lost <a href="recovery.php?mode=username">username</a> or <a href="recovery.php?mode=password">password</a>?</font></center>
+                </form>
+         </div>
+    </body>
+</html>
