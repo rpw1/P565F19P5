@@ -44,7 +44,7 @@ class UserDatabase:
         try:
             self.conn = sqlite3.connect(self.db_file)
             c : sqlite3.Cursor = self.conn.cursor()
-            c.execute('CREATE TABLE IF NOT EXISTS users (username text UNIQUE NOT NULL, password text NOT NULL, first_name text NOT NULL, last_name text NOT NULL, role int NOT NULL)')
+            c.execute('CREATE TABLE IF NOT EXISTS users (username text UNIQUE NOT NULL, password text NOT NULL, first_name text NOT NULL, last_name text NOT NULL, email text NOT NULL, role int NOT NULL)')
             self.conn.commit()
         except Error as e:
             print(e)
@@ -53,7 +53,7 @@ class UserDatabase:
             c.close()
             return successful_connection
 
-    def insert_user(self, username : str, password : str, f_name : str, l_name : str, role : int) -> bool:
+    def insert_user(self, username : str, password : str, f_name : str, l_name : str, email : str, role : int) -> bool:
         """
         Parameters
         ----------
@@ -62,9 +62,11 @@ class UserDatabase:
         password : str ->
             encrypted password of the user \n
         f_name : str -> 
-            the first name of the user \n
+            first name of the user \n
         l_name : str ->
-            the last name of the user \n
+            last name of the user \n
+        email : str ->
+            email of the user \n
         role: int ->
             role of the user either Client(1), Fitness Professional(2), Admin(3)
 
@@ -78,8 +80,8 @@ class UserDatabase:
         successful_insert = True
         try:
             c : sqlite3.Cursor = self.conn.cursor()
-            user_values : tuple = (username, password, f_name, l_name, role,)
-            c.execute("INSERT INTO users VALUES (?,?,?,?,?)", user_values)
+            user_values : tuple = (username, password, f_name, l_name, email, role,)
+            c.execute("INSERT INTO users VALUES (?,?,?,?,?,?)", user_values)
             self.conn.commit()
         except Error as e:
             print(e)
