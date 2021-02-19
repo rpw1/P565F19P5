@@ -8,14 +8,15 @@ def login():
 
 @auth.route("/register", methods=["GET", "POST"])
 def register():
-    if request.method = "POST":
+    if request.method == "POST":
         email = request.form.get("email")
-        fname = request.form.get("fname")
-        lname = request.form.get("lname")
+        f_name = request.form.get("f_name")
+        l_name = request.form.get("l_name")
         password = request.form.get("password")
         confirm = request.form.get("confirm")
         if password != confirm:
             flash("Password must equal confirmation", category="error")
         else:
             #add
+            pass
     return render_template("register.html")
