@@ -30,8 +30,8 @@ class UserDatabase:
     """
 
     def __init__(self):
-        self.db_file : str = "src/database/sqlite/db/user_sqlite.db"
-        self.conn : sqlite3.Connection = None
+        self.db_file = "src/database/sqlite/db/user_sqlite.db"
+        self.conn = sqlite3.Connection = None
 
     def check_database(self) -> bool:
         """
@@ -40,10 +40,10 @@ class UserDatabase:
         bool ->
             represents a successful(true) or an unsuccessful(false) connection to the database
         """
-        successful_connection : bool = True
+        successful_connection = True
         try:
             self.conn = sqlite3.connect(self.db_file)
-            c : sqlite3.Cursor = self.conn.cursor()
+            c = sqlite3.Cursor = self.conn.cursor()
             c.execute('CREATE TABLE IF NOT EXISTS users (username text UNIQUE NOT NULL, password text NOT NULL, first_name text NOT NULL, last_name text NOT NULL, email text NOT NULL, role int NOT NULL)')
             self.conn.commit()
         except Error as e:
@@ -79,8 +79,8 @@ class UserDatabase:
         if not self.check_database(): return False
         successful_insert = True
         try:
-            c : sqlite3.Cursor = self.conn.cursor()
-            user_values : tuple = (username, password, f_name, l_name, email, role,)
+            c = sqlite3.Cursor = self.conn.cursor()
+            user_values = (username, password, f_name, l_name, email, role,)
             c.execute("INSERT INTO users VALUES (?,?,?,?,?,?)", user_values)
             self.conn.commit()
         except Error as e:
@@ -104,10 +104,10 @@ class UserDatabase:
             user information from the database (returns None if not found)
         """
         if not self.check_database(): return tuple()
-        c : sqlite3.Cursor = self.conn.cursor()
-        search_parameters : tuple = (username,)
+        c = sqlite3.Cursor = self.conn.cursor()
+        search_parameters = (username,)
         c.execute('SELECT * FROM users WHERE username=?', search_parameters)
-        fetched_user : tuple = c.fetchone()
+        fetched_user = c.fetchone()
         c.close()
         self.conn.close()
         return fetched_user
@@ -125,10 +125,10 @@ class UserDatabase:
             true if user successfully removed false otherwise
         """
         if not self.check_database(): return False
-        successful_delete : bool = True
+        successful_delete = True
         try:
-            c : sqlite3.Cursor = self.conn.cursor()
-            search_parameters : tuple = (username,)
+            c = sqlite3.Cursor = self.conn.cursor()
+            search_parameters = (username,)
             c.execute('DELETE FROM users WHERE username=?', search_parameters)
             self.conn.commit()
         except Error as e:
@@ -154,10 +154,10 @@ class UserDatabase:
             true if user's password successfully updated false otherwise
         """
         if not self.check_database(): return False
-        successful_delete : bool = True
+        successful_delete = True
         try:
-            c : sqlite3.Cursor = self.conn.cursor()
-            search_parameters : tuple = (password, username,)
+            c = sqlite3.Cursor = self.conn.cursor()
+            search_parameters = (password, username,)
             c.execute('UPDATE users SET password=? WHERE username=?', search_parameters)
             self.conn.commit()
         except Error as e:
