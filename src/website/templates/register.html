@@ -1,10 +1,46 @@
-<form method="POST">
-    <h3>Register for FitnessU</h3>
-    <input type="email" name="email" placeholder="e-mail">
-    <input type="text" name="f_name" placeholder="first name">
-    <input type="text" name="l_name" placeholder="last name">
-    <input type="text" name="username" placeholder="username">
-    <input type="password" name="password" placeholder="password">
-    <input type="password" name="confirm" placeholder="confirm password">
-    <button type="submit">Register</button>
-</form>
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="container pt-3 h-100">
+    <div class="row justify-content-center align-self-center">
+    <div class="col-md-6">
+    <div class="card bg-light card-body">
+    <form method="POST">
+            <h3>Register for FitnessU</h3>
+        <div class="form-group">
+            <label for="type">I am a...</label>
+            <select id="type" name="type" class="form-control">
+                <option value="1">Trainee</option>
+                <option value="2">Trainer</option>
+                <option value="3">Administrator</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="email" name="email" placeholder="e-mail" class="form-control">
+        </div>
+        <div class="form-group">
+            <input type="text" name="f_name" placeholder="first name" class="form-control">
+        </div>
+        <div class="form-group">
+            <input type="text" name="l_name" placeholder="last name" class="form-control">
+        </div>
+        <div class="form-group">
+            <input type="text" name="username" placeholder="username" class="form-control">
+        </div>
+        <div class="form-group">
+            <input type="password" name="password" placeholder="password" class="form-control">
+        </div>
+        <div class="form-group">
+            <input type="password" name="confirm" placeholder="confirm password" class="form-control">
+        </div>
+        <div class="form-checkbox">
+            <input type="checkbox" id="terms" name="terms">
+            <label for="terms"> I agree to the Terms of Service and Privacy Policy.</label>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Register</button>
+    </form>
+    </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
