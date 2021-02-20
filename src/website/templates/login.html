@@ -1,5 +1,22 @@
-<form method="POST">
-    <input type="text" placeholder="username" name="username">
-    <input type="password" placeholder="password" name="password">
-    <button type="submit">Log in</button>
-</form>
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="container pt-3 h-100">
+    <div class="row justify-content-center align-self-center">
+    <div class="col-md-6">
+    <div class="card bg-light card-body">
+    <form method="POST">
+            <h3>Login to FitnessU</h3>
+        <div class="form-group">
+            <input type="text" placeholder="username" name="username" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <input type="password" placeholder="password" name="password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Log in</button>
+    </form>
+    </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
