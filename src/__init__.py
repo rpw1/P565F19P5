@@ -1,4 +1,8 @@
 from website import create_app
+from database.user_database import UserDatabase
+import sys
+
+print(sys.path)
 
 app = create_app()
 

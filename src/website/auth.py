@@ -1,9 +1,8 @@
 from flask import Blueprint, render_template, request
-import sqlite3
-import user_database as udb
+from database.user_database import UserDatabase
 
 auth = Blueprint("auth", __name__)
-database = "/src/database/test_user_sqlite.db"
+user_db : UserDatabase = UserDatabase()
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():
@@ -21,6 +20,7 @@ def register():
         if password != confirm:
             flash("Password must equal confirmation", category="error")
         else:
-            conn = sqlite3.connect(database)
-            udb.insert_user(username, password, f_name, l_name, email, 1)       
+            pass
+            user_db.insert_user(username, password, f_name, l_name, email, 1)    
+            print(user_db.get_user(username))
     return render_template("register.html")
