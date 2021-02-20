@@ -1,12 +1,26 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect, url_for
 from database.user_database import UserDatabase
-from cryptography.fernet import Fernet
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user, login_required, logout_user, current_user
 
 auth = Blueprint("auth", __name__)
 user_db = UserDatabase = UserDatabase()
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        user = user_db.get_user(username)
+        if user:
+            if check_password_hash(user_db.get_password(username), password):
+                login_user(user, remember=True)
+                return(redirect(url_for("views.home")))
+            else:
+                print(user_db.get_password(username))
+                flash("Incorrect password")
+        else:
+            flash("No user exists with that username")
     return render_template("login.html")
 
 @auth.route("/register", methods=["GET", "POST"])
@@ -19,10 +33,21 @@ def register():
         password = request.form.get("password")
         confirm = request.form.get("confirm")
         acc_type = int(request.form.get("type"))
-        if password != confirm:
+        user = user_db.get_user(username)
+        if user:
+            flash("Username already in use")
+        elif password != confirm:
             flash("Password must equal confirmation", category="error")
         else:
-            pass
-            user_db.insert_user(username, password, f_name, l_name, email, acc_type)    
+            user_db.insert_user(username, generate_password_hash(password, method="sha256"), f_name, l_name, email, acc_type)    
             print(user_db.get_user(username))
+            user = user_db.get_user(username)
+            login_user(user, remember=True)
+            return redirect(url_for("views.home"))
     return render_template("register.html")
+
+@auth.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("auth.login"))

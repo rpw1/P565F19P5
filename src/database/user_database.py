@@ -112,6 +112,16 @@ class UserDatabase:
         self.conn.close()
         return fetched_user
 
+    def get_password(self, username : str) -> str:
+        if not self.check_database(): return str()
+        c = sqlite3.Cursor = self.conn.cursor()
+        search_parameters = (username,)
+        c.execute('SELECT password FROM users WHERE username=?', search_parameters)
+        fetched_user = c.fetchone()
+        c.close()
+        self.conn.close()
+        return fetched_user[0]
+
     def remove_user(self, username : str) -> bool:
         """
         Parameters
