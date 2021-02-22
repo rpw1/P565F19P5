@@ -17,6 +17,7 @@ def login():
             current_user = User(user_values[0], user_values[1], user_values[2], user_values[3], user_values[4], user_values[5])
             if check_password_hash(user_db.get_password(username), password):
                 login_user(current_user, remember=True)
+                flash("Logged in successfully!", category="success")
                 return(redirect(url_for("views.home")))
             else:
                 print(user_db.get_password(username))
