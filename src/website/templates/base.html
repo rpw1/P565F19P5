@@ -16,10 +16,15 @@
 <body>
     <div id ="nav">
         <ul>
+            {% if not(user) %}
             <li><a href= "/login">Login</a></li>
             <li><a href="/register">Register</a></li>
             <li><a href="contact.asp">Contact</a></li>
             <li><a href="about.asp">About</a></li>
+            {% endif %}
+            {% if user %}
+            <li><a href="/logout">Logout</a></li>
+            {% endif %}
           </ul>
     </div>
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -43,7 +48,7 @@
         {% endfor %}
     {% endif %}
     {% endwith %}
-    <div id="content">{% block content %}{% endblock %}</div>
+    <div class="container-xl pt-3">{% block content %}{% endblock %}</div>
     <div id="footer">
         {% block footer %}
         &copy; Copyright 2021 by <a href="http://domain.invalid/">you</a>.
