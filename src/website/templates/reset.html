@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Reset{% endblock %}
+{% block content %}
+<div class="container pt-3 h-100">
+    <div class="row justify-content-center align-self-center">
+    <div class="col-md-6">
+    <div class="card bg-light card-body">
+    <form method="POST">
+            <h3>Reset Password</h3>
+        <div class="form-group">
+            <input type="email" placeholder="e-mail" name="username" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Reset</button>
+    </form>
+    </div>
+    </div>
+    </div>
+</div>
+{% endblock %}

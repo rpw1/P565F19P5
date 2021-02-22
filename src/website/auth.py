@@ -54,3 +54,11 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for("auth.login"))
+
+@auth.route("/reset", methods=["GET","POST"])
+def reset():
+    return render_template("reset.html")
+
+@auth.route("/reset/<key>", methods=["GET", "POST"])
+def reset_key(key):
+    return key
