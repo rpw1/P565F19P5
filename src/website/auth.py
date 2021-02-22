@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from database.user_database import UserDatabase
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
@@ -13,8 +13,8 @@ def login():
         username = request.form.get("username")
         password = request.form.get("password")
         user_values = user_db.get_user(username)
-        current_user = User(user_values[0], user_values[1], user_values[2], user_values[3], user_values[4], user_values[5])
-        if current_user:
+        if user_values:
+            current_user = User(user_values[0], user_values[1], user_values[2], user_values[3], user_values[4], user_values[5])
             if check_password_hash(user_db.get_password(username), password):
                 login_user(current_user, remember=True)
                 return(redirect(url_for("views.home")))
@@ -37,7 +37,7 @@ def register():
         acc_type = int(request.form.get("type"))
         user = user_db.get_user(username)
         if user:
-            flash("Username already in use")
+            flash("Username already in use", category="error")
         elif password != confirm:
             flash("Password must equal confirmation", category="error")
         else:

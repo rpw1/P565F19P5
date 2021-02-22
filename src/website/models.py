@@ -5,12 +5,12 @@ class User:
 
     def __init__(self, username : str, password : str, f_name : str, l_name : str, email : str, role : int):
         super().__init__()
-        self.username : str = username
-        self.password : str = password
-        self.f_name : str = f_name
-        self.l_name : str = l_name
-        self.email : str = email
-        self.role : int = role
+        self.username = username
+        self.password = password
+        self.f_name = f_name
+        self.l_name = l_name
+        self.email = email
+        self.role = role
     
 
     def is_authenticated(self):
