@@ -2,7 +2,6 @@ from flask import Flask
 from flask_login import LoginManager
 from database.user_database import UserDatabase
 from .models import User
-import sys
 
 user_db = UserDatabase = UserDatabase()
 
