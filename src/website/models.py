@@ -26,3 +26,6 @@ class User:
     
     def get_id(self):
         return self.username
+
+    def get_email(self):
+        return self.email
