@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Duo Login{% endblock %}
+{% block content %}
+<head>
+    <script src="{{ url_for('static', filename='duo_login.js') }}"></script>
+    <script>
+    Duo.init({
+        'host': 'api-f891d591.duosecurity.com',
+        'sig_request': { sig_request },
+        'post_action': 'http://127.0.0.1:5000/login'
+    });
+    </script>
+    <style>
+      #duo_iframe {
+        width: 100%;
+        min-width: 304px;
+        max-width: 620px;
+        height: 330px;
+        border: none;
+      }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+</head>
+<div class="container pt-3 h-100">
+  <div class="row justify-content-center align-self-center">
+  <div class="col-md-6">
+  <div class="card bg-light card-body">
+  <form method="POST">
+  <iframe id="duo_iframe">
+  </iframe>
+  <style>
+    #duo_iframe {
+      width: 100%;
+      min-width: 304px;
+      max-width: 620px;
+      height: 330px;
+      border: none;
+    }
+  </style>
+  </form>
+  </div>
+  </div>
+  </div>
+</div>
+{% endblock %}
