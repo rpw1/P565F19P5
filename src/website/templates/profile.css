@@ -1,0 +1,18 @@
+body
+{
+    font-family: sans-serif;
+    color: #3c3939;
+    background-color: #f1f1f1;
+
+}
+.profile-card
+{
+    width: 400px;
+    margin: auto;
+    background: #fff;
+    box-shadow: 0 4px 10px 0 rbga(0,0,0,0.5);
+}
+.image-container
+{
+    position: relative;
+}
