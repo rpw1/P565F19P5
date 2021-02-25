@@ -1,20 +1,25 @@
-<!doctype htl>
-<html>
-<head>
-    <title>Profile</title>
-    <link rel = "stylesheet" href="profiles.css">
-        <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    </head>
-    <body>
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% if user.role == 1 %}
+{% set class = "Trainee" %}
+{% elif user.role == 2 %}
+{% set class = "Trainer" %}
+{% else %}
+{% set class = "Admin" %}
+{% endif %}
+{% block content %}
         <div class ="profile-card">
             <div class="image-container">
                 <img src = "user.jpeg" style="width: 25%">
                 <div class = "title">
-                    <h2>Ben Mathew</h2>
+                    <h2>{{user.f_name}} {{user.l_name}}</h2>
+                    <p>Username: {{user.username}}</p>
+                    <p>E-mail: {{user.email}}</p>
+                    <p>Class: {{class}}</p>
                 </div>
             </div>
             <div class="main-container">
                 <p>Easy</p>
             </div>
         </div>
-    </body>
+{% endblock %}
