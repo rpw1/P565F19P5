@@ -31,10 +31,10 @@ class UserDatabase:
     """
 
     def __init__(self):
-        if os.name == 'Linux':
-            self.db_file = r"src/database/sqlite/db/user_sqlite.db"
-        else:
-            self.db_file = "src/database/sqlite/db/user_sqlite.db"
+        # if os.name == 'Linux':
+        #     self.db_file = r"src/database/sqlite/db/user_sqlite.db"
+        # else:
+        self.db_file = "src/database/sqlite/db/user_sqlite.db"
         self.conn = sqlite3.Connection = None
 
     def check_database(self) -> bool:
@@ -47,7 +47,7 @@ class UserDatabase:
         try:
             self.conn = sqlite3.connect(self.db_file)
             c = sqlite3.Cursor = self.conn.cursor()
-            c.execute('CREATE TABLE IF NOT EXISTS users (username text UNIQUE NOT NULL, password text NOT NULL, first_name text NOT NULL, last_name text NOT NULL, email text UNIQUE NOT NULL, role int NOT NULL)')
+            c.execute('CREATE TABLE IF NOT EXISTS users (id text PRIMARY KEY, username text UNIQUE NOT NULL, password text NOT NULL, first_name text NOT NULL, last_name text NOT NULL, email text UNIQUE NOT NULL, role int NOT NULL)')
             self.conn.commit()
         except Error as e:
             print(e)
@@ -56,10 +56,12 @@ class UserDatabase:
             c.close()
             return True
 
-    def insert_user(self, username : str, password : str, f_name : str, l_name : str, email : str, role : int) -> bool:
+    def insert_user(self, user_id, username : str, password : str, f_name : str, l_name : str, email : str, role : int) -> bool:
         """
         Parameters
         ----------
+        user_id : str ->
+            ID of the user \n
         username : str ->
             username of the user \n
         password : str ->
@@ -83,8 +85,8 @@ class UserDatabase:
         successful_insert = True
         try:
             c = sqlite3.Cursor = self.conn.cursor()
-            user_values = (username, password, f_name, l_name, email, role,)
-            c.execute("INSERT INTO users VALUES (?,?,?,?,?,?)", user_values)
+            user_values = (user_id, username, password, f_name, l_name, email, role,)
+            c.execute("INSERT INTO users VALUES (?,?,?,?,?,?,?)", user_values)
             self.conn.commit()
         except Error as e:
             print(e)
