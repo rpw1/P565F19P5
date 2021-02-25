@@ -6,7 +6,7 @@
     <script>
     Duo.init({
         'host': 'api-f891d591.duosecurity.com',
-        'sig_request': { sig_request },
+        'sig_request': '{{ sig_request }}',
         'post_action': 'http://127.0.0.1:5000/login'
     });
     </script>
@@ -28,7 +28,7 @@
   <div class="card bg-light card-body">
   <form method="POST">
   <iframe id="duo_iframe">
-  </iframe>
+  </iframe, data-host="api-f891d591.duosecurity.com", data-sig-request="{{ sig_request }}" >
   <style>
     #duo_iframe {
       width: 100%;

@@ -3,7 +3,7 @@ from database.user_database import UserDatabase
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from .models import User
-import duo_web, os, json
+import duo_web, os, json, hashlib
 
 auth = Blueprint("auth", __name__)
 user_db = UserDatabase = UserDatabase()
@@ -31,7 +31,7 @@ def login():
                 return(redirect(url_for("views.home")))
                 # else:
                 #     flash("Duo login was not successful")
-                # return redirect(url_for("auth.duo_login", username = username, sig_request = signal_request))
+                # return redirect(url_for("auth.duo_login", sig_request = signal_request))
             else:
                 print(user_db.get_password(username))
                 flash("Incorrect password")
@@ -76,7 +76,6 @@ def reset():
 def reset_key(key):
     return key
 
-@auth.route("/duo/<username>", methods=["GET","POST"])
-def duo_login(username):
-    
+@auth.route("/duo/<sig_request>", methods=["GET","POST"])
+def duo_login(sig_request):
     return render_template("duo.html")
