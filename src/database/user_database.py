@@ -1,6 +1,7 @@
 import sqlite3
 from sqlite3 import Error
 import os
+import pathlib
 
 class UserDatabase:
     """
@@ -34,7 +35,7 @@ class UserDatabase:
         # if os.name == 'Linux':
         #     self.db_file = r"src/database/sqlite/db/user_sqlite.db"
         # else:
-        self.db_file = "src/database/sqlite/db/user_sqlite.db"
+        self.db_file = pathlib.Path(r"src\database\sqlite\db\user_sqlite.db")
         self.conn = sqlite3.Connection = None
 
     def check_database(self) -> bool:
