@@ -7,8 +7,8 @@ import duo_web, json
 from oauthlib.oauth2 import WebApplicationClient
 import requests
 
-auth = Blueprint("auth", __name__)
 user_db = UserDatabase = UserDatabase()
+auth = Blueprint("auth", __name__)
 """
 GOOGLE_CLIENT_ID = "133654944932-7jp5imq4u3k6ng5r8k9suue3rckcsdcf.apps.googleusercontent.com"
 GOOGLE_CLIENT_SECRET = "zSWURv4KexNnOvRRP2tDQZX2"

@@ -1,5 +1,6 @@
 import sqlite3
 from sqlite3 import Error
+import os
 
 class UserDatabase:
     """
@@ -30,7 +31,10 @@ class UserDatabase:
     """
 
     def __init__(self):
-        self.db_file = "src/database/sqlite/db/user_sqlite.db"
+        if os.name == 'Linux':
+            self.db_file = r"src/database/sqlite/db/user_sqlite.db"
+        else:
+            self.db_file = "src/database/sqlite/db/user_sqlite.db"
         self.conn = sqlite3.Connection = None
 
     def check_database(self) -> bool:
@@ -40,18 +44,17 @@ class UserDatabase:
         bool ->
             represents a successful(true) or an unsuccessful(false) connection to the database
         """
-        successful_connection = True
         try:
             self.conn = sqlite3.connect(self.db_file)
             c = sqlite3.Cursor = self.conn.cursor()
-            c.execute('CREATE TABLE IF NOT EXISTS users (username text UNIQUE NOT NULL, password text NOT NULL, first_name text NOT NULL, last_name text NOT NULL, email text NOT NULL, role int NOT NULL)')
+            c.execute('CREATE TABLE IF NOT EXISTS users (username text UNIQUE NOT NULL, password text NOT NULL, first_name text NOT NULL, last_name text NOT NULL, email text UNIQUE NOT NULL, role int NOT NULL)')
             self.conn.commit()
         except Error as e:
             print(e)
-            successful_connection = False
+            return False
         finally:
             c.close()
-            return successful_connection
+            return True
 
     def insert_user(self, username : str, password : str, f_name : str, l_name : str, email : str, role : int) -> bool:
         """
