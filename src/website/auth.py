@@ -28,10 +28,10 @@ def login():
                 signal_request = duo_web.sign_request(i_key, s_key, a_key, username)
                 # if authenticated_username:
                 #     flash("Logged in successfully!", category="success")
-                # return(redirect(url_for("views.home")))
+                return(redirect(url_for("views.home")))
                 # else:
                 #     flash("Duo login was not successful")
-                return redirect(url_for("auth.duo_login", sig_request = signal_request))
+                # return redirect(url_for("auth.duo_login", sig_request = signal_request))
             else:
                 print(user_db.get_password(username))
                 flash("Incorrect password")
