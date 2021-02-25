@@ -3,7 +3,7 @@ from database.user_database import UserDatabase
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from .models import User
-import duo_web, os, json, hashlib
+import duo_web, json
 
 auth = Blueprint("auth", __name__)
 user_db = UserDatabase = UserDatabase()
@@ -20,18 +20,18 @@ def login():
         if user_values:
             current_user = User(user_values[0], user_values[1], user_values[2], user_values[3], user_values[4], user_values[5])
             if check_password_hash(user_db.get_password(username), password):
-                login_user(current_user, remember=True)
-                # keys = json.load(open("duo_keys.json"))
-                # i_key = keys["i-key"]
-                # s_key = keys["s-key"]
-                # a_key = keys["a-key"]
-                # signal_request = duo_web.sign_request(i_key, s_key, a_key, username)
+                # login_user(current_user, remember=True)
+                keys = json.load(open("duo_keys.json"))
+                i_key = keys["i-key"]
+                s_key = keys["s-key"]
+                a_key = keys["a-key"]
+                signal_request = duo_web.sign_request(i_key, s_key, a_key, username)
                 # if authenticated_username:
                 #     flash("Logged in successfully!", category="success")
-                return(redirect(url_for("views.home")))
+                # return(redirect(url_for("views.home")))
                 # else:
                 #     flash("Duo login was not successful")
-                # return redirect(url_for("auth.duo_login", sig_request = signal_request))
+                return redirect(url_for("auth.duo_login", sig_request = signal_request))
             else:
                 print(user_db.get_password(username))
                 flash("Incorrect password")
@@ -78,4 +78,4 @@ def reset_key(key):
 
 @auth.route("/duo/<sig_request>", methods=["GET","POST"])
 def duo_login(sig_request):
-    return render_template("duo.html")
+    return render_template("duo.html", sig_request = sig_request)
