@@ -78,7 +78,8 @@ def reset_key(key):
 
 @auth.route("/duo/<sig_request>", methods=["GET","POST"])
 def duo_login(sig_request):
-    return render_template("duo.html", sig_request = sig_request)
+    url_callback = url_for("auth.duo_callback")
+    return render_template("duo.html", sig_request = sig_request, url_callback = url_callback)
 
 @auth.route("/duo_callback", methods=["GET","POST"])
 def duo_callback():
