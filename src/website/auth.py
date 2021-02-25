@@ -7,9 +7,6 @@ import duo_web, json
 
 auth = Blueprint("auth", __name__)
 user_db = UserDatabase = UserDatabase()
-i_key = ""
-s_key = ""
-a_key = ""
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():
@@ -20,18 +17,12 @@ def login():
         if user_values:
             current_user = User(user_values[0], user_values[1], user_values[2], user_values[3], user_values[4], user_values[5])
             if check_password_hash(user_db.get_password(username), password):
-                # login_user(current_user, remember=True)
                 keys = json.load(open("duo_keys.json"))
                 i_key = keys["i-key"]
                 s_key = keys["s-key"]
                 a_key = keys["a-key"]
                 signal_request = duo_web.sign_request(i_key, s_key, a_key, username)
-                # if authenticated_username:
-                #     flash("Logged in successfully!", category="success")
-                return(redirect(url_for("views.home")))
-                # else:
-                #     flash("Duo login was not successful")
-                # return redirect(url_for("auth.duo_login", sig_request = signal_request))
+                return redirect(url_for("auth.duo_login", sig_request = signal_request))
             else:
                 print(user_db.get_password(username))
                 flash("Incorrect password")
@@ -79,3 +70,25 @@ def reset_key(key):
 @auth.route("/duo/<sig_request>", methods=["GET","POST"])
 def duo_login(sig_request):
     return render_template("duo.html", sig_request = sig_request)
+
+@auth.route("/duo_callback", methods=["GET","POST"])
+def duo_callback():
+    if request.method == "POST":
+        sig_response = request.form.get("sig_response")
+        keys = json.load(open("duo_keys.json"))
+        i_key = keys["i-key"]
+        s_key = keys["s-key"]
+        a_key = keys["a-key"]
+        authenticated_username = duo_web.verify_response(i_key, s_key, a_key, sig_response)
+        if authenticated_username:
+            user_values = user_db.get_user(authenticated_username)
+            if user_values:
+                current_user = User(user_values[0], user_values[1], user_values[2], user_values[3], user_values[4], user_values[5])
+                login_user(current_user, remember=True)
+                flash("Logged in successfully!", category="success")
+                return(redirect(url_for("views.home")))
+            else:
+                flash("User value was not equal to what is stored in the database")
+        else:
+            flash("Duo login was not successful")
+    return render_template("login.html")
