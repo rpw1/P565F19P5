@@ -22,20 +22,19 @@ client = WebApplicationClient(GOOGLE_CLIENT_ID)
 @auth.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form.get("username")
+        email = request.form.get("email")
         password = request.form.get("password")
-        user_values = user_db.get_user(username)
+        user_values = user_db.get_user_by_email(email)
         if user_values:
             current_user = User(user_values[0], user_values[1], user_values[2], user_values[3], user_values[4], user_values[5], user_values[6])
-            if check_password_hash(user_db.get_password(username), password):
+            if check_password_hash(user_db.get_password(email), password):
                 keys = json.load(open("duo_keys.json"))
                 i_key = keys["i-key"]
                 s_key = keys["s-key"]
                 a_key = keys["a-key"]
-                signal_request = duo_web.sign_request(i_key, s_key, a_key, username)
+                signal_request = duo_web.sign_request(i_key, s_key, a_key, email)
                 return redirect(url_for("auth.duo_login", sig_request = signal_request))
             else:
-                print(user_db.get_password(username))
                 flash("Incorrect password")
         else:
             flash("No user exists with that username")
@@ -46,20 +45,19 @@ def register():
     if request.method == "POST":
         user_id = str(uuid.uuid4())
         email = request.form.get("email")
-        username = request.form.get("username")
         f_name = request.form.get("f_name")
         l_name = request.form.get("l_name")
         password = request.form.get("password")
         confirm = request.form.get("confirm")
         acc_type = int(request.form.get("type"))
-        user = user_db.get_user(username)
+        user = user_db.get_user_by_email(email)
         if user:
-            flash("Username already in use", category="error")
+            flash("E-mail already in use", category="error")
         elif password != confirm:
             flash("Password must equal confirmation", category="error")
         else:
-            user_db.insert_user(user_id, username, generate_password_hash(password, method="sha256"), f_name, l_name, email, acc_type)    
-            current_user = User(user_id, username, generate_password_hash(password, method="sha256"), f_name, l_name, email, acc_type)
+            user_db.insert_user(user_id, "x", generate_password_hash(password, method="sha256"), f_name, l_name, email, acc_type)    
+            current_user = User(user_id, "x", generate_password_hash(password, method="sha256"), f_name, l_name, email, acc_type)
             login_user(current_user, remember=True)
             return redirect(url_for("views.home"))
     return render_template("register.html")
@@ -92,7 +90,7 @@ def duo_callback():
         a_key = keys["a-key"]
         authenticated_username = duo_web.verify_response(i_key, s_key, a_key, sig_response)
         if authenticated_username:
-            user_values = user_db.get_user(authenticated_username)
+            user_values = user_db.get_user_by_email(authenticated_username)
             if user_values:
                 current_user = User(user_values[0], user_values[1], user_values[2], user_values[3], user_values[4], user_values[5], user_values[6])
                 login_user(current_user, remember=True)
