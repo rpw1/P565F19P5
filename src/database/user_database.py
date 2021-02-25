@@ -112,6 +112,27 @@ class UserDatabase:
         self.conn.close()
         return fetched_user
 
+    def get_user_by_email(self, email : str) -> tuple:
+        """
+        Parameters
+        ----------
+        username : str ->
+            username of the user
+        
+        Returns
+        -------
+        tuple ->
+            user information from the database (returns None if not found)
+        """
+        if not self.check_database(): return tuple()
+        c = sqlite3.Cursor = self.conn.cursor()
+        search_parameters = (email,)
+        c.execute('SELECT * FROM users WHERE email=?', search_parameters)
+        fetched_user = c.fetchone()
+        c.close()
+        self.conn.close()
+        return fetched_user
+
     def get_password(self, username : str) -> str:
         if not self.check_database(): return str()
         c = sqlite3.Cursor = self.conn.cursor()

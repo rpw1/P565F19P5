@@ -3,11 +3,18 @@ from flask_login import LoginManager
 from database.user_database import UserDatabase
 from .models import User
 from flask_mail import Mail, Message
+from oauthlib.oauth2 import WebApplicationClient
 
 user_db = UserDatabase = UserDatabase()
+GOOGLE_CLIENT_ID = "133654944932-7jp5imq4u3k6ng5r8k9suue3rckcsdcf.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET = "zSWURv4KexNnOvRRP2tDQZX2"
+GOOGLE_DISCOVERY_URL = (
+    "https://accounts.google.com/.well-known/openid-configuration"
+)
 
 def create_app():
     app = Flask(__name__)
+    client = WebApplicationClient(GOOGLE_CLIENT_ID)
     mail = Mail(app)
     app.config['MAIL_SERVER']='smtp.gmail.com'
     app.config['MAIL_PORT'] = 465

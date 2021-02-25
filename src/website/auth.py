@@ -4,9 +4,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from .models import User
 import duo_web, json
+from oauthlib.oauth2 import WebApplicationClient
+import requests
 
 auth = Blueprint("auth", __name__)
 user_db = UserDatabase = UserDatabase()
+"""
+GOOGLE_CLIENT_ID = "133654944932-7jp5imq4u3k6ng5r8k9suue3rckcsdcf.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET = "zSWURv4KexNnOvRRP2tDQZX2"
+GOOGLE_DISCOVERY_URL = (
+    "https://accounts.google.com/.well-known/openid-configuration"
+)
+client = WebApplicationClient(GOOGLE_CLIENT_ID)
+"""
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():
@@ -47,7 +57,6 @@ def register():
             flash("Password must equal confirmation", category="error")
         else:
             user_db.insert_user(username, generate_password_hash(password, method="sha256"), f_name, l_name, email, acc_type)    
-            print(user_db.get_user(username))
             current_user = User(username, generate_password_hash(password, method="sha256"), f_name, l_name, email, acc_type)
             login_user(current_user, remember=True)
             return redirect(url_for("views.home"))
@@ -92,3 +101,50 @@ def duo_callback():
         else:
             flash("Duo login was not successful")
     return render_template("login.html")
+"""
+@auth.route("/google_login")
+def google_login():
+    google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
+    authorization_endpoint = google_provider_cfg["authorization_endpoint"]
+    request_uri = client.prepare_request_uri(
+        authorization_endpoint,
+        redirect_uri=request.base_url + "/callback",
+        scope=["openid", "email", "profile"],
+    )
+    return redirect(request_uri)
+
+@auth.route("/google_login/callback")
+def google_callback():
+    code = request.args.get("code")
+    google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
+    token_endpoint = google_provider_cfg["token_endpoint"]
+    token_url, headers, body = client.prepare_token_request(
+        token_endpoint,
+        authorization_response=request.url,
+        redirect_url=request.base_url,
+        code=code
+    )
+    token_response = requests.post(
+        token_url,
+        headers=headers,
+        data=body,
+        auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
+    )       
+    client.parse_request_body_response(json.dumps(token_response.json()))
+    userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
+    uri, headers, body = client.add_token(userinfo_endpoint)
+    userinfo_response = requests.get(uri, headers = headers, data = body)
+    if userinfo_response.json().get("email_verified"):
+        u_id = userinfo_response.json()["sub"]
+        email = userinfo_response.json()["email"]
+        picture = userinfo_response.json()["picture"]
+        name = userinfo_response.json()["given_name"]
+    else:
+        flash("Google Login invalid", category="error")
+        redirect(url_for("auth.login"))
+    if not user_db.get_user_by_email(email):
+        user_db.insert_user(u_id, "x", name, name, email, 1)    
+    current_user = User(u_id, "x", name, name, email, 1)
+    login_user(current_user, remember=True)
+    return redirect(url_for("views.home"))
+"""
