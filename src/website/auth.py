@@ -148,3 +148,8 @@ def google_callback():
     current_user = User(u_id, email, str(uuid.uuid4()), first_name, last_name, email, 1)
     login_user(current_user, remember=True)
     return redirect(url_for("views.home"))
+
+@auth.route("/google_login_role")
+def google_role(u_id, email, first_name, last_name, unique_id):
+    pass
+    
