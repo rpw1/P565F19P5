@@ -30,3 +30,6 @@ class User:
 
     def get_email(self):
         return self.email
+
+    def get_first_name(self):
+        return self.f_name
