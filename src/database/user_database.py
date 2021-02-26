@@ -68,9 +68,8 @@ class UserDatabase:
         except Error as e:
             print(e)
             return False
-        finally:
-            c.close()
-            return True
+        c.close()
+        return True
 
     def insert_user(self, user_id, username : str, password : str, f_name : str, l_name : str, email : str, role : int) -> bool:
         """
@@ -98,7 +97,6 @@ class UserDatabase:
         """
 
         if not self.check_database(): return False
-        successful_insert = True
         try:
             c = sqlite3.Cursor = self.conn.cursor()
             user_values = (user_id, username, password, f_name, l_name, email, role,)
@@ -106,11 +104,10 @@ class UserDatabase:
             self.conn.commit()
         except Error as e:
             print(e)
-            successful_insert = False
-        finally:
-            c.close()
-            self.conn.close()
-            return successful_insert
+            return False
+        c.close()
+        self.conn.close()
+        return True
 
     def get_user(self, username : str) -> tuple:
         """
@@ -177,7 +174,6 @@ class UserDatabase:
             true if user successfully removed false otherwise
         """
         if not self.check_database(): return False
-        successful_delete = True
         try:
             c = sqlite3.Cursor = self.conn.cursor()
             search_parameters = (username,)
@@ -185,11 +181,10 @@ class UserDatabase:
             self.conn.commit()
         except Error as e:
             print(e)
-            successful_delete = False
-        finally:
-            c.close()
-            self.conn.close()
-            return successful_delete
+            return False
+        c.close()
+        self.conn.close()
+        return True
 
     def update_user(self, username : str, password : str) -> bool:
         """
@@ -214,8 +209,7 @@ class UserDatabase:
             self.conn.commit()
         except Error as e:
             print(e)
-            successful_delete = False
-        finally:
-            c.close()
-            self.conn.close()
-            return successful_delete
+            return False
+        c.close()
+        self.conn.close()
+        return True
