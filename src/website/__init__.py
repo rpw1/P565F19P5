@@ -32,7 +32,7 @@ def create_app():
     login_manager.init_app(app)
     @login_manager.user_loader
     def load_user(username):
-        user_values = user_db.get_user(username)
+        user_values = user_db.get_user_by_email(username)
         current_user = User(user_values[0], user_values[1], user_values[2], user_values[3], user_values[4], user_values[5], user_values[6])
         return current_user
     from .views import views

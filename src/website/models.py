@@ -16,8 +16,8 @@ class User:
 
     def is_authenticated(self):
         udb = UserDatabase()
-        user_values = udb.get_user(self.username)
-        return user_values[1] == self.password
+        user_values = udb.get_user_by_email(self.username)
+        return user_values[2] == self.password
 
     def is_active(self):
         return self.is_authenticated
