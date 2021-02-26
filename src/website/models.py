@@ -3,8 +3,9 @@ from flask_login import UserMixin
 from database.user_database import UserDatabase
 class User:
 
-    def __init__(self, username : str, password : str, f_name : str, l_name : str, email : str, role : int):
+    def __init__(self, user_id : str, username : str, password : str, f_name : str, l_name : str, email : str, role : int):
         super().__init__()
+        self.user_id = user_id
         self.username = username
         self.password = password
         self.f_name = f_name
@@ -29,3 +30,6 @@ class User:
 
     def get_email(self):
         return self.email
+
+    def get_first_name(self):
+        return self.f_name

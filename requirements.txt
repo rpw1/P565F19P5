@@ -1,0 +1,9 @@
+pyOpenSSL
+flask
+pytest
+flask-login
+duo-web
+requests
+werkzeug
+Flask-Mail
+oauthlib
