@@ -8,18 +8,21 @@
 {% set class = "Admin" %}
 {% endif %}
 {% block content %}
+    <div>
+        <h3 class="display-4">{{user.f_name}}'s Profile</h3>
+    </div>
+    <p></p>
         <div class ="profile-card">
+            <img src="https://i.pinimg.com/originals/9e/de/24/9ede2417cc327dffd71e91d92fa143db.jpg" style="width: 35%">
             <div class="image-container">
-                <img src = "user.jpeg" style="width: 25%">
                 <div class = "title">
-                    <h2>{{user.f_name}} {{user.l_name}}</h2>
-                    <p>Username: {{user.username}}</p>
+                    <p>Username: {{user.get_id()}}</p>
                     <p>E-mail: {{user.email}}</p>
                     <p>Class: {{class}}</p>
                 </div>
             </div>
             <div class="main-container">
-                <p>Easy</p>
+                <p></p>
             </div>
         </div>
 {% endblock %}
