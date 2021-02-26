@@ -2,6 +2,7 @@ import sqlite3
 from sqlite3 import Error
 import os
 import pathlib
+from sys import argv
 
 class UserDatabase:
     """
@@ -32,7 +33,24 @@ class UserDatabase:
     """
 
     def __init__(self):
-        self.db_file = "src/database/sqlite/db/user_sqlite.db"
+        if (len(argv) == 1):
+            print("Using Productions's Database")
+            self.db_file = "src/database/sqlite/db/user_sqlite.db"
+        elif argv[1] == "1":
+            print("Using Ryan's Database")
+            self.db_file = "src/database/sqlite/db/ryan_user_sqlite.db"
+        elif argv[1] == "2":
+            print("Using Derek's Database")
+            self.db_file = "src/database/sqlite/db/derek_user_sqlite.db"
+        elif argv[1] == "3":
+            print("Using Ben's Database")
+            self.db_file = "src/database/sqlite/db/ben_user_sqlite.db"
+        elif argv[1] == "4":
+            print("Using Izzy's Database")
+            self.db_file = "src/database/sqlite/db/izzy_user_sqlite.db"
+        else:
+            print("Using Productions's Database")
+            self.db_file = "src/database/sqlite/db/user_sqlite.db"
         self.conn = sqlite3.Connection = None
 
     def check_database(self) -> bool:
