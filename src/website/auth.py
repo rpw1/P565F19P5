@@ -56,8 +56,8 @@ def register():
         elif password != confirm:
             flash("Password must equal confirmation", category="error")
         else:
-            user_db.insert_user(user_id, "x", generate_password_hash(password, method="sha256"), f_name, l_name, email, acc_type)    
-            current_user = User(user_id, "x", generate_password_hash(password, method="sha256"), f_name, l_name, email, acc_type)
+            user_db.insert_user(user_id, email, generate_password_hash(password, method="sha256"), f_name, l_name, email, acc_type)    
+            current_user = User(user_id, email, generate_password_hash(password, method="sha256"), f_name, l_name, email, acc_type)
             login_user(current_user, remember=True)
             return redirect(url_for("views.home"))
     return render_template("register.html")
