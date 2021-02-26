@@ -32,11 +32,10 @@ class UserDatabase:
     """
 
     def __init__(self):
-        # if os.name == 'Linux':
-        #     self.db_file = r"src/database/sqlite/db/user_sqlite.db"
-        # else:
-        self.db_file = os.path.join(os.path.dirname(__file__), pathlib.Path(r"sqlite\db\user_sqlite.db"))
-        # pathlib.Path(r"src\database\sqlite\db\user_sqlite.db")
+        if os.name == 'Linux':
+            self.db_file = r"src/database/sqlite/db/user_sqlite.db"
+        else:
+            self.db_file = os.path.join(os.path.dirname(__file__), pathlib.Path(r"sqlite\db\user_sqlite.db"))
         self.conn = sqlite3.Connection = None
 
     def check_database(self) -> bool:
