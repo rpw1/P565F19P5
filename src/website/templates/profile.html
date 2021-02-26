@@ -8,14 +8,16 @@
 {% set class = "Admin" %}
 {% endif %}
 {% block content %}
-    <div>
-        <h3 class="display-4">{{user.f_name}}'s Profile</h3>
-    </div>
-    <p></p>
+<div class="container pt-3 h-100">
+    <div class="row justify-content-center align-self-center">
+    <div class="col-md-6">
+    <div class="card bg-light card-body">
+        <h3 class="btn btn-danger btn-block">{{user.f_name}}'s Profile</h3>
+    
         <div class ="profile-card">
             <img src="https://i.pinimg.com/originals/9e/de/24/9ede2417cc327dffd71e91d92fa143db.jpg" style="width: 35%">
             <div class="image-container">
-                <div class = "title">
+                <div class = "form-group">
 
                     <p>Username: {{user.get_id()}}</p>
 
@@ -25,8 +27,9 @@
                     <p>Class: {{class}}</p>
                 </div>
             </div>
-            <div class="main-container">
-                <p></p>
-            </div>
         </div>
+    </div>
+    </div>
+    </div>
+</div>
 {% endblock %}
