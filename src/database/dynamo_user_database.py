@@ -11,8 +11,8 @@ class Login_Database:
         if not self.dynamodb:
             self.dynamodb = boto3.resource(
                 'dynamodb', 
-                aws_access_key_id = "AKIAJTQ5TOR6ING5XBWQ", 
-                aws_secret_access_key = "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",
+                aws_access_key_id = "", 
+                aws_secret_access_key = "",
                 region_name = 'us-east-2'
                 )
         self.user_table = self.dynamodb.Table('users')
