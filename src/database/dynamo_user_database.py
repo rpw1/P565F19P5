@@ -65,15 +65,6 @@ class LoginDatabase:
             }
         )
 
-    def query_for_user_id(self, user_id):
-        self.check_database()
-        response = self.user_table.query(
-            KeyConditionExpression=Key('user_id').eq(user_id)
-        )
-        print(response['Items'])
-        return response['Items'][0]
-
-
 if __name__ == '__main__':
     database = LoginDatabase()
     database.insert_user("ryan.will@outlook.com", "123", "123", "Ryan", "Williams", 1, "image_string")
