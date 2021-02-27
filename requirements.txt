@@ -9,4 +9,5 @@ Flask-Mail
 oauthlib
 psycopg2
 gunicorn
-autoenv
+python-dotenv
+virtualenv
