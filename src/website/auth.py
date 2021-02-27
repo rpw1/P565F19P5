@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from database.user_database import UserDatabase
+from database.dynamo_user_database import LoginDatabase
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from .models import User
@@ -8,7 +8,7 @@ from oauthlib.oauth2 import WebApplicationClient
 import requests
 import uuid
 
-user_db = UserDatabase = UserDatabase()
+user_db = LoginDatabase()
 auth = Blueprint("auth", __name__)
 
 GOOGLE_CLIENT_ID = "133654944932-7jp5imq4u3k6ng5r8k9suue3rckcsdcf.apps.googleusercontent.com"
@@ -24,10 +24,12 @@ def login():
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
-        user_values = user_db.get_user_by_email(email)
+        user_values = user_db.get_user(email)
         if user_values:
-            current_user = User(user_values[0], user_values[1], user_values[2], user_values[3], user_values[4], user_values[5], user_values[6])
-            if check_password_hash(user_db.get_password(email), password):
+            current_user = User(
+                user_values['email'], user_values['user_id'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role'], user_values['image']
+            )
+            if check_password_hash(user_values['password'], password):
                 keys = json.load(open("duo_keys.json"))
                 i_key = keys["i-key"]
                 s_key = keys["s-key"]
@@ -50,14 +52,14 @@ def register():
         password = request.form.get("password")
         confirm = request.form.get("confirm")
         acc_type = int(request.form.get("type"))
-        user = user_db.get_user_by_email(email)
+        user = user_db.get_user(email)
         if user:
             flash("E-mail already in use", category="error")
         elif password != confirm:
             flash("Password must equal confirmation", category="error")
         else:
-            user_db.insert_user(user_id, email, generate_password_hash(password, method="sha256"), f_name, l_name, email, acc_type)    
-            current_user = User(user_id, email, generate_password_hash(password, method="sha256"), f_name, l_name, email, acc_type)
+            user_db.insert_user(email, user_id, generate_password_hash(password, method="sha256"), f_name, l_name, acc_type, "image_string")    
+            current_user = User(email, user_id, generate_password_hash(password, method="sha256"), f_name, l_name, acc_type, "image_string")
             login_user(current_user, remember=True)
             return redirect(url_for("views.home"))
     return render_template("register.html")
@@ -91,9 +93,11 @@ def duo_callback():
         a_key = keys["a-key"]
         authenticated_username = duo_web.verify_response(i_key, s_key, a_key, sig_response)
         if authenticated_username:
-            user_values = user_db.get_user_by_email(authenticated_username)
+            user_values = user_db.get_user(authenticated_username)
             if user_values:
-                current_user = User(user_values[0], user_values[1], user_values[2], user_values[3], user_values[4], user_values[5], user_values[6])
+                current_user = User(
+                user_values['email'], user_values['user_id'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role'], user_values['image']
+                )
                 login_user(current_user, remember=True)
                 flash("Logged in successfully!", category="success")
                 return(redirect(url_for("views.home")))
@@ -145,8 +149,8 @@ def google_callback():
         flash("Google Login invalid", category="error")
         redirect(url_for("auth.login"))
     if not user_db.get_user_by_email(email):
-        user_db.insert_user(u_id, email, str(uuid.uuid4()), first_name, last_name, email, 1)    
-    current_user = User(u_id, email, str(uuid.uuid4()), first_name, last_name, email, 1)
+        user_db.insert_user(email, u_id, str(uuid.uuid4()), first_name, last_name, 1, picture)    
+    current_user = User(email, u_id, str(uuid.uuid4()), first_name, last_name, 1, picture)
     login_user(current_user, remember=True)
     return redirect(url_for("views.home"))
 

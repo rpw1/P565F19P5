@@ -1,9 +1,9 @@
 import boto3
-
+from boto3.dynamodb.conditions import Key
 from decouple import config
 
 
-class Login_Database:
+class LoginDatabase:
 
     def __init__(self, dynamodb = None):
         self.dynamodb = dynamodb
@@ -21,6 +21,8 @@ class Login_Database:
 
     def insert_user(self, email, user_id, password, first_name, last_name, role, image):
         self.check_database()
+        print(config('AWS_ACCESS_KEY_ID'))
+        print(config('AWS_SECRET_ACCESS_KEY'))
         response = self.user_table.put_item(
             Item = {
                 'email' : email,
@@ -66,8 +68,17 @@ class Login_Database:
             }
         )
 
+    def query_for_user_id(self, user_id):
+        self.check_database()
+        response = self.user_table.query(
+            KeyConditionExpression=Key('user_id').eq(user_id)
+        )
+        print(response['Items'])
+        return response['Items'][0]
+
+
 if __name__ == '__main__':
-    database = Login_Database()
-    database.insert_user("rpw@iu.edu", "123", "123", "Ryan", "Williams", 1, "image_string")
-    print(database.get_user("rpw@iu.edu"))
-    database.delete_user("rpw@iu.edu")
+    database = LoginDatabase()
+    database.insert_user("ryan.will@outlook.com", "123", "123", "Ryan", "Williams", 1, "image_string")
+    print(database.get_user("ryan.will@outlook.com"))
+    database.delete_user("ryan.will@outlook.com")
