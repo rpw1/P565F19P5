@@ -7,3 +7,6 @@ requests
 werkzeug
 Flask-Mail
 oauthlib
+psycopg2
+gunicorn
+autoenv
