@@ -4,7 +4,6 @@ from database.dynamo_user_database import LoginDatabase
 from .models import User
 from flask_mail import Mail, Message
 from oauthlib.oauth2 import WebApplicationClient
-from flask_dynamo import Dynamo
 
 user_db = LoginDatabase()
 GOOGLE_CLIENT_ID = "133654944932-7jp5imq4u3k6ng5r8k9suue3rckcsdcf.apps.googleusercontent.com"
