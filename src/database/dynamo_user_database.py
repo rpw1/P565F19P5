@@ -1,5 +1,7 @@
 import boto3
 
+from decouple import config
+
 
 class Login_Database:
 
@@ -11,9 +13,9 @@ class Login_Database:
         if not self.dynamodb:
             self.dynamodb = boto3.resource(
                 'dynamodb', 
-                aws_access_key_id = "", 
-                aws_secret_access_key = "",
-                region_name = 'us-east-2'
+                aws_access_key_id = config('AWS_ACCESS_KEY_ID'), 
+                aws_secret_access_key = config('AWS_SECRET_ACCESS_KEY'),
+                region_name = config('AWS_REGION')
                 )
         self.user_table = self.dynamodb.Table('users')
 

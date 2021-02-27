@@ -8,3 +8,4 @@ werkzeug
 Flask-Mail
 oauthlib
 boto3
+python-decouple
