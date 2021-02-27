@@ -11,3 +11,6 @@ psycopg2
 gunicorn
 python-dotenv
 virtualenv
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-Script
