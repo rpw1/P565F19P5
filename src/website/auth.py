@@ -7,6 +7,13 @@ import duo_web, json
 from oauthlib.oauth2 import WebApplicationClient
 import requests
 import uuid
+import smtplib
+import email.utils
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import boto3
+import secrets
+import string
 
 user_db = LoginDatabase()
 auth = Blueprint("auth", __name__)
@@ -73,13 +80,36 @@ def logout():
 @auth.route("/reset", methods=["GET","POST"])
 def reset():
     if request.method == "POST":
-        email = request.form.get("email")
-        user = user_db.get_user(email)
+        recipient = request.form.get("email") 
+        sender = 'thisbechildxd@gmail.com' #i should probably use the email for fitness U
+        sender_name = 'Fitness U'
+        user = user_db.get_user(recipient)
+
         if not user:
             flash("Account with this email does not exist", category="error")
             return render_template("reset.html")
         else:
-            return render_template("password_reset.html")
+            alphabet = string.ascii_letters + string.digits
+            temp_password = ''.join(secrets.choice(alphabet) for i in range(20))
+            password = generate_password_hash(temp_password, method="sha256")
+            user_db.update_password(recipient, password)
+            print(temp_password)
+            body = """
+                Hello this is a test
+
+                -izzy """ + temp_password + """
+            """
+            try:
+                s = smtplib.SMTP('email-smtp.us-east-2.amazonaws.com')
+                s.connect('email-smtp.us-east-2.amazonaws.com', 587)
+                s.starttls()
+                s.login('AKIAUM4QIDHR43NBTQJQ','BO83F+jckoyDBHwX+/S568Wv5wJSOWQVqFXSFI7nIA+3')
+                s.sendmail(sender, recipient, body)
+                return render_template("password_reset.html")
+            except Exception as e:
+                flash("Error: unable to send email", category="error")
+                print ("Error: unable to send email")
+                return render_template("reset.html")
     return render_template("reset.html")
 
 @auth.route("/password_reset", methods=["GET","POST"])
