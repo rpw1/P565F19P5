@@ -14,6 +14,7 @@ from email.mime.text import MIMEText
 import boto3
 import secrets
 import string
+from decouple import config
 
 user_db = LoginDatabase()
 auth = Blueprint("auth", __name__)
@@ -37,11 +38,7 @@ def login():
                 user_values['email'], user_values['user_id'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role'], user_values['image']
             )
             if check_password_hash(user_values['password'], password):
-                keys = json.load(open("../duo_keys.json"))
-                i_key = keys["i-key"]
-                s_key = keys["s-key"]
-                a_key = keys["a-key"]
-                signal_request = duo_web.sign_request(i_key, s_key, a_key, email)
+                signal_request = duo_web.sign_request(config('DUO_I_KEY'), config('DUO_S_KEY'), config('DUO_A_KEY'), email)
                 return redirect(url_for("auth.duo_login", sig_request = signal_request))
             else:
                 flash("Incorrect password")
@@ -135,11 +132,7 @@ def duo_login(sig_request):
 def duo_callback():
     if request.method == "POST":
         sig_response = request.form.get("sig_response")
-        keys = json.load(open("../duo_keys.json"))
-        i_key = keys["i-key"]
-        s_key = keys["s-key"]
-        a_key = keys["a-key"]
-        authenticated_username = duo_web.verify_response(i_key, s_key, a_key, sig_response)
+        authenticated_username = duo_web.verify_response(config('DUO_I_KEY'), config('DUO_S_KEY'), config('DUO_A_KEY'), sig_response)
         if authenticated_username:
             user_values = user_db.get_user(authenticated_username)
             if user_values:
