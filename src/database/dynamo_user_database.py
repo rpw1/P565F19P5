@@ -21,8 +21,6 @@ class LoginDatabase:
 
     def insert_user(self, email, user_id, password, first_name, last_name, role, image):
         self.check_database()
-        print(config('AWS_ACCESS_KEY_ID'))
-        print(config('AWS_SECRET_ACCESS_KEY'))
         response = self.user_table.put_item(
             Item = {
                 'email' : email,
@@ -34,7 +32,6 @@ class LoginDatabase:
                 'image' : image
             }
         )
-        print(response)
 
     def get_user(self, email):
         self.check_database()
@@ -67,15 +64,6 @@ class LoginDatabase:
                 'email' : email
             }
         )
-
-    def query_for_user_id(self, user_id):
-        self.check_database()
-        response = self.user_table.query(
-            KeyConditionExpression=Key('user_id').eq(user_id)
-        )
-        print(response['Items'])
-        return response['Items'][0]
-
 
 if __name__ == '__main__':
     database = LoginDatabase()
