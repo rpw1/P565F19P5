@@ -30,7 +30,7 @@ def login():
                 user_values['email'], user_values['user_id'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role'], user_values['image']
             )
             if check_password_hash(user_values['password'], password):
-                keys = json.load(open("duo_keys.json"))
+                keys = json.load(open("../duo_keys.json"))
                 i_key = keys["i-key"]
                 s_key = keys["s-key"]
                 a_key = keys["a-key"]
@@ -72,7 +72,25 @@ def logout():
 
 @auth.route("/reset", methods=["GET","POST"])
 def reset():
+    if request.method == "POST":
+        email = request.form.get("email")
+        user = user_db.get_user(email)
+        if not user:
+            flash("Account with this email does not exist", category="error")
+            return render_template("reset.html")
+        else:
+            return render_template("password_reset.html")
     return render_template("reset.html")
+
+@auth.route("/password_reset", methods=["GET","POST"])
+def password_reset():
+    if request.method == "POST":
+        old_password = request.form.get("old_password")
+        new_password = request.form.get("new_password")
+        confirm = request.form.get("confirm")
+        flash("ahahaha this is wrong lol")
+        
+    return render_template("password_reset.html")
 
 @auth.route("/reset/<key>", methods=["GET", "POST"])
 def reset_key(key):
@@ -87,7 +105,7 @@ def duo_login(sig_request):
 def duo_callback():
     if request.method == "POST":
         sig_response = request.form.get("sig_response")
-        keys = json.load(open("duo_keys.json"))
+        keys = json.load(open("../duo_keys.json"))
         i_key = keys["i-key"]
         s_key = keys["s-key"]
         a_key = keys["a-key"]
