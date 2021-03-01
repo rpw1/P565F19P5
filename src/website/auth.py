@@ -68,6 +68,22 @@ def register():
             return redirect(url_for("views.home"))
     return render_template("register.html")
 
+"""
+@auth.route("/update_password", methods=["GET","POST"])
+@login_required
+def update_password():
+    if request.method == "POST":
+        new_password = request.form.get("password")
+        confirm = request.form.get("confirm")
+        email = current_user.get_id()
+        password = generate_password_hash(new_password, method="sha256")
+        if password != confirm:
+            flash("Password must equal confirmation", category="error")
+        else:
+            user_db.update_password(email, password)
+    return render_template("update_password.html", user=current_user)
+"""
+
 @auth.route("/logout")
 @login_required
 def logout():
@@ -108,16 +124,6 @@ def reset():
                 print ("Error: unable to send email")
                 return render_template("reset.html")
     return render_template("reset.html")
-
-@auth.route("/password_reset", methods=["GET","POST"])
-def password_reset():
-    if request.method == "POST":
-        old_password = request.form.get("old_password")
-        new_password = request.form.get("new_password")
-        confirm = request.form.get("confirm")
-        flash("ahahaha this is wrong lol")
-        
-    return render_template("password_reset.html")
 
 @auth.route("/reset/<key>", methods=["GET", "POST"])
 def reset_key(key):
