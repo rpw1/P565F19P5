@@ -8,3 +8,5 @@ class Config(object):
     DUO_A_KEY = os.environ.get("DUO_A_KEY")
     DUO_I_KEY = os.environ.get("DUO_I_KEY")
     DUO_S_KEY = os.environ.get("DUO_S_KEY")
+    SMTP_USERNAME = os.environ.get('SMTP_USERNAME')
+    SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD')

@@ -15,6 +15,9 @@ import boto3
 import secrets
 import string
 from decouple import config
+import email.utils
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 user_db = LoginDatabase()
 auth = Blueprint("auth", __name__)
@@ -94,7 +97,7 @@ def logout():
 def reset():
     if request.method == "POST":
         recipient = request.form.get("email") 
-        sender = 'thisbechildxd@gmail.com' #i should probably use the email for fitness U
+        sender = 'fitness-u@outlook.com' #i should probably use the email for fitness U
         sender_name = 'Fitness U'
         user = user_db.get_user(recipient)
 
@@ -107,21 +110,29 @@ def reset():
             password = generate_password_hash(temp_password, method="sha256")
             user_db.update_password(recipient, password)
             print(temp_password)
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = "Password Reset for your FitnessU account"
+            msg['From'] = sender
+            msg['To'] = recipient
             body = """
                 Hello this is a test
 
                 -izzy """ + temp_password + """
             """
+            message_body = MIMEText(body, 'plain')
+            msg.attach(message_body)
             try:
-                s = smtplib.SMTP('email-smtp.us-east-2.amazonaws.com')
-                s.connect('email-smtp.us-east-2.amazonaws.com', 587)
+                s = smtplib.SMTP('email-smtp.us-east-2.amazonaws.com', 587)
                 s.starttls()
-                s.login('AKIAUM4QIDHR43NBTQJQ','BO83F+jckoyDBHwX+/S568Wv5wJSOWQVqFXSFI7nIA+3')
-                s.sendmail(sender, recipient, body)
+                s.ehlo()
+                s.login(config('SMTP_USERNAME'), config('SMTP_PASSWORD'))  # s.login('AKIAUM4QIDHR43NBTQJQ','BO83F+jckoyDBHwX+/S568Wv5wJSOWQVqFXSFI7nIA+3')
+                s.sendmail(sender, recipient, msg.as_string())
+                s.close()
                 return render_template("password_reset.html")
             except Exception as e:
                 flash("Error: unable to send email", category="error")
                 print ("Error: unable to send email")
+                print(e)
                 return render_template("reset.html")
     return render_template("reset.html")
 
