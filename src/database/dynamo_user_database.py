@@ -76,9 +76,3 @@ class LoginDatabase:
                 'email' : email
             }
         )
-
-if __name__ == '__main__':
-    database = LoginDatabase()
-    database.insert_user("ryan.will@outlook.com", "123", "123", "Ryan", "Williams", 1, "image_string")
-    print(database.get_user("ryan.will@outlook.com"))
-    database.delete_user("ryan.will@outlook.com")
