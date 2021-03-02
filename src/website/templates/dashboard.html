@@ -1,17 +1,21 @@
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-    <h1>Hello, {{user.user_id}}!</h1>
+    <h1>Hello, {{user.first_name}}!</h1>
+    <hr/>
     <h3>Recently Uploaded</h3>
     <div class="row flex-row flex-nowrap overflow-auto">
         {% for x in range(0,5)%}
         <div class="col-auto mb-3">
             <div class="card h-100" style="width:250px">
+                <img class="card-img-top" src="https://i.ytimg.com/vi/px2Q47O0_eE/maxresdefault.jpg" alt="thumbnail">
                 <div class="card-body">
-                    <p>test content card</p>
+                    <h5 class="card-title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"><a href="#">Test title blah blah blah overflow</a></h5>
+                    <p>Uploaded by user on March 2, 2021</p>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
+    <hr/>
 {% endblock %}
