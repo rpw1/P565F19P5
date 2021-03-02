@@ -37,3 +37,17 @@ ul {
   .active {
     background-color:  #C5D9D7;
   }
+
+  .content-row {
+    overflow-x: scroll;
+    display: block;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+    background: yellow;
+  }
+
+  .content-row.col-xl-4 {
+    background: red;
+    display: inline-block;
+    float: none;
+  }

@@ -44,6 +44,18 @@ class LoginDatabase:
             return result['Item']
         else:
             return None
+    
+    def get_user_by_id(self, user_id):
+        self.check_database()
+        result = self.user_table.get_item(
+            Key = {
+                'user_id': user_id
+            }
+        )
+        if 'Item' in result:
+            return result['Item']
+        else:
+            return None
 
     def update_password(self, email, password):
         self.check_database()
