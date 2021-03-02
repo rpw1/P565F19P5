@@ -207,8 +207,9 @@ def google_callback():
         flash("Google Login invalid", category="error")
         redirect(url_for("auth.login"))
     if not user_db.get_user(email):
-        user_db.insert_user(email, u_id, str(uuid.uuid4()), first_name, last_name, 1, picture)    
-    current_user = User(email, u_id, str(uuid.uuid4()), first_name, last_name, 1, picture)
+        password = generate_password_hash(str(uuid.uuid4()), method="sha256")
+        user_db.insert_user(email, u_id, password, first_name, last_name, 1, picture)    
+    current_user = User(email, u_id, password, first_name, last_name, 1, picture)
     login_user(current_user, remember=True)
     return redirect(url_for("views.home"))
 
