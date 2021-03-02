@@ -19,7 +19,7 @@ class ContentDatabase:
                 )
         self.user_table = self.dynamodb.Table('content')
 
-    def insert_content(self, content_id, email, title, mode_of_instruction, workout_type, age_of_content, description, thumbnail, date):
+    def insert_content(self, content_id, email, title, mode_of_instruction, workout_type, description, thumbnail, date, content):
         self.check_database()
         response = self.user_table.put_item(
             Item = {
@@ -28,10 +28,10 @@ class ContentDatabase:
                 'title': title,
                 'instruction': mode_of_instruction,
                 'type': workout_type,
-                'age_range': age_of_content,
                 'description': description,
                 'thumbnail': thumbnail,
-                'date': date
+                'date': date,
+                'content': content
             }
         )
 
