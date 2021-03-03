@@ -6,9 +6,8 @@
   yellow accent - #E0B31E
 
 
-*/
 
-#nav ul {
+.navbar ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -16,11 +15,11 @@
     background-color: #588C87;
   }
   
-  #nav li {
+  .navbar li {
     float: left;
   }
   
-  #nav li a {
+  .nav-link {
     display: block;
     color: #F2F2F2;
     text-align: center;
@@ -28,20 +27,20 @@
     text-decoration: none;
   }
 
-  #nav button {
+  .navbar button {
     margin-top: 7px;
     margin-left: 8px;
-    background: #239538;
+    background: #C5D9D7;
     border: #588C87;
   }
   
-  #nav li a:hover {
+  .navbar li a:hover {
     background-color:  #C5D9D7;
     color: #E0B31E;
     text-decoration: none;
   }
 
-  #nav .active {
+  .navbar .active {
     background-color:  #C5D9D7;
   }
 
@@ -57,4 +56,14 @@
     background: red;
     display: inline-block;
     float: none;
+  }
+
+  */
+
+  #footer {
+    position: fixed;
+    padding: 20px;
+    bottom: 0;
+    width: 100%;
+    left: 0;
   }

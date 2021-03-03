@@ -6,32 +6,32 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap4-retro.min.css') }}"> -->
+    <!--  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap4-retro.min.css') }}"> -->
+    <link rel="stylesheet" type= "text/css" href= "{{ url_for('static', filename='styles.css') }}">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type= "text/css" href= "{{ url_for('static', filename='styles.css') }}">
     <link rel="stylesheet" type= "text/css" href= "{{ url_for('static', filename='profile.css') }}">
     <title>{% block title %}{% endblock %} | FitnessU</title>
     {% endblock %}
 </head>
 <body>
-    <div id ="nav">
-        <ul>
-            {% if not(user) %}
+    <div class ="navbar navbar-expand-sm bg-light">
+        <ul class="navbar nav">
+            {% if not(current_user) %}
             <li><a href= "/login">Login</a></li>
             <li><a href="/register">Register</a></li>
             <li><a href="contact.asp">Contact</a></li>
             <li><a href="about.asp">About</a></li>
             {% endif %}
-            {% if user %}
-            <li>
-                <button class="btn btn-secondary dropdown-toggle" style="float:right" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{user.first_name}} {{user.last_name}}</button>
+            {% if current_user %}
+            <li class="nav-item">
+                <button class="btn btn-secondary dropdown-toggle" style="float:right" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{current_user.first_name}} {{current_user.last_name}}</button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="/profile">Profile</a>
                     <a class="dropdown-item" href="/logout">Logout</a>
                 </div>
             </li>
-            <li><a href="/">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
             {% endif %}
           </ul>
     </div>
@@ -59,8 +59,8 @@
     <div class="container-xl pt-3">{% block content %}{% endblock %}</div>
     <div id="footer">
         {% block footer %}
-        &copy; Copyright 2021 by <a href="http://domain.invalid/">you</a>.
+        <p><small>&copy; FitnessU 2021.</small></p>
         {% endblock %}
-      </div>
+    </div>
 </body>
 </html>
