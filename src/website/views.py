@@ -35,6 +35,11 @@ def user_page(id):
         flash("That user does not exist!", category="error")
         return redirect(url_for("views.home"))
 
+@views.route("/content/<id>")
+@login_required
+def content(id):
+    return render_template("content.html", id=id)
+
 @views.route("/update_password", methods=["GET","POST"])
 @login_required
 def update_password():

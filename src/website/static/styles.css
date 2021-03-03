@@ -8,7 +8,7 @@
 
 */
 
-ul {
+#nav ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -16,25 +16,32 @@ ul {
     background-color: #588C87;
   }
   
-  li {
+  #nav li {
     float: left;
   }
   
-  li a {
+  #nav li a {
     display: block;
     color: #F2F2F2;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
   }
+
+  #nav button {
+    margin-top: 7px;
+    margin-left: 8px;
+    background: #239538;
+    border: #588C87;
+  }
   
-  li a:hover {
+  #nav li a:hover {
     background-color:  #C5D9D7;
     color: #E0B31E;
     text-decoration: none;
   }
 
-  .active {
+  #nav .active {
     background-color:  #C5D9D7;
   }
 
