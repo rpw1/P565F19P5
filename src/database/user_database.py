@@ -18,7 +18,7 @@ class UserDatabase:
                 aws_secret_access_key = config('AWS_SECRET_ACCESS_KEY'),
                 region_name = config('AWS_REGION')
                 )
-        self.user_table = self.dynamodb.Table('users')
+        self.user_table = self.dynamodb.Table('users_prod')
 
     def insert_client(self, email, password, first_name, last_name, gender, bio = "",
         image = "https://upload.wikimedia.org/wikipedia/en/c/c6/Roisin_Murphy_-_Overpowered.png", 
@@ -103,44 +103,22 @@ class UserDatabase:
         )
 
     def get_client(self, email):
-        self.check_database()
-        result = self.user_table.get_item(
-            Key = {
-                'email': email,
-                'role': self.roles[0]
-            }
-        )
-        if 'Item' in result:
-            return result['Item']
-        else:
-            return None
+        return self._get_user(email, self.role[0])
 
     def delete_client(self, email):
-        self.check_database()
-        self.user_table.delete_item(
-            Key = {
-                'email': email,
-                'role': self.roles[0]
-            }
-        )
-    
+        self._delete_user(email, self.role[0])
+
     def update_client_content(self, email, client_content):
-        self.check_database()
-        result = self.user_table.update_item(
-            Key = {
-                'email' : email,
-                'role': self.roles[0]
-            },
-            UpdateExpression = 'SET content = :val',
-            ExpressionAttributeValues = {
-                ':val' : client_content
-            },
-            ReturnValues = 'UPDATED_NEW'
-        ) 
-        if 'Item' in result:
-            return result['Item']
-        else:
-            return dict()
+        return self._update_content(email, client_content, self.role[0])
+
+    def update_client_password(self, email, password):
+        return self._update_password(email, password, self.role[0])
+
+    def update_client_image(self, email, image):
+        return self._update_image(email, image, self.role[0])
+
+    def update_client_bio(self, email, bio):
+        return self._update_bio(email, bio, self.role[0])
 
     def insert_fitness_professional(self, email, password, first_name, last_name, gender, location, bio = "",
         image = "https://upload.wikimedia.org/wikipedia/en/c/c6/Roisin_Murphy_-_Overpowered.png",
@@ -195,46 +173,13 @@ class UserDatabase:
         )
     
     def get_fitness_professional(self, email):
-        self.check_database()
-        result = self.user_table.get_item(
-            Key = {
-                'email': email,
-                'role': self.roles[1]
-            }
-        )
-        if 'Item' in result:
-            return result['Item']
-        else:
-            return None
+        return self._get_user(email, self.role[1])
 
     def delete_fitness_professional(self, email):
-        self.check_database()
-        self.user_table.delete_item(
-            Key = {
-                'email': email,
-                'role': self.roles[1]
-            }
-        )
-
+        self._delete_user(email, self.role[1])
 
     def update_fitness_professional_content(self, email, fitness_professional_content):
-        self.check_database()
-        result = self.user_table.update_item(
-            Key = {
-                'email' : email,
-                'role': self.roles[1]
-            },
-            UpdateExpression = 'SET content = :val',
-            ExpressionAttributeValues = {
-                ':val' : fitness_professional_content
-            },
-            ReturnValues = 'UPDATED_NEW'
-        ) 
-        if 'Item' in result:
-            return result['Item']
-        else:
-            return dict()
-
+        return self._update_content(email, fitness_professional_content, self.role[1])
 
     def update_fitness_professional_location(self, email, location):
         self.check_database()
@@ -272,7 +217,16 @@ class UserDatabase:
         else:
             return dict()
 
-    def insert_fitness_professional(self, email, password, first_name, last_name, gender, bio,
+    def update_fitness_professional_password(self, email, password):
+        return self._update_password(email, password, self.role[1])
+
+    def update_fitness_professional_image(self, email, image):
+        return self._update_image(email, image, self.role[1])
+
+    def update_fitness_professional_bio(self, email, bio):
+        return self._update_bio(email, bio, self.role[1])
+
+    def insert_admin(self, email, password, first_name, last_name, gender, bio = "",
         image = "https://upload.wikimedia.org/wikipedia/en/c/c6/Roisin_Murphy_-_Overpowered.png",
         admin_content = dict()):
         """
@@ -299,7 +253,7 @@ class UserDatabase:
         response = self.user_table.put_item(
             Item = {
                 'email': email,
-                'role': self.roles[1],
+                'role': self.roles[2],
                 'password': password,
                 'first_name': first_name,
                 'last_name': last_name,
@@ -309,8 +263,27 @@ class UserDatabase:
                 'content': admin_content
             }
         )
-    
+
     def get_admin(self, email):
+        return self._get_user(email, self.role[2])
+
+    def delete_admin(self, email):
+        self._delete_user(email, self.role[2])
+
+    def update_admin_content(self, email, admin_content):
+        return self._update_content(email, admin_content, self.role[2])
+
+    def update_admin_password(self, email, password):
+        return self._update_password(email, password, self.role[2])
+
+    def update_admin_image(self, email, image):
+        return self._update_image(email, image, self.role[2])
+
+    def update_admin_bio(self, email, bio):
+        return self._update_bio(email, bio, self.role[2])
+
+    
+    def _get_user(self, email):
         self.check_database()
         result = self.user_table.get_item(
             Key = {
@@ -323,7 +296,7 @@ class UserDatabase:
         else:
             return None
 
-    def delete_admin(self, email):
+    def _delete_user(self, email):
         self.check_database()
         self.user_table.delete_item(
             Key = {
@@ -332,12 +305,12 @@ class UserDatabase:
             }
         )
 
-    def update_admin_content(self, email, admin_content):
+    def _update_content(self, email, admin_content):
         self.check_database()
         result = self.user_table.update_item(
             Key = {
                 'email' : email,
-                'role': self.roles[1]
+                'role': self.roles[2]
             },
             UpdateExpression = 'SET content = :val',
             ExpressionAttributeValues = {
@@ -345,17 +318,17 @@ class UserDatabase:
             },
             ReturnValues = 'UPDATED_NEW'
         ) 
-        if 'Item' in result:
-            return result['Item']
+        if 'Attributes' in result:
+            return result['Attributes']
         else:
             return dict()
 
-    def update_password(self, email, password):
+    def _update_password(self, email, password, role):
         self.check_database()
         result = self.user_table.update_item(
-            KeyConditionExpression = '#email = :email',
-            ExpressionAttributeNames = {
-                '#email': email,
+            Key = {
+                'email' : email,
+                'role': role
             },
             UpdateExpression = 'SET password = :val',
             ExpressionAttributeValues = {
@@ -363,18 +336,18 @@ class UserDatabase:
             },
             ReturnValues = 'UPDATED_NEW'
         ) 
-        if 'Item' in result:
-            return result['Item']
+        if 'Attributes' in result:
+            return result['Attributes']
         else:
             return dict()
 
 
-    def update_image(self, email, image):
+    def _update_image(self, email, image, role):
         self.check_database()
         result = self.user_table.update_item(
-            KeyConditionExpression = '#email = :email',
-            ExpressionAttributeNames = {
-                '#email': email,
+            Key = {
+                'email' : email,
+                'role': role
             },
             UpdateExpression = 'SET image = :val',
             ExpressionAttributeValues = {
@@ -382,18 +355,18 @@ class UserDatabase:
             },
             ReturnValues = 'UPDATED_NEW'
         )
-        if 'Item' in result:
-            return result['Item']
+        if 'Attributes' in result:
+            return result['Attributes']
         else:
             return dict()
 
 
-    def update_bio(self, email, bio):
+    def _update_bio(self, email, bio, role):
         self.check_database()
         result = self.user_table.update_item(
-            KeyConditionExpression = '#email = :email',
-            ExpressionAttributeNames = {
-                '#email': email,
+            Key = {
+                'email' : email,
+                'role': role
             },
             UpdateExpression = 'SET bio = :val',
             ExpressionAttributeValues = {
@@ -401,7 +374,7 @@ class UserDatabase:
             },
             ReturnValues = 'UPDATED_NEW'
         ) 
-        if 'Item' in result:
-            return result['Item']
+        if 'Attributes' in result:
+            return result['Attributes']
         else:
             return dict()
