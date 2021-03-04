@@ -20,7 +20,7 @@ class UserDatabase:
                 )
         self.user_table = self.dynamodb.Table('users_prod')
 
-    def insert_client(self, email, password, first_name, last_name, gender, bio = "",
+    def insert_client(self, email, password, first_name, last_name, gender = "", bio = "",
         image = "https://upload.wikimedia.org/wikipedia/en/c/c6/Roisin_Murphy_-_Overpowered.png", 
         client_content = dict()):
         """
@@ -120,7 +120,7 @@ class UserDatabase:
     def update_client_bio(self, email, bio):
         return self._update_bio(email, bio, self.role[0])
 
-    def insert_fitness_professional(self, email, password, first_name, last_name, gender, location, bio = "",
+    def insert_fitness_professional(self, email, password, first_name, last_name, gender = "", location = "", bio = "",
         image = "https://upload.wikimedia.org/wikipedia/en/c/c6/Roisin_Murphy_-_Overpowered.png",
         specialties = list(), fitness_professional_content = dict()):
         """
@@ -226,7 +226,7 @@ class UserDatabase:
     def update_fitness_professional_bio(self, email, bio):
         return self._update_bio(email, bio, self.role[1])
 
-    def insert_admin(self, email, password, first_name, last_name, gender, bio = "",
+    def insert_admin(self, email, password, first_name, last_name, gender = "", bio = "",
         image = "https://upload.wikimedia.org/wikipedia/en/c/c6/Roisin_Murphy_-_Overpowered.png",
         admin_content = dict()):
         """

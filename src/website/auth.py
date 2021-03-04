@@ -27,8 +27,7 @@ GOOGLE_CLIENT_SECRET = "zSWURv4KexNnOvRRP2tDQZX2"
 GOOGLE_DISCOVERY_URL = (
     "https://accounts.google.com/.well-known/openid-configuration"
 )
-client = WebApplicationClient(GOOGLE_CLIENT_ID)
-
+client = WebApplicationClient(config("GOOGLE_CLIENT_ID"))
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():
@@ -198,6 +197,7 @@ def google_callback():
     uri, headers, body = client.add_token(userinfo_endpoint)
     userinfo_response = requests.get(uri, headers = headers, data = body)
     if userinfo_response.json().get("email_verified"):
+        print(userinfo_response.json())
         u_id = userinfo_response.json()["sub"]
         email = userinfo_response.json()["email"]
         picture = userinfo_response.json()["picture"]
