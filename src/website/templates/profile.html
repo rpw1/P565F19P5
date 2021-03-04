@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Profile{% endblock %}
+{% block title %}{{user.first_name}}'s Profile{% endblock %}
 {% if user.role == 1 %}
 {% set class = "Trainee" %}
 {% elif user.role == 2 %}
@@ -8,30 +8,20 @@
 {% set class = "Admin" %}
 {% endif %}
 {% block content %}
-<div class="container pt-3 h-100">
-    <div class="row justify-content-center align-self-center">
-    <div class="col-md-6">
-    <div class="card bg-light card-body">
-        <h3 class="btn btn-primary btn-block">{{user.first_name}}'s Profile</h3>
-    
-        <div class ="card mb-3 text-center bg-info text-white">
-            <img src="https://i.pinimg.com/originals/9e/de/24/9ede2417cc327dffd71e91d92fa143db.jpg" style="width: 35%; margin-bottom: 5%; display:block; margin-left: auto; margin-right: auto; margin-top: 5%;">
-            <div class="image-container">
-                <div class = "form-group">
-
-                    <p style="text-align:center">Username: {{user.user_id}}</p>
-
-                    <h2 style="text-align:center">{{user.first_name}} {{user.last_name}}</h2>
-
-                    <p style="text-align:center">E-mail: {{user.email}}</p>
-                    <a href= "/update_password">Change Password</a>
-                    <p style="text-align:center">Class: {{class}}</p>
-                </div>
-            </div>
-        </div>
+<div class="row align-items-center p-3">
+    <div class="col-md-2">
+        <img style="max-height:150px; height:auto; width:auto;" class="rounded-circle border border-4 border-dark" src="https://upload.wikimedia.org/wikipedia/en/c/c6/Roisin_Murphy_-_Overpowered.png">
     </div>
+    <div class="col-md-9">
+        <h1 class="display-3">{{user.first_name}} {{user.last_name}}</h1>
+        <p class="text-muted"><small>{{class}}</small></p>
     </div>
+    {% if current_user.user_id == user.user_id %}
+    <div class="col-md-1">
+        <a href="/update_password">Change password</a>
     </div>
+    {% endif %}
 </div>
-</div>
+<hr/>
+{{user.user_id}}
 {% endblock %}

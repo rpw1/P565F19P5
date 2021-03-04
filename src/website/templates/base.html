@@ -17,13 +17,13 @@
 <body>
     <div class ="navbar navbar-expand-sm bg-light">
         <ul class="navbar nav">
-            {% if not(current_user) %}
+            {% if not(current_user.is_authenticated) %}
             <li><a href= "/login">Login</a></li>
             <li><a href="/register">Register</a></li>
             <li><a href="contact.asp">Contact</a></li>
             <li><a href="about.asp">About</a></li>
             {% endif %}
-            {% if current_user %}
+            {% if current_user.is_authenticated %}
             <li class="nav-item">
                 <button class="btn btn-secondary dropdown-toggle" style="float:right" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{current_user.first_name}} {{current_user.last_name}}</button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -57,10 +57,12 @@
     {% endif %}
     {% endwith %}
     <div class="container-xl pt-3">{% block content %}{% endblock %}</div>
+    <!--
     <div id="footer">
         {% block footer %}
         <p><small>&copy; FitnessU 2021.</small></p>
         {% endblock %}
     </div>
+    -->
 </body>
 </html>
