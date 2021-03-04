@@ -17,27 +17,36 @@ class ContentDatabase:
                 aws_secret_access_key = config('AWS_SECRET_ACCESS_KEY'),
                 region_name = config('AWS_REGION')
                 )
-        self.user_table = self.dynamodb.Table('content')
+        self.content_table = self.dynamodb.Table('content')
 
-    def insert_content(self, content_id, email, title, mode_of_instruction, workout_type, description, thumbnail, date, content):
+    def insert_content(self, content_id, email, content = dict()):
+        """
+            content_id -> required, string \n
+            email -> required, string \n
+            content -> 
+            {
+                content_type: "",
+                title: "",
+                description: "",
+                thumbnail: "",
+                date: "",
+                data: {
+                    content_data
+                }
+            }
+        """
         self.check_database()
-        response = self.user_table.put_item(
+        response = self.content_table.put_item(
             Item = {
                 'content_id': content_id,
                 'email': email,
-                'title': title,
-                'instruction': mode_of_instruction,
-                'type': workout_type,
-                'description': description,
-                'thumbnail': thumbnail,
-                'date': date,
                 'content': content
             }
         )
 
     def get_content(self, content_id, email):
         self.check_database()
-        result = self.user_table.get_item(
+        result = self.content_table.get_item(
             Key = {
                 'content_id': content_id,
                 "email": email
@@ -50,10 +59,28 @@ class ContentDatabase:
 
     def delete_content(self, content_id, email):
         self.check_database()
-        self.user_table.delete_item(
+        self.content_table.delete_item(
             Key = {
                 'content_id': content_id,
                 "email": email
             }
         )
+
+    def update_content(self, contnet_id, email, content):
+        self.check_database()
+        result = self.content_table.update_item(
+            Key = {
+                'content_id': contnet_id,
+                'email' : email,
+            },
+            UpdateExpression = 'SET content = :val',
+            ExpressionAttributeValues = {
+                ':val' : content
+            },
+            ReturnValues = 'UPDATED_NEW'
+        ) 
+        if 'Attributes' in result:
+            return result['Attributes']
+        else:
+            return dict()
 
