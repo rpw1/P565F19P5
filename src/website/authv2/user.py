@@ -4,17 +4,16 @@ from database.user_database import UserDatabase
 
 class User:
 
-    def __init__(self, email, password, first_name, last_name, role):
+    def __init__(self, email, password, first_name, last_name):
         super().__init__()
         self.password = password
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
-        self.role = role
 
     def is_authenticated(self):
         udb = UserDatabase()
-        user_values = udb._get_user(email, role)
+        user_values = udb.query_user(email)
         if 'password' in user_values:
             return user_values['password'] == self.password
         else:

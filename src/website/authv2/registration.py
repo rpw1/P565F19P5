@@ -51,7 +51,7 @@ def client_register():
             flash("Password must equal confirmation", category="error")
         else:
             user_db.insert_client(email, generate_password_hash(password, method="sha256"), f_name, l_name, gender)    
-            current_user = User(email, generate_password_hash(password, method="sha256"), f_name, l_name, roles[0])
+            current_user = User(email, generate_password_hash(password, method="sha256"), f_name, l_name)
             login_user(current_user, remember=True)
             return redirect(url_for("views.home"))
     return render_template("client_register.html")
@@ -73,7 +73,7 @@ def fitness_professional_register():
             flash("Password must equal confirmation", category="error")
         else:
             user_db.insert_fitness_professional(email, generate_password_hash(password, method="sha256"), f_name, l_name, gender, location)    
-            current_user = User(email, generate_password_hash(password, method="sha256"), f_name, l_name, roles[0])
+            current_user = User(email, generate_password_hash(password, method="sha256"), f_name, l_name)
             login_user(current_user, remember=True)
             return redirect(url_for("views.home"))
     return render_template("fitness_professional_register.html")
@@ -98,7 +98,7 @@ def admin_register():
             flash("Password must equal confirmation", category="error")
         else:
             user_db.insert_admin(email, generate_password_hash(password, method="sha256"), f_name, l_name, gender)    
-            current_user = User(email, generate_password_hash(password, method="sha256"), f_name, l_name, roles[0])
+            current_user = User(email, generate_password_hash(password, method="sha256"), f_name, l_name)
             login_user(current_user, remember=True)
             return redirect(url_for("views.home"))
     return render_template("admin_register.html")
@@ -147,7 +147,7 @@ def google_register_callback(role):
     else:
         flash("Google Login invalid", category="error")
         redirect(url_for("auth.login"))
-    if not user_db._get_user(email, role):
+    if len(user_db._get_user(email, role)) == 0:
         password = generate_password_hash(str(uuid.uuid4()), method="sha256")
         if role == roles[0]:
             user_db.insert_client(email, password, first_name, last_name, image = picture)
@@ -158,6 +158,6 @@ def google_register_callback(role):
             return render_template('role_registration')
     else:
         flash("Account already created, logging you in")
-    current_user = User(email, password, first_name, last_name, role)
+    current_user = User(email, password, first_name, last_name)
     login_user(current_user, remember=True)
     return redirect(url_for("views.home"))

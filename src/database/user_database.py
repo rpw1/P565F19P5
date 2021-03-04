@@ -103,22 +103,25 @@ class UserDatabase:
         )
 
     def get_client(self, email):
-        return self._get_user(email, self.role[0])
+        return self._get_user(email, self.roles[0])
 
     def delete_client(self, email):
-        self._delete_user(email, self.role[0])
+        self._delete_user(email, self.roles[0])
 
     def update_client_content(self, email, client_content):
-        return self._update_content(email, client_content, self.role[0])
+        return self._update_content(email, client_content, self.roles[0])
 
     def update_client_password(self, email, password):
-        return self._update_password(email, password, self.role[0])
+        return self._update_password(email, password, self.roles[0])
 
     def update_client_image(self, email, image):
-        return self._update_image(email, image, self.role[0])
+        return self._update_image(email, image, self.roles[0])
 
     def update_client_bio(self, email, bio):
-        return self._update_bio(email, bio, self.role[0])
+        return self._update_bio(email, bio, self.roles[0])
+
+    def update_client_gender(self, email, gender):
+        return self._update_gender(email, gender, self.roles[0])
 
     def insert_fitness_professional(self, email, password, first_name, last_name, gender = "", location = "", bio = "",
         image = "https://upload.wikimedia.org/wikipedia/en/c/c6/Roisin_Murphy_-_Overpowered.png",
@@ -173,13 +176,13 @@ class UserDatabase:
         )
     
     def get_fitness_professional(self, email):
-        return self._get_user(email, self.role[1])
+        return self._get_user(email, self.roles[1])
 
     def delete_fitness_professional(self, email):
-        self._delete_user(email, self.role[1])
+        self._delete_user(email, self.roles[1])
 
     def update_fitness_professional_content(self, email, fitness_professional_content):
-        return self._update_content(email, fitness_professional_content, self.role[1])
+        return self._update_content(email, fitness_professional_content, self.roles[1])
 
     def update_fitness_professional_location(self, email, location):
         self.check_database()
@@ -218,13 +221,16 @@ class UserDatabase:
             return dict()
 
     def update_fitness_professional_password(self, email, password):
-        return self._update_password(email, password, self.role[1])
+        return self._update_password(email, password, self.roles[1])
 
     def update_fitness_professional_image(self, email, image):
-        return self._update_image(email, image, self.role[1])
+        return self._update_image(email, image, self.roles[1])
 
     def update_fitness_professional_bio(self, email, bio):
-        return self._update_bio(email, bio, self.role[1])
+        return self._update_bio(email, bio, self.roles[1])
+
+    def update_fitness_professional_gender(self, email, gender):
+        return self._update_gender(email, gender, self.roles[1])
 
     def insert_admin(self, email, password, first_name, last_name, gender = "", bio = "",
         image = "https://upload.wikimedia.org/wikipedia/en/c/c6/Roisin_Murphy_-_Overpowered.png",
@@ -265,30 +271,33 @@ class UserDatabase:
         )
 
     def get_admin(self, email):
-        return self._get_user(email, self.role[2])
+        return self._get_user(email, self.roles[2])
 
     def delete_admin(self, email):
-        self._delete_user(email, self.role[2])
+        self._delete_user(email, self.roles[2])
 
     def update_admin_content(self, email, admin_content):
-        return self._update_content(email, admin_content, self.role[2])
+        return self._update_content(email, admin_content, self.roles[2])
 
     def update_admin_password(self, email, password):
-        return self._update_password(email, password, self.role[2])
+        return self._update_password(email, password, self.roles[2])
 
     def update_admin_image(self, email, image):
-        return self._update_image(email, image, self.role[2])
+        return self._update_image(email, image, self.roles[2])
 
     def update_admin_bio(self, email, bio):
-        return self._update_bio(email, bio, self.role[2])
+        return self._update_bio(email, bio, self.roles[2])
+
+    def update_admin_gender(self, email, gender):
+        return self._update_gender(email, gender, self.roles[2])
 
     
-    def _get_user(self, email):
+    def _get_user(self, email, role):
         self.check_database()
         result = self.user_table.get_item(
             Key = {
                 'email': email,
-                'role': self.roles[2]
+                'role': role
             }
         )
         if 'Item' in result:
@@ -296,21 +305,21 @@ class UserDatabase:
         else:
             return None
 
-    def _delete_user(self, email):
+    def _delete_user(self, email, role):
         self.check_database()
         self.user_table.delete_item(
             Key = {
                 'email': email,
-                'role': self.roles[2]
+                'role': role
             }
         )
 
-    def _update_content(self, email, admin_content):
+    def _update_content(self, email, admin_content, role):
         self.check_database()
         result = self.user_table.update_item(
             Key = {
                 'email' : email,
-                'role': self.roles[2]
+                'role': role
             },
             UpdateExpression = 'SET content = :val',
             ExpressionAttributeValues = {
@@ -378,3 +387,56 @@ class UserDatabase:
             return result['Attributes']
         else:
             return dict()
+
+    def _update_gender(self, email, gender, role):
+        self.check_database()
+        result = self.user_table.update_item(
+            Key = {
+                'email' : email,
+                'role': role
+            },
+            UpdateExpression = 'SET gender = :val',
+            ExpressionAttributeValues = {
+                ':val' : gender
+            },
+            ReturnValues = 'UPDATED_NEW'
+        ) 
+        if 'Attributes' in result:
+            return result['Attributes']
+        else:
+            return dict()
+
+    def query_user(self, email):
+        self.check_database()
+        response = self.user_table.query(
+            KeyConditionExpression=Key('email').eq(email)
+        )
+        if 'Items' in response:
+            return response["Items"][0]
+        else:
+            return dict()
+    
+    def query_delete_user(self, email):
+        response = self.query_user(email)
+        self._delete_user(email, response['role'])
+
+
+    def query_update_content(self, email, content):
+        response = self.query_user(email)
+        return self._update_content(email, content, response['role'])
+
+    def query_update_bio(self, email, bio):
+        response = self.query_user(email)
+        return self._update_bio(email, bio, response['role'])
+
+    def query_update_password(self, email, password):
+        response = self.query_user(email)
+        return self._update_password(email, password, response['role'])
+
+    def query_update_image(self, email, image):
+        response = self.query_user(email)
+        return self._update_image(email, image, response['role'])
+
+    def query_update_gender(self, email, gender):
+        response = self.query_user(email)
+        return self._update_gender(email, gender, response['role'])
