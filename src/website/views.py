@@ -42,6 +42,10 @@ def user_page(id):
 def content(id):
     return render_template("content.html", id=id)
 
+@views.route("/upload")
+def upload():
+    return render_template("upload.html")
+
 @views.route("/update_password", methods=["GET","POST"])
 @login_required
 def update_password():
