@@ -11,10 +11,10 @@ user_db = LoginDatabase()
 @views.route("/")
 #@login_required
 def home():
-    if current_user:
+    if current_user.is_authenticated:
         return render_template("dashboard.html", user=current_user)
     else: 
-        return "not logged in"
+        return redirect(url_for("auth.login"))
 
 if __name__ == "__main__":
     app.run(debug=True)

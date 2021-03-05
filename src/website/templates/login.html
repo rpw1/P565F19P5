@@ -1,37 +1,37 @@
 {% extends "base.html" %}
 {% block title %}Login{% endblock %}
 {% block content %}
-<div class="bg-white">
 <div class="container pt-3 h-100">
+    <div class="row justify-content-center">
+        <img src="{{ url_for('static', filename='logo_transparent.png') }}" class="center-block" width="auto" height="200px">
+    </div>
     <div class="row justify-content-center align-self-center">
-    <div class="col-md-6">
-    <img src="https://lh3.googleusercontent.com/iso9xhL5wI06waiGDQtuPAkiswtWAZVJypOW39BoffFsvFPnMt1QHkuwouoqnvYwkA3MqDkApDgP-AENUNtSN4-QKYTHRMiuSzqI72M" width="500px" height="275px">
-    <div class="card bg-light card-body">
-    <form method="POST">
-        <h5>Login to FitnessU</h5>
-        <div class="form-group">
-            <a href="/google_login" class="btn btn-danger btn-block">Sign in with Google</a>
+        <div class="col-md-6">
+            <div class="card bg-light card-body">
+                <form method="POST">
+                    <h5>Login to FitnessU</h5>
+                    <div class="form-group">
+                        <a href="/google_login" class="btn btn-danger btn-block">Sign in with Google</a>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="e-mail" name="email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" placeholder="password" name="password" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block">Log in</button>
+                    </div>
+                    <div class="form-group">
+                        <a href="/register" class="btn btn-secondary btn-sm btn-block">Need an account?</a>
+                    </div>
+                    <div class="form-group">
+                        <a href="/reset" class="btn btn-secondary btn-sm btn-block">Forgot your password?</a>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            <input type="email" placeholder="e-mail" name="email" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <input type="password" placeholder="password" name="password" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary btn-block">Log in</button>
-        </div>
-        <div class="form-group">
-            <a href="/register" class="btn btn-secondary btn-sm btn-block">Need an account?</a>
-        </div>
-        <div class="form-group">
-            <a href="/reset" class="btn btn-secondary btn-sm btn-block">Forgot your password?</a>
-        </div>
-    </form>
     </div>
-    </div>
-    </div>
-</div>
 </div>
 
 

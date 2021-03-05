@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Register{% endblock %}
 {% block content %}
-<div class="bg-white">
 <div class="container pt-3 h-100">
+    <div class="row justify-content-center">
+        <img src="{{ url_for('static', filename='logo_transparent.png') }}" class="center-block" width="auto" height="200px">
+    </div>
     <div class="row justify-content-center align-self-center">
     <div class="col-md-6">
-        <img src="https://lh3.googleusercontent.com/iso9xhL5wI06waiGDQtuPAkiswtWAZVJypOW39BoffFsvFPnMt1QHkuwouoqnvYwkA3MqDkApDgP-AENUNtSN4-QKYTHRMiuSzqI72M" width="500px" height="275px">
     <div class="card bg-light card-body">
     <form method="POST">
             <h3>Register for FitnessU</h3>
@@ -41,6 +42,5 @@
     </div>
     </div>
     </div>
-</div>
 </div>
 {% endblock %}
