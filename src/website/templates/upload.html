@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="bg-white">
+<head>
+    {% block head %}
+    {% block title %}{% endblock %} | FitnessU</title>
+    {% endblock %}
+</head>
+<body>
+    <form action="https://upload.embed.ly/1/video?key=YOUR_API_KEY" method="POST" enctype="multipart/form-data" name="upload_form">
+        <div id="upload-button" class="button">Upload Video</div>
+        <div id="upload-input">
+          <input id="video_file" name="video_file" type="file">
+        </div>
+      </form>
+      <div class="url-display"></div>
+      <div class="embed-code"></div>
+      <div class="video-display"></div>
+      <img id="loader" src="https://i.imgur.com/s4Z4mdr.gif">
+</body>
+</html>
