@@ -2,9 +2,6 @@
 {% block title %}Register{% endblock %}
 {% block content %}
 <div class="container pt-3 h-100">
-    <div class="row justify-content-center">
-        <img src="{{ url_for('static', filename='logo_transparent.png') }}" class="center-block" width="auto" height="200px">
-    </div>
     <div class="row justify-content-center align-self-center">
     <div class="col-md-6">
     <div class="card bg-light card-body">
@@ -40,6 +37,13 @@
         <button type="submit" class="btn btn-primary btn-block">Register</button>
     </form>
     </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-light card-body h-100">
+            <img src="{{ url_for('static', filename='logo_transparent.png') }}" class="center-block" width="auto" height="auto">
+            <hr/>
+            <p class="text-muted">FitnessU allows for both fitness professionals and trainees to communicate, share content, create workout plans, all in the same place. <a href="/login">Login</a> or join now to participate.</p>
+        </div>
     </div>
     </div>
 </div>
