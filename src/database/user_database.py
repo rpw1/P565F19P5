@@ -139,9 +139,7 @@ class UserDatabase:
             specialties -> [specialty] \n
             fitness_professional_content ->
             {
-                workout_plans: [contnet_ids],
-                diet_plans: [content_ids],
-                videos: [content_ids],
+                user_content: [content_ids]
                 client_metrics: {
                     data
                 },

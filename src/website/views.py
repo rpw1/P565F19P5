@@ -51,18 +51,17 @@ def content(id):
     if current_content:
         content_type = current_content['content_type']
         if content_type == "video":
-            title = current_content['title']
-            description = current_content['description']
-            video_file = current_content['data']['video_file']
-            video_date = current_content['date']
-            created_user = current_content['email']
-            user_path = url_for("views.user_page/" + created_user)
-            return render_template("content.html", created_user = created_user, title = title, description = description, 
-                video_file = video_file, video_date = video_date, user_path = user_page)
-        elif content_type == "workout_plan":
-            flash("Not implemented yet", category="error")
-        elif content_type == "diet_plan":
-            flash("Not implemented yet", category="error")
+            file_type = "video/mp4"
+        else:
+            file_type = "pdf"
+        title = current_content['title']
+        description = current_content['description']
+        video_file = current_content['file']
+        video_date = current_content['date']
+        created_user = current_content['email']
+        user_path = url_for("views.user_page/" + created_user)
+        return render_template("content.html", created_user = created_user, title = title, description = description, 
+            content_file = video_file, content_date = video_date, user_path = user_page, file_type = file_type)
     return render_template("content.html", id=id)
 
 @views.route("/upload", methods=["GET","POST"])
@@ -73,30 +72,28 @@ def upload():
         active_user = user_db.get_fitness_professional(email)
         if active_user:
             old_content = active_user['content']
-            if 'videos' in content:
-                videos = old_content['videos']
+            if 'user_content' in content:
+                videos = old_content['content']
                 videos.append(content_id)
             else:
-                old_content['videos'] = [content_id]
+                old_content['user_content'] = [content_id]
             active_user.update_fitness_professional_content(email, old_content)
-            video_file = request.form.get("video_file")
+            content_file = request.form.get("video_file") # This will be uploaded to s3 and be a link to the bucket file
             thumbnail = request.form.get("thumbnail")
             content_type = request.form.get("content_type")
             title = request.form.get("title")
             description = request.form.get("description")
             current_date = date.today().strftime("%m/%d/%Y")
-            video_content = {
+            uploaded_content = {
                 "content_type": content_type,
                 "title": title,
                 "description": description,
                 "thumbnail": thumbnail,
                 "date": current_date,
-                "data": {
-                    "video_file": video_file,
-                    "amount_viewed": 0
-                }
+                "file": content_file,
+                "amount_viewed": 0
             }
-            content_db.insert_content(content_id, email, video_content)
+            content_db.insert_content(content_id, email, uploaded_content)
             flash("Upload successful")
             redirect(url_for("views.home"))
         else:
