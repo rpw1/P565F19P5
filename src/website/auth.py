@@ -20,6 +20,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 user_db = UserDatabase()
+roles = ['client', 'fitness_professional', 'admin']
 auth = Blueprint("auth", __name__)
 
 GOOGLE_CLIENT_ID = "133654944932-7jp5imq4u3k6ng5r8k9suue3rckcsdcf.apps.googleusercontent.com"
@@ -69,7 +70,7 @@ def register():
                 user_db.insert_fitness_professional(email, generate_password_hash(password, method="sha256"), f_name + l_name + str(acc_type), f_name, l_name)
             else:
                 user_db.insert_admin(email, generate_password_hash(password, method="sha256"), f_name + l_name + str(acc_type), f_name, l_name)  
-            current_user = User(email, generate_password_hash(password, method="sha256"), f_name, l_name, str(acc_type))
+            current_user = User(email, generate_password_hash(password, method="sha256"), f_name, l_name, roles[acc_type - 1])
             login_user(current_user, remember=True)
             return redirect(url_for("views.home"))
     return render_template("register.html")
@@ -213,7 +214,7 @@ def google_callback():
     if not user_db.query_user(email):
         password = generate_password_hash(str(uuid.uuid4()), method="sha256")
         user_db.insert_client(email, password, first_name + last_name + "1", first_name, last_name, image = picture)   
-    current_user = User(email, "", first_name, last_name, "1")
+    current_user = User(email, "", first_name, last_name, roles[0])
     login_user(current_user, remember=True)
     return redirect(url_for("views.home"))
 

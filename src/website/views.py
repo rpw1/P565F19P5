@@ -1,12 +1,12 @@
 from flask import Flask, Blueprint, redirect, url_for, render_template, request, flash
 from flask_login import login_required, current_user
-from database.dynamo_user_database import LoginDatabase
+from database.user_database import UserDatabase
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import User
 import uuid
 
 views = Blueprint("views", __name__)
-user_db = LoginDatabase()
+user_db = UserDatabase()
 
 @views.route("/")
 #@login_required
@@ -27,10 +27,10 @@ def profile():
 @views.route("/user/<id>")
 @login_required
 def user_page(id):
-    user_values = user_db.get_user(id)
+    user_values = user_db.query_user(id)
     if user_values:
         profile_user = User(
-                user_values['email'], user_values['user_id'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role'], user_values['image']
+                user_values['email'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role']
                 )
         return render_template("profile.html", user=profile_user)
     else:
