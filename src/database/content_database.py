@@ -84,3 +84,23 @@ class ContentDatabase:
         else:
             return dict()
 
+    def query_content_by_email(self, email):
+        self.check_database()
+        response = self.content_table.query(
+            KeyConditionExpression=Key('email').eq(email)
+        )
+        if 'Items' in response:
+            return response["Items"]
+        print("Unable to query content")
+        return None
+
+    def query_content_by_id(self, content_id):
+        self.check_database()
+        response = self.content_table.query(
+            KeyConditionExpression=Key('content_id').eq(content_id)
+        )
+        if 'Items' in response:
+            if len(response["Items"]) > 0:
+                return response["Items"][0]
+        print("Unable to query content")
+        return None

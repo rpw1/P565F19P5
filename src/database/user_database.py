@@ -31,7 +31,7 @@ class UserDatabase:
             gender -> required, string \n
             bio -> string \n
             image -> user profile image string \n
-            user_content -> 
+            content -> 
             {
                 timetables: {
                     workout for the day: {
