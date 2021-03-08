@@ -26,17 +26,20 @@ if __name__ == "__main__":
 @views.route("/profile")
 @login_required
 def profile():
-    return render_template("profile.html", user=current_user)
+    user_values = user_db.query_user(current_user.get_id())
+    user_image = user_values['image']
+    return render_template("profile.html", user=current_user, user_image = user_image)
 
 @views.route("/user/<id>")
 @login_required
 def user_page(id):
     user_values = user_db.query_user(id)
     if user_values:
+        user_image = user_values['image']
         profile_user = User(
                 user_values['email'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role']
                 )
-        return render_template("profile.html", user=profile_user)
+        return render_template("profile.html", user=profile_user, user_image = user_image)
     else:
         flash("That user does not exist!", category="error")
         return redirect(url_for("views.home"))
