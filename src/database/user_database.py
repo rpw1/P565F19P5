@@ -20,7 +20,7 @@ class UserDatabase:
                 )
         self.user_table = self.dynamodb.Table('users_prod')
 
-    def insert_client(self, email, password, first_name, last_name, gender = "", bio = "",
+    def insert_client(self, email, password, username, first_name, last_name, gender = "", bio = "",
         image = "https://upload.wikimedia.org/wikipedia/en/c/c6/Roisin_Murphy_-_Overpowered.png", 
         client_content = dict()):
         """
@@ -93,6 +93,7 @@ class UserDatabase:
                 'email': email,
                 'role': self.roles[0],
                 'password': password,
+                'username': username,
                 'first_name': first_name,
                 'last_name': last_name,
                 'gender': gender,
@@ -123,7 +124,7 @@ class UserDatabase:
     def update_client_gender(self, email, gender):
         return self._update_gender(email, gender, self.roles[0])
 
-    def insert_fitness_professional(self, email, password, first_name, last_name, gender = "", location = "", bio = "",
+    def insert_fitness_professional(self, email, password, username, first_name, last_name, gender = "", location = "", bio = "",
         image = "https://upload.wikimedia.org/wikipedia/en/c/c6/Roisin_Murphy_-_Overpowered.png",
         specialties = list(), fitness_professional_content = dict()):
         """
@@ -164,6 +165,7 @@ class UserDatabase:
                 'email': email,
                 'role': self.roles[1],
                 'password': password,
+                'username': username,
                 'first_name': first_name,
                 'last_name': last_name,
                 'gender': gender,
@@ -232,7 +234,7 @@ class UserDatabase:
     def update_fitness_professional_gender(self, email, gender):
         return self._update_gender(email, gender, self.roles[1])
 
-    def insert_admin(self, email, password, first_name, last_name, gender = "", bio = "",
+    def insert_admin(self, email, password, username, first_name, last_name, gender = "", bio = "",
         image = "https://upload.wikimedia.org/wikipedia/en/c/c6/Roisin_Murphy_-_Overpowered.png",
         admin_content = dict()):
         """
@@ -261,6 +263,7 @@ class UserDatabase:
                 'email': email,
                 'role': self.roles[2],
                 'password': password,
+                'username': username,
                 'first_name': first_name,
                 'last_name': last_name,
                 'gender': gender,
@@ -412,31 +415,43 @@ class UserDatabase:
             KeyConditionExpression=Key('email').eq(email)
         )
         if 'Items' in response:
-            return response["Items"][0]
-        else:
-            return dict()
+            if len(response["Items"]) > 0:
+                return response["Items"][0]
+        print("Unable to query user")
+        return None
     
     def query_delete_user(self, email):
         response = self.query_user(email)
-        self._delete_user(email, response['role'])
+        if response:
+            self._delete_user(email, response['role'])
 
 
     def query_update_content(self, email, content):
         response = self.query_user(email)
-        return self._update_content(email, content, response['role'])
+        if response:
+            return self._update_content(email, content, response['role'])
+        return response
 
     def query_update_bio(self, email, bio):
         response = self.query_user(email)
-        return self._update_bio(email, bio, response['role'])
+        if response:
+            return self._update_bio(email, bio, response['role'])
+        return response
 
     def query_update_password(self, email, password):
         response = self.query_user(email)
-        return self._update_password(email, password, response['role'])
+        if response:
+            return self._update_password(email, password, response['role'])
+        return response
 
     def query_update_image(self, email, image):
         response = self.query_user(email)
-        return self._update_image(email, image, response['role'])
+        if response:
+            return self._update_image(email, image, response['role'])
+        return response
 
     def query_update_gender(self, email, gender):
         response = self.query_user(email)
-        return self._update_gender(email, gender, response['role'])
+        if response:
+            return self._update_gender(email, gender, response['role'])
+        return None

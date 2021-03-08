@@ -1,22 +1,20 @@
 from flask_login import UserMixin
 
-from database.dynamo_user_database import LoginDatabase
+from database.user_database import UserDatabase
 class User:
 
-    def __init__(self, email, user_id, password, first_name, last_name, role, image):
+    def __init__(self, email, password, first_name, last_name, role):
         super().__init__()
-        self.user_id = user_id
         self.password = password
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
         self.role = role
-        self.image = image
     
 
     def is_authenticated(self):
-        udb = LoginDatabase()
-        user_values = udb.get_user(self.email)
+        udb = UserDatabase()
+        user_values = udb.query_user(self.email)
         if 'password' in user_values:
             return user_values['password'] == self.password
         else:
@@ -27,11 +25,8 @@ class User:
 
     def is_anonymous(self):
         return False
-    
-    def get_id(self):
-        return self.email
 
-    def get_user_id(self):
+    def get_id(self):
         return self.email
 
     def get_first_name(self):

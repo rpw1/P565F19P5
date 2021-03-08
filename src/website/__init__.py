@@ -1,11 +1,11 @@
 from flask import Flask
 from flask_login import LoginManager
-from database.dynamo_user_database import LoginDatabase
+from database.user_database import UserDatabase
 from .models import User
 from flask_mail import Mail, Message
 from oauthlib.oauth2 import WebApplicationClient
 
-user_db = LoginDatabase()
+user_db = UserDatabase()
 GOOGLE_CLIENT_ID = "133654944932-7jp5imq4u3k6ng5r8k9suue3rckcsdcf.apps.googleusercontent.com"
 GOOGLE_CLIENT_SECRET = "zSWURv4KexNnOvRRP2tDQZX2"
 GOOGLE_DISCOVERY_URL = (
@@ -32,9 +32,9 @@ def create_app():
     login_manager.init_app(app)
     @login_manager.user_loader
     def load_user(user_id):
-        user_values = user_db.get_user(user_id)
+        user_values = user_db.query_user(user_id)
         current_user = User(
-            user_values['email'], user_values['user_id'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role'], user_values['image']
+            user_values['email'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role']
             )
         return current_user
     from .views import views

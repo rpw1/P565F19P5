@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from database.dynamo_user_database import LoginDatabase
+from database.user_database import UserDatabase
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from .models import User
@@ -19,7 +19,7 @@ import email.utils
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-user_db = LoginDatabase()
+user_db = UserDatabase()
 auth = Blueprint("auth", __name__)
 
 GOOGLE_CLIENT_ID = "133654944932-7jp5imq4u3k6ng5r8k9suue3rckcsdcf.apps.googleusercontent.com"
@@ -34,10 +34,10 @@ def login():
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
-        user_values = user_db.get_user(email)
+        user_values = user_db.query_user(email)
         if user_values:
             current_user = User(
-                user_values['email'], user_values['user_id'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role'], user_values['image']
+                user_values['email'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role']
             )
             if check_password_hash(user_values['password'], password):
                 signal_request = duo_web.sign_request(config('DUO_I_KEY'), config('DUO_S_KEY'), config('DUO_A_KEY'), email)
@@ -51,21 +51,25 @@ def login():
 @auth.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        user_id = str(uuid.uuid4())
         email = request.form.get("email")
         f_name = request.form.get("f_name")
         l_name = request.form.get("l_name")
         password = request.form.get("password")
         confirm = request.form.get("confirm")
         acc_type = int(request.form.get("type"))
-        user = user_db.get_user(email)
+        user = user_db.query_user(email)
         if user:
             flash("E-mail already in use", category="error")
         elif password != confirm:
             flash("Password must equal confirmation", category="error")
         else:
-            user_db.insert_user(email, user_id, generate_password_hash(password, method="sha256"), f_name, l_name, acc_type, "image_string")    
-            current_user = User(email, user_id, generate_password_hash(password, method="sha256"), f_name, l_name, acc_type, "image_string")
+            if acc_type == 1:
+                user_db.insert_client(email, generate_password_hash(password, method="sha256"), f_name + l_name + str(acc_type), f_name, l_name)
+            elif acc_type == 2:
+                user_db.insert_fitness_professional(email, generate_password_hash(password, method="sha256"), f_name + l_name + str(acc_type), f_name, l_name)
+            else:
+                user_db.insert_admin(email, generate_password_hash(password, method="sha256"), f_name + l_name + str(acc_type), f_name, l_name)  
+            current_user = User(email, generate_password_hash(password, method="sha256"), f_name, l_name, str(acc_type))
             login_user(current_user, remember=True)
             return redirect(url_for("views.home"))
     return render_template("register.html")
@@ -150,10 +154,10 @@ def duo_callback():
         sig_response = request.form.get("sig_response")
         authenticated_username = duo_web.verify_response(config('DUO_I_KEY'), config('DUO_S_KEY'), config('DUO_A_KEY'), sig_response)
         if authenticated_username:
-            user_values = user_db.get_user(authenticated_username)
+            user_values = user_db.query_user(authenticated_username)
             if user_values:
                 current_user = User(
-                user_values['email'], user_values['user_id'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role'], user_values['image']
+                user_values['email'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role']
                 )
                 login_user(current_user, remember=True)
                 flash("Logged in successfully!", category="success")
@@ -206,10 +210,10 @@ def google_callback():
     else:
         flash("Google Login invalid", category="error")
         redirect(url_for("auth.login"))
-    if not user_db.get_user(email):
+    if not user_db.query_user(email):
         password = generate_password_hash(str(uuid.uuid4()), method="sha256")
-        user_db.insert_user(email, u_id, password, first_name, last_name, 1, picture)    
-    current_user = User(email, u_id, password, first_name, last_name, 1, picture)
+        user_db.insert_client(email, password, first_name + last_name + "1", first_name, last_name, image = picture)   
+    current_user = User(email, "", first_name, last_name, "1")
     login_user(current_user, remember=True)
     return redirect(url_for("views.home"))
 
