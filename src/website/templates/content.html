@@ -7,11 +7,15 @@
             <button type="submit" class="btn btn-block btn-danger mb-3">Delete video</button>
             {% endif %}
             <div class="card mb-3">
-                <video width="100%" controls><source src="{{ video_file }}" type="video/mp4"></video>
+                {% if {{ file_type }} == "video/mp4"}
+                <video width="100%" controls><source src="{{ content_file }}" type="{{ file_type }}"></video>
+                {% else %}
+                <iframe src="{{ content_file }}" width="100%"></iframe>
+                {% endif %}
                 <div class="card-body">
                     <h1 class="card-title">{{ title }}</h1>
                     <p>{{ description }}</p>
-                    <p class="text-muted">Uploaded on {{ video_date }} by <a href="{{ user_path }}">{{ created_user }}</a></p>
+                    <p class="text-muted">Uploaded on {{ content_date }} by <a href="{{ user_path }}">{{ created_user }}</a></p>
                 </div>
             </div>
         </div>
