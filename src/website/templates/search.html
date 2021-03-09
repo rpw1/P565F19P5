@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Results for {{query}}{% endblock %}
+{% block content %}
+<h1>Results for {{query}}</h1>
+<hr/>
+    <div class="row">
+        <div class="col-xl-3">
+            <div class="card w-100 mb-2 bg-light">
+                <div class="card-body">
+                    <h2>Filters</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-9">
+    {% for user in range(0,10) %}
+            <div class="card w-100 mb-2 bg-light">
+                <div class="card-body">
+                    <h4>User's name or content title</h4>
+                    <p class="text-muted">User's role or content description</p>
+                </div>
+            </div>
+    {% endfor %}
+        </div>
+    </div>
+{% endblock %}

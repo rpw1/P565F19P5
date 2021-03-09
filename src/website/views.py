@@ -136,7 +136,10 @@ def progress_tracking():
 @login_required
 def search():
     if request.method == "POST":
-        return request.form.get("search")
+        query = request.form.get("search")
+        #users = user_db.query_user_by_name(query)
+        users = [1,2,3]
+        return render_template("search.html", query=query, users=users)
     else:
         flash("You must search using the search bar!", category="error")
         return redirect(url_for("views.home"))
