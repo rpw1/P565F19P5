@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}{{user.first_name}}'s Profile{% endblock %}
+{% if user.role == "client" %}
+{% set class = "Trainee" %}
+{% elif user.role == "fitness_professional" %}
+{% set class = "Trainer" %}
+{% else %}
+{% set class = "Admin" %}
+{% endif %}
+{% block content %}
+<h2>My Progress</h2>
+<h3>Weekly Calorie Intake</h3>
+<canvas id="myChart" width="400" height="400"></canvas>
+<script>
+    Chart.defaults.global.responsive = false;
+ 
+ // define the chart data
+ var chartData = {
+    labels : ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+  datasets : [{
+      label: "Calories",
+       fill: true,
+       lineTension: 0.1,
+       backgroundColor: "rgba(75,192,192,0.4)",
+       borderColor: "rgba(75,192,192,1)",
+       borderCapStyle: 'butt',
+       borderDash: [],
+       borderDashOffset: 0.0,
+       borderJoinStyle: 'miter',
+       pointBorderColor: "rgba(75,192,192,1)",
+       pointBackgroundColor: "#fff",
+       pointBorderWidth: 1,
+       pointHoverRadius: 5,
+       pointHoverBackgroundColor: "rgba(75,192,192,1)",
+       pointHoverBorderColor: "rgba(220,220,220,1)",
+       pointHoverBorderWidth: 2,
+       pointRadius: 1,
+       pointHitRadius: 10,
+       data : [10.2, 3.2, 69],
+       spanGaps: false
+   }]
+ }
+  
+ // get chart canvas
+ var ctx = document.getElementById("myChart").getContext("2d");
+  
+ // create the chart using the chart canvas
+ var myChart = new Chart(ctx, {type: 'line', data: chartData,});
+</script>
+
+<h2>My Progress</h2>
+            <form method="POST_1">
+                <label for="day_of_week">Day:</label>
+                <select id="day_of_week" name="day_of_week">
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Tuesday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
+                </select>
+                <input type="calories" name="calories" placeholder="calorie intake" class="form-control" required>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">Update Calorie Intake</button>
+                </div>
+            </form>
+            <form method="POST_2">
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="new password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="confirm" placeholder="confirm password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">Update Today's Data</button>
+                </div>
+            </form>
+
+{% endblock %}

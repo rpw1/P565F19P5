@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, redirect, url_for, render_template, request, flash
+from flask import Flask, Blueprint, redirect, url_for, render_template, request, flash, Markup
 from flask_login import login_required, current_user
 from database.user_database import UserDatabase
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -121,3 +121,13 @@ def update_password():
             flash("Password successfully changed!", category="success")
     return render_template("update_password.html", user=current_user)
 
+
+@views.route("/progress_tracking", methods=["GET","POST"])
+@login_required
+def progress_tracking():
+    if request.method == "POST_1":
+        legend = 'Calories'
+        temperatures = [10.2, 3.2, 69]
+        times =  ['Monday', 'Tuesaday', 'Wed']
+        return render_template('progress_tracking.html', values=temperatures, labels=times, legend=legend, user=current_user)
+    return render_template('progress_tracking.html', user=current_user)
