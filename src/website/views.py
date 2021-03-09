@@ -136,7 +136,7 @@ def progress_tracking():
 @login_required
 def search():
     if request.method == "POST":
-        return "ok"
+        return request.form.get("search")
     else:
         flash("You must search using the search bar!", category="error")
         return redirect(url_for("views.home"))
