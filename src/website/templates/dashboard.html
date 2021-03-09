@@ -3,6 +3,19 @@
 {% block content %}
     <h1>Hello, {{user.first_name}}!</h1>
     <hr/>
+    {% if current_user.role == 'admin' %}
+    <div class="row">
+        <div class="card w-100">
+            <div class="card-header">
+                Admin Metrics
+            </div>
+            <div class="card-body">
+                will add soon
+            </div>
+        </div>
+    </div>
+    <hr/>
+    {% endif %}
     <h3>Recently Uploaded</h3>
     <div class="row flex-row flex-nowrap overflow-auto">
         {% for x in range(0,5)%}
