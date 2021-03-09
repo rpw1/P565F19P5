@@ -137,6 +137,9 @@ def progress_tracking():
 def search():
     if request.method == "POST":
         query = request.form.get("search")
+        if query == "":
+            flash("Query cannot be empty!", category="error")
+            return redirect(request.referrer)
         #users = user_db.query_user_by_name(query)
         users = [1,2,3]
         return render_template("search.html", query=query, users=users)
