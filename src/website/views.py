@@ -131,3 +131,12 @@ def progress_tracking():
         times =  ['Monday', 'Tuesaday', 'Wed']
         return render_template('progress_tracking.html', values=temperatures, labels=times, legend=legend, user=current_user)
     return render_template('progress_tracking.html', user=current_user)
+
+@views.route("/search", methods=["GET","POST"])
+@login_required
+def search():
+    if request.method == "POST":
+        return "ok"
+    else:
+        flash("You must search using the search bar!", category="error")
+        return redirect(url_for("views.home"))
