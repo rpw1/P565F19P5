@@ -30,6 +30,11 @@ def profile():
     user_image = user_values['image']
     return render_template("profile.html", user=current_user, user_image = user_image)
 
+@views.route("/calendar")
+@login_required
+def calendar():
+    return render_template("calendar.html", user=current_user)
+    
 @views.route("/user/<id>")
 @login_required
 def user_page(id):
