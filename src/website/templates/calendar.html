@@ -1,18 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Calendar{% endblock %}
 {% block content %}
-<link rel="stylesheet" href="{{url_for('static', filename='calendarstyle.css')}}">
-<link rel="stylesheet" href="{{url_for('static', filename='evo-calendar.min.css')}}" >
-<link rel="stylesheet" href="{{url_for('static', filename='evo-calendar.midnight-blue.min.css')}}" >
-
-<body>
-    
-    <div class="view">
-
-        <div id="calendar"></div>
-
-
-    </div>
+<head>
+    <link rel="stylesheet" href="{{url_for('static', filename='calendarstyle.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='evo-calendar.min.css')}}" >
+    <link rel="stylesheet" href="{{url_for('static', filename='evo-calendar.midnight-blue.min.css')}}" >
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='evo-calendar.min.js') }}"></script>
 
@@ -23,6 +15,16 @@
             })
         })
     </script>
+</head>
+
+<body>
+    
+    <div class="view">
+
+        <div id="calendar"></div>
+
+
+    </div>
 </body>
     
       
