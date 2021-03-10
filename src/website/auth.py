@@ -63,6 +63,12 @@ def register():
             flash("E-mail already in use", category="error")
         elif password != confirm:
             flash("Password must equal confirmation", category="error")
+        elif len(password) < 4:
+            flash("Password must be at least 4 characters", category="error")
+        elif not(f_name.isalpha()):
+            flash("First name must only contain alphabetical characters", category="error")
+        elif not(l_name.isalpha()):
+            flash("First name must only contain alphabetical characters", category="error")
         else:
             if acc_type == 1:
                 user_db.insert_client(email, generate_password_hash(password, method="sha256"), f_name + l_name + str(acc_type), f_name, l_name)
