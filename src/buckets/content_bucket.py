@@ -35,6 +35,28 @@ class ContentBucket:
         print("Error: s3 dict was not set up correctly")
         return None
 
+    def delete_file(self, s3_dict):
+        self.check_bucket()
+        if 'object_name' in s3_dict:
+            response = self.bucket.delete_objects(
+                Delete={
+                    "Objects" : [
+                        {
+                            "Key" : s3_dict['object_name']
+                        }
+                    ]
+                }
+            )
+
+            if 'Deleted' in response:
+                if len(response['Deleted']) > 0:
+                    if "Key" in response['Deleted'][0]:
+                        if s3_dict['object_name'] == response['Deleted'][0]['Key']:
+                            print("File deleted Successfully")
+                            return True
+        print("Object was not deleted successfully")
+        return False
+
     
 
         
