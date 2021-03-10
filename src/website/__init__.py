@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_login import LoginManager
-from database.user_database import UserDatabase
+from src.database.user_database import UserDatabase
 from .models import User
 from flask_mail import Mail, Message
 from oauthlib.oauth2 import WebApplicationClient

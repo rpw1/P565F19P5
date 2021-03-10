@@ -12,11 +12,11 @@
             </div>
         </div>
         <div class="col-xl-9">
-    {% for user in range(0,10) %}
+    {% for user in range(users_len) %}
             <div class="card w-100 mb-2 bg-light">
                 <div class="card-body">
-                    <h4>User's name or content title</h4>
-                    <p class="text-muted">User's role or content description</p>
+                    <h4>{{ users[user]['first_name'] }} {{ users[user]['last_name'] }}</h4>
+                    <p class="text-muted"> {{ users[user]['role'] }}</p>
                 </div>
             </div>
     {% endfor %}

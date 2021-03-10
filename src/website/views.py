@@ -1,15 +1,17 @@
 from flask import Flask, Blueprint, redirect, url_for, render_template, request, flash, Markup
 from flask_login import login_required, current_user
-from database.user_database import UserDatabase
+from src.database.user_database import UserDatabase
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import User
-from database.content_database import ContentDatabase
+from src.database.content_database import ContentDatabase
+from src.buckets.content_bucket import ContentBucket
 import uuid
 from datetime import date
 
 views = Blueprint("views", __name__)
 user_db = UserDatabase()
 content_db = ContentDatabase()
+content_bucket = ContentBucket()
 roles = ['client', 'fitness_professional', 'admin']
 
 @views.route("/")
@@ -19,9 +21,6 @@ def home():
         return render_template("dashboard.html", user=current_user)
     else: 
         return redirect(url_for("auth.login"))
-
-if __name__ == "__main__":
-    app.run(debug=True)
 
 @views.route("/profile")
 @login_required
@@ -55,47 +54,47 @@ def content(id):
     current_content = content_db.query_content_by_id(id)
     if current_content:
         content_type = current_content['content_type']
-        if content_type == "video":
-            file_type = "video/mp4"
-        else:
-            file_type = "pdf"
         title = current_content['title']
         description = current_content['description']
-        video_file = current_content['file']
-        video_date = current_content['date']
+        bucket_src = content_bucket.get_file_link(current_content['bucket_info'])
+        content_date = current_content['date']
         created_user = current_content['email']
         user_path = url_for("views.user_page/" + created_user)
         return render_template("content.html", created_user = created_user, title = title, description = description, 
-            content_file = video_file, content_date = video_date, user_path = user_page, file_type = file_type)
+            bucket_src = bucket_src, content_date = content_date, user_path = user_page)
     return render_template("content.html", id=id)
 
 @views.route("/upload", methods=["GET","POST"])
 def upload():
     if request.method == "POST":
-        content_id = uuid.uuid4()
+        content_id = str(uuid.uuid4())
         email = current_user.get_id()
         active_user = user_db.get_fitness_professional(email)
         if active_user:
             old_content = active_user['content']
-            if 'user_content' in content:
-                videos = old_content['content']
+            del old_content['user_content']
+            if 'user_content' in old_content:
+                videos = old_content['user_content']
                 videos.append(content_id)
             else:
                 old_content['user_content'] = [content_id]
-            active_user.update_fitness_professional_content(email, old_content)
-            content_file = request.form.get("video_file") # This will be uploaded to s3 and be a link to the bucket file
+            user_db.update_fitness_professional_content(email, old_content)
+            content_file = request.form.get("content_file")
+            print(type(content_file))
+            bucket_info = content_bucket.add_file(email, content_file)
             thumbnail = request.form.get("thumbnail")
             content_type = request.form.get("content_type")
             title = request.form.get("title")
             description = request.form.get("description")
             current_date = date.today().strftime("%m/%d/%Y")
+            content_bucket.add_file()
             uploaded_content = {
                 "content_type": content_type,
                 "title": title,
                 "description": description,
                 "thumbnail": thumbnail,
                 "date": current_date,
-                "file": content_file,
+                "bucket_info": bucket_info,
                 "amount_viewed": 0
             }
             content_db.insert_content(content_id, email, uploaded_content)
@@ -128,7 +127,7 @@ def progress_tracking():
     if request.method == "POST_1":
         legend = 'Calories'
         temperatures = [10.2, 3.2, 69]
-        times =  ['Monday', 'Tuesaday', 'Wed']
+        times = ['Monday', 'Tuesaday', 'Wed']
         return render_template('progress_tracking.html', values=temperatures, labels=times, legend=legend, user=current_user)
     return render_template('progress_tracking.html', user=current_user)
 
@@ -140,9 +139,13 @@ def search():
         if query == "":
             flash("Query cannot be empty!", category="error")
             return redirect(request.referrer)
-        #users = user_db.query_user_by_name(query)
-        users = [1,2,3]
-        return render_template("search.html", query=query, users=users)
+        users = user_db.search_user_by_email(query)
+        if users:
+            users_len = len(users)
+            return render_template("search.html", query=query, users=users, users_len = users_len)
+        else:
+            flash("Query had no results", category="error")
+            return redirect(url_for("views.home"))
     else:
         flash("You must search using the search bar!", category="error")
         return redirect(url_for("views.home"))

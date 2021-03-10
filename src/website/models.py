@@ -1,6 +1,6 @@
 from flask_login import UserMixin
 
-from database.user_database import UserDatabase
+from src.database.user_database import UserDatabase
 class User:
 
     def __init__(self, email, password, first_name, last_name, role):

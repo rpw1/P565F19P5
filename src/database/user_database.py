@@ -70,7 +70,7 @@ class UserDatabase:
                         }
                     }
                 },
-                content: {
+                video_content: {
                     upcoming_training: [content_ids],
                     recently_watched: [content_ids]
                 },
@@ -137,6 +137,7 @@ class UserDatabase:
             bio -> string \n
             image -> user profile image string \n
             specialties -> [specialty] \n
+            bucket -> path to s3 bucket
             fitness_professional_content ->
             {
                 user_content: [content_ids]
@@ -452,4 +453,14 @@ class UserDatabase:
         response = self.query_user(email)
         if response:
             return self._update_gender(email, gender, response['role'])
+        return None
+
+    def search_user_by_email(self, email):
+        self.check_database()
+        response = self.user_table.query(
+            KeyConditionExpression=Key('email').begins_with(email)
+        )
+        if 'Items' in response:
+            return response['Items']
+        print("Unable to query content")
         return None

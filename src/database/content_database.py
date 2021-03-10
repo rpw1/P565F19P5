@@ -30,9 +30,9 @@ class ContentDatabase:
                 description: "",
                 thumbnail: "",
                 date: "",
-                data: {
-                    content_data
-                }
+                bucket -> "path to bucket"
+                file_path -> "path to content file"
+                view_count: ""
             }
         """
         self.check_database()
