@@ -101,6 +101,7 @@ def update_password():
 @login_required
 def logout():
     logout_user()
+    flash("Logged out successfully!", category="success")
     return redirect(url_for("auth.login"))
 
 @auth.route("/reset", methods=["GET","POST"])
