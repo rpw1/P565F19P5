@@ -68,7 +68,7 @@ def register():
         elif not(f_name.isalpha()):
             flash("First name must only contain alphabetical characters", category="error")
         elif not(l_name.isalpha()):
-            flash("First name must only contain alphabetical characters", category="error")
+            flash("Last name must only contain alphabetical characters", category="error")
         else:
             if acc_type == 1:
                 user_db.insert_client(email, generate_password_hash(password, method="sha256"), f_name + l_name + str(acc_type), f_name, l_name)
