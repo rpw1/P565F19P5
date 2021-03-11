@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Welcome!{% endblock %}
+{% block content %}
+<link rel="stylesheet" type= "text/css" href= "{{ url_for('static', filename='landing.css') }}">
+<div class="row justify-content-end">
+    <div class="col-sm-5">
+        <div class="card border-0 shadow justify-content-center">
+            <div class="card-body">
+                <img class="mx-auto d-block" src="{{ url_for('static', filename='logo_transparent.png') }}" style="width:50%">
+                <p class="text-muted">don't worry this isn't done yet i need to find a bigger image or something and make it more flashy too</p>
+                <a class="btn btn-block btn-primary rounded-pill mb-2" href="/register">Get started</a>
+                <div class="row justify-content-center">
+                    <a href="/login">Already have an account?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
