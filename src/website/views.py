@@ -2,11 +2,13 @@ from flask import Flask, Blueprint, redirect, url_for, render_template, request,
 from flask_login import login_required, current_user
 from src.database.user_database import UserDatabase
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from .models import User
 from src.database.content_database import ContentDatabase
 from src.buckets.content_bucket import ContentBucket
-import uuid
+import uuid, os
 from datetime import date
+from decouple import config
 
 views = Blueprint("views", __name__)
 user_db = UserDatabase()
@@ -51,22 +53,52 @@ def user_page(id):
 @views.route("/content/<id>")
 @login_required
 def content(id):
-    current_content = content_db.query_content_by_id(id)
-    if current_content:
-        content_type = current_content['content_type']
-        title = current_content['title']
-        description = current_content['description']
-        bucket_src = content_bucket.get_file_link(current_content['bucket_info'])
-        content_date = current_content['date']
-        created_user = current_content['email']
-        user_path = url_for("views.user_page/" + created_user)
-        return render_template("content.html", created_user = created_user, title = title, description = description, 
-            bucket_src = bucket_src, content_date = content_date, user_path = user_page)
-    return render_template("content.html", id=id)
+    query_content = content_db.query_content_by_id(id)
+    if query_content:
+        if 'content' in query_content:
+            current_content = query_content['content']
+            title = current_content['title']
+            description = current_content['description']
+            thumbnail_link, content_link = content_bucket.get_file_link(current_content['bucket_info'])
+            content_date = current_content['date']
+            created_user = query_content['email']
+            user_path = url_for("views.user_page", id = created_user)
+            return render_template("content.html", created_user = created_user, title = title, description = description, 
+                content_link = content_link, content_date = content_date, user_path = user_page)
+    flash("Content did not show correctly", category="error")
+    return redirect(url_for("views.home"))
 
 @views.route("/upload", methods=["GET","POST"])
 def upload():
     if request.method == "POST":
+        content_file_name = None
+        thumbnail_name = None
+        if 'content_file' in request.files:
+            content_file = request.files['content_file']
+            if content_file != '':
+                content_file_name = secure_filename(content_file.filename)
+                content_file_path = os.path.join(config('UPLOAD_FOLDER'), content_file_name)
+                content_file.save(content_file_path)
+            else:
+                flash("Contetnt file was not uploaded successfully", category="error")
+                return render_template("upload.html")
+        else:
+            flash("Contetnt file was not uploaded successfully", category="error")
+            return render_template("upload.html")
+
+        if 'thumbnail' in request.files:
+            thumbnail = request.files['thumbnail']
+            if thumbnail != '':
+                thumbnail_name = secure_filename(thumbnail.filename)
+                thumbnail_path = os.path.join(config('UPLOAD_FOLDER'), thumbnail_name)
+                thumbnail.save(thumbnail_path)
+            else:
+                flash("Contetnt file was not uploaded successfully", category="error")
+                return render_template("upload.html")
+        else:
+            flash("Contetnt file was not uploaded successfully", category="error")
+            return render_template("upload.html")
+                
         content_id = str(uuid.uuid4())
         email = current_user.get_id()
         active_user = user_db.get_fitness_professional(email)
@@ -79,30 +111,23 @@ def upload():
             else:
                 old_content['user_content'] = [content_id]
             user_db.update_fitness_professional_content(email, old_content)
-            content_file = request.form.get("content_file")
-            print(type(content_file))
-            bucket_info = content_bucket.add_file(email, content_file)
-            thumbnail = request.form.get("thumbnail")
-            content_type = request.form.get("content_type")
             title = request.form.get("title")
             description = request.form.get("description")
             current_date = date.today().strftime("%m/%d/%Y")
-            content_bucket.add_file()
+            bucket_info = content_bucket.add_file(content_id, email, content_file_name, thumbnail_name)
             uploaded_content = {
-                "content_type": content_type,
                 "title": title,
                 "description": description,
-                "thumbnail": thumbnail,
                 "date": current_date,
                 "bucket_info": bucket_info,
                 "amount_viewed": 0
             }
             content_db.insert_content(content_id, email, uploaded_content)
             flash("Upload successful")
-            redirect(url_for("views.home"))
+            return redirect(url_for("views.content", id = content_id))
         else:
             flash("You do not have permission to upload content")
-            redirect(url_for("views.home"))
+            return redirect(url_for("views.home"))
     return render_template("upload.html")
 
 @views.route("/update_password", methods=["GET","POST"])

@@ -14,3 +14,4 @@ class Config(object):
     GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
     GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
     GOOGLE_DISCOVERY_URL = os.environ.get('GOOGLE_DISCOVERY_URL')
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER')
