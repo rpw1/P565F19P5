@@ -116,7 +116,7 @@ def update_password():
         if new_password != confirm:
             flash("Password must equal confirmation", category="error")
         else:
-            user_db.update_password(email, password)
+            user_db.update_client_password(email, password)
             flash("Password successfully changed!", category="success")
     return render_template("update_password.html", user=current_user)
 

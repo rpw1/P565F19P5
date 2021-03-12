@@ -108,9 +108,9 @@ def logout():
 def reset():
     if request.method == "POST":
         recipient = request.form.get("email") 
-        sender = 'fitness-u@outlook.com' #i should probably use the email for fitness U
+        sender = 'fitness-u@outlook.com'
         sender_name = 'Fitness U'
-        user = user_db.get_user(recipient)
+        user = user_db.get_client(recipient)
 
         if not user:
             flash("Account with this email does not exist", category="error")
@@ -119,16 +119,18 @@ def reset():
             alphabet = string.ascii_letters + string.digits
             temp_password = ''.join(secrets.choice(alphabet) for i in range(20))
             password = generate_password_hash(temp_password, method="sha256")
-            user_db.update_password(recipient, password)
+            user_db.update_client_password(recipient, password)
             print(temp_password)
             msg = MIMEMultipart('alternative')
             msg['Subject'] = "Password Reset for your FitnessU account"
             msg['From'] = sender
             msg['To'] = recipient
             body = """
-                Hello this is a test
-
-                -izzy """ + temp_password + """
+                Reset your password
+                Hello! A request has been recieved to reset the password for your FitnessU account.
+                Login with the new credentials:
+                Email: """ + recipient + """ 
+                Temporary Password: """ + temp_password + """
             """
             message_body = MIMEText(body, 'plain')
             msg.attach(message_body)

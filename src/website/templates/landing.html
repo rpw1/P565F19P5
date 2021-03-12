@@ -1,19 +1,48 @@
+<link rel="stylesheet" type= "text/css" href= "{{ url_for('static', filename='landing.css') }}">
 {% extends "base.html" %}
 {% block title %}Welcome!{% endblock %}
 {% block content %}
 <link rel="stylesheet" type= "text/css" href= "{{ url_for('static', filename='landing.css') }}">
-<div class="row justify-content-end">
-    <div class="col-sm-5">
-        <div class="card border-0 shadow justify-content-center">
-            <div class="card-body">
-                <img class="mx-auto d-block" src="{{ url_for('static', filename='logo_transparent.png') }}" style="width:50%">
-                <p class="text-muted">FitnessU connects fitness professionals and trainees from all over the world through sharing workouts and diet plans, chatting with fitness professionals, and tracking your own progress—all from the comfort of your own home. Get started now to start your fitness journey, or join as a professional to start sharing your talents!</p>
-                <a class="btn btn-block btn-primary rounded-pill mb-2" href="/register">Get started</a>
-                <div class="row justify-content-center">
-                    <a href="/login">Already have an account?</a>
-                </div>
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto+Mono&display=swap" rel="stylesheet">
+<div class ="get-started">
+    <img class="fit-image" src="https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1350&q=80">
+    <div class = "center">
+        <h2 class="welcome">Welcome to</p>
+        <h2 class ="welcome">FitnessU!</p>
+    </div>
+</div>
+<div class ="fitness-row">
+    <img class="fitness-image" src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MTV8fGd5bXxlbnwwfHwwfA%3D%3D&ixlib=rb-1.2.1&w=1000&q=80">
+    <div class="card-body">
+        <img class="mx-auto d-block" src="{{ url_for('static', filename='logo_transparent.png') }}" style="width:50%">
+        <p class="text-muted">FitnessU connects fitness professionals and trainees from all over the world through sharing workouts and diet plans, chatting with fitness professionals, and tracking your own progress—all from the comfort of your own home. Get started now to start your fitness journey, or join as a professional to start sharing your talents!</p>
+        <a class="btn btn-block btn-primary rounded-pill mb-2" href="/register">Get started</a>
+        <div class="row justify-content-center">
+            <a href="/login">Already have an account?</a>
+        </div>
+    </div>
+</div>
+<div class ="meal-row">
+    <img class="meal-image" src="https://images.unsplash.com/photo-1547592180-85f173990554?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80">
+    <div class = "hope">
+        <div class = "three-cards">
+            <div class = "card">
+                <p class="card-words">Check out our meal plans provided by dieticians. They create tailored meal plans for any kind of diet ranging from low-carb to keto or vegan.</p>
+                <a class="btn btn-block btn-primary rounded-pill mb-2" href="/register">View Inside</a>
+            </div>
+            <div class = "card">
+                <p class="card-words">Browse hundreds of workout videos and workout plans uploaded by fitness professionals.</p>
+                <a class="btn btn-block btn-primary rounded-pill mb-2" href="/register">View Inside</a>
+            </div>
+            <div class = "card">
+                <p class="card-words">Set and track goals for yourself on a persoalized calendar.</p>
+                <a class="btn btn-block btn-primary rounded-pill mb-2" href="/register">View Inside</a>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}
