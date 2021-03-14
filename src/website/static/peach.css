@@ -16,7 +16,7 @@
 }
 .mfp-planner.peach .mfp-selection
 {
-    background-color:#2d8080;
+    background-color:#ffffff;
 }/**
 * Popup forms styles
 */
@@ -421,14 +421,14 @@
 .mfp-resource-view.peach .mfp-header
 {
     color: #fff;
-    background-color: #2d8080;
+    background-color: #ffffff;
     border-color:#2d8080;
 }
 .mfp-resource-view.peach .mfp-header-group
 {
     color: #fff;
-    border-color:#2d8080;
-    background-color: #2d8080;
+    border-color:#ffffff;
+    background-color: #ffffff;
     text-align: center;
     vertical-align: middle;
 }

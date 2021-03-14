@@ -16323,7 +16323,7 @@ var NewForm = function (_BaseForm) {
             // Add Subject
             var newControl = this.createTextArea({ id: "subject", events: { keydown: this._areaKeyDown } });
             this.addControl(newControl);
-            newControl.element.placeholder = "appointment text";
+            newControl.element.placeholder = "appointment content";
             var style = newControl.element.style;
             style.height = "80px";
             style.width = "98%";
