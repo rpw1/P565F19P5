@@ -174,3 +174,12 @@ def search():
     else:
         flash("You must search using the search bar!", category="error")
         return redirect(url_for("views.home"))
+
+@views.route("/moderate")
+@login_required
+def moderate():
+    if current_user.role == 'admin':
+        return render_template("moderate.html")
+    else:
+        flash("You do not have permission to access that page!", category="error")
+        return redirect(url_for("views.home"))
