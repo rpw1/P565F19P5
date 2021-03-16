@@ -159,18 +159,33 @@ def progress_tracking():
 @views.route("/search", methods=["GET","POST"])
 @login_required
 def search():
-    if request.method == "POST":
+    #if request.method == "POST":
         query = request.form.get("search")
         if query == "":
             flash("Query cannot be empty!", category="error")
             return redirect(request.referrer)
-        users = user_db.search_user_by_email(query)
-        if users:
-            users_len = len(users)
-            return render_template("search.html", query=query, users=users, users_len = users_len)
-        else:
-            flash("Query had no results", category="error")
-            return redirect(url_for("views.home"))
+        return redirect(url_for("views.search_query", query=query, page=1))
+        #users = user_db.search_user_by_email(query)
+        #if users:
+         #   users_len = len(users)
+         #   return render_template("search.html", query=query, users=users, users_len = users_len)
+        #else:
+         #   flash("Query had no results", category="error")
+          #  return redirect(url_for("views.home"))
+    #else:
+     #   flash("You must search using the search bar!", category="error")
+      #  return redirect(url_for("views.home"))
+
+@views.route("/search/<query>/<page>")
+@login_required
+def search_query(query, page):
+    return render_template("search.html", query=query, users=[], users_len=0)
+
+@views.route("/moderate")
+@login_required
+def moderate():
+    if current_user.role == 'admin':
+        return render_template("moderate.html")
     else:
-        flash("You must search using the search bar!", category="error")
+        flash("You do not have permission to access that page!", category="error")
         return redirect(url_for("views.home"))
