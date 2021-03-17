@@ -31,3 +31,4 @@ class User:
 
     def get_first_name(self):
         return self.first_name
+

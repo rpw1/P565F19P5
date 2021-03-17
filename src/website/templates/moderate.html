@@ -24,8 +24,10 @@
                                 </p>
                             </div>
                             <div class="col-xl-3 align-items-center my-auto">
-                                <button class="btn btn-block btn-success">Approve</button>
-                                <button class="btn btn-block btn-danger">Delete</button>
+                                <form method="POST">
+                                    <button class="btn btn-block btn-success" name="moderate" value="approve" type="submit">Approve</button>
+                                    <button class="btn btn-block btn-danger" name="moderate" value="delete" type="submit">Delete</button>
+                                </form>
                             </div>
                         </div>
                     </div>

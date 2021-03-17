@@ -181,10 +181,16 @@ def search():
 def search_query(query, page):
     return render_template("search.html", query=query, users=[], users_len=0)
 
-@views.route("/moderate")
+@views.route("/moderate", methods=["GET","POST"])
 @login_required
 def moderate():
     if current_user.role == 'admin':
+        if request.method == "POST":
+            action = request.form.get("moderate")
+            if action == "approve":
+                flash("Content approved!", category="success")
+            else:
+                flash("Content deleted", category="error")
         return render_template("moderate.html")
     else:
         flash("You do not have permission to access that page!", category="error")
