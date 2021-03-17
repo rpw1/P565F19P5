@@ -187,10 +187,11 @@ def moderate():
     if current_user.role == 'admin':
         if request.method == "POST":
             action = request.form.get("moderate")
+            content_id = request.form.get("content_id")
             if action == "approve":
                 flash("Content approved!", category="success")
             else:
-                flash("Content deleted", category="error")
+                flash("Content deleted", category="success")
         return render_template("moderate.html")
     else:
         flash("You do not have permission to access that page!", category="error")
