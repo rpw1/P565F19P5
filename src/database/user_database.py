@@ -465,6 +465,9 @@ class UserDatabase:
         print("Unable to query content")
         return None
 
+    def get_user_count(self):
+        self.check_database()
+        return self.user_table.item_count
     """
      context.writeDateTime(this.dueDate, "dueDate", element);
       context.writeDateTime(this.startDate, "startDate", element);
