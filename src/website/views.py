@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from .models import User
 from src.database.content_database import ContentDatabase
 from src.buckets.content_bucket import ContentBucket
-import uuid, os
+import uuid, os, shutil
 from datetime import date
 from decouple import config
 
@@ -71,6 +71,10 @@ def content(id):
 @views.route("/upload", methods=["GET","POST"])
 def upload():
     if request.method == "POST":
+        try:
+            os.mkdir(config('UPLOAD_FOLDER'))
+        except Exception as e:
+            print('Failed to create folder %s. Reason: %s' % (config('UPLOAD_FOLDER'), e))
         content_file_name = None
         thumbnail_name = None
         if 'content_file' in request.files:
@@ -104,7 +108,6 @@ def upload():
         active_user = user_db.get_fitness_professional(email)
         if active_user:
             old_content = active_user['content']
-            del old_content['user_content']
             if 'user_content' in old_content:
                 videos = old_content['user_content']
                 videos.append(content_id)
@@ -115,6 +118,10 @@ def upload():
             description = request.form.get("description")
             current_date = date.today().strftime("%m/%d/%Y")
             bucket_info = content_bucket.add_file(content_id, email, content_file_name, thumbnail_name)
+            try:
+                shutil.rmtree(config('UPLOAD_FOLDER'))
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (config('UPLOAD_FOLDER'), e))
             uploaded_content = {
                 "title": title,
                 "description": description,

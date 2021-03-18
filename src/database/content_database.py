@@ -30,6 +30,7 @@ class ContentDatabase:
                 description: "",
                 thumbnail: "",
                 date: "",
+                approved: "false"
                 bucket -> "path to bucket"
                 file_path -> "path to content file"
                 view_count: ""
@@ -40,7 +41,8 @@ class ContentDatabase:
             Item = {
                 'content_id': content_id,
                 'email': email,
-                'content': content
+                'content': content,
+                'approved': False
             }
         )
 
