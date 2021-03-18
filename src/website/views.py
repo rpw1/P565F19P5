@@ -20,7 +20,9 @@ roles = ['client', 'fitness_professional', 'admin']
 #@login_required
 def home():
     if current_user.is_authenticated:
-        return render_template("dashboard.html", user=current_user)
+        total_users = user_db.get_user_count()
+        total_content = content_db.get_content_count()
+        return render_template("dashboard.html", user=current_user, total_users=total_users, total_content=total_content)
     else: 
         return render_template("landing.html")
 

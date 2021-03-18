@@ -104,3 +104,7 @@ class ContentDatabase:
                 return response["Items"][0]
         print("Unable to query content")
         return None
+
+    def get_content_count(self):
+        self.check_database()
+        return self.content_table.item_count
