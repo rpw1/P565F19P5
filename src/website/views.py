@@ -189,10 +189,20 @@ def moderate():
             action = request.form.get("moderate")
             content_id = request.form.get("content_id")
             if action == "approve":
-                flash("Content approved!", category="success")
+                message = Markup("<b>Content Title</b> approved!")
+                flash(message, category="success")
             else:
-                flash("Content deleted", category="success")
+                message = Markup("<b>Content Title</b> deleted")
+                flash(message, category="error")
         return render_template("moderate.html")
     else:
         flash("You do not have permission to access that page!", category="error")
         return redirect(url_for("views.home"))
+
+@views.route("/messages")
+@login_required
+def messages():
+    #get a list of all conversations user is involved in
+    #all senders are clients, so we can check the user's role to see what fields to look for
+    #pass that list of conversations to the template
+    return render_template("messages.html")

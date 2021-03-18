@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Messages{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-xl-4">
+        <div class="list-group">
+            {% for x in range(0,4) %}
+            <a class="list-group-item list-group-item-action" href="#">
+                <h5>Other Person</h5>
+                <p class="text-muted mb-1">latest message</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-xl-8">
+        <p>display conversation using javascript here (and maybe iframes)</p>
+    </div>
+</div>
+{% endblock %}
