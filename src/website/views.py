@@ -22,7 +22,8 @@ def home():
     if current_user.is_authenticated:
         total_users = user_db.get_user_count()
         total_content = content_db.get_content_count()
-        return render_template("dashboard.html", user=current_user, total_users=total_users, total_content=total_content)
+        recent = content_db.query_content_approved() #change this later
+        return render_template("dashboard.html", user=current_user, total_users=total_users, total_content=total_content, recent=recent)
     else: 
         return render_template("landing.html")
 
@@ -42,12 +43,13 @@ def calendar():
 @login_required
 def user_page(id):
     user_values = user_db.query_user(id)
+    uploads = content_db.query_content_by_user(id)
     if user_values:
         user_image = user_values['image']
         profile_user = User(
                 user_values['email'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role']
                 )
-        return render_template("profile.html", user=profile_user, user_image = user_image)
+        return render_template("profile.html", user=profile_user, user_image = user_image, uploads=uploads)
     else:
         flash("That user does not exist!", category="error")
         return redirect(url_for("views.home"))
@@ -222,8 +224,10 @@ def moderate():
             email = request.form.get("email")
             title = request.form.get("title")
             if action == "approve":
+                content_db.update_approval(content_id, email, True)
                 message = Markup("<b>{}</b> approved!".format(title))
                 flash(message, category="success")
+                return redirect(url_for("views.moderate"))
             elif action == "delete":
                 content_db.delete_content(content_id, email)
                 message = Markup("<b>{}</b> deleted".format(title))
