@@ -464,11 +464,9 @@ class UserDatabase:
         response = self.user_table.scan(
             FilterExpression=Key('role').eq(self.roles[1])
         )
-        return response
-    
-if __name__ == '__main__':
-    u_db = UserDatabase()
-    print(u_db.scan_table())
+        return response['Items']
+
+
 
     """
      context.writeDateTime(this.dueDate, "dueDate", element);
