@@ -130,7 +130,7 @@ class ContentDatabase:
     def query_content_by_user(self, email):
         self.check_database()
         response = self.content_table.scan(
-            FilterExpression = Attr('email').eq(email)
+            FilterExpression = Attr('email').eq(email) and Attr('approved').eq(True)
         )
         if 'Items' in response:
             return response["Items"]
