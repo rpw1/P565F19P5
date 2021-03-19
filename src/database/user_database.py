@@ -455,19 +455,21 @@ class UserDatabase:
             return self._update_gender(email, gender, response['role'])
         return None
 
-    def search_user_by_email(self, email):
-        self.check_database()
-        response = self.user_table.query(
-            KeyConditionExpression=Key('email').begins_with(email)
-        )
-        if 'Items' in response:
-            return response['Items']
-        print("Unable to query content")
-        return None
-
     def get_user_count(self):
         self.check_database()
         return self.user_table.item_count
+
+    def scan_table(self):
+        self.check_database()
+        response = self.user_table.scan(
+            FilterExpression=Key('role').eq(self.roles[1])
+        )
+        return response
+    
+if __name__ == '__main__':
+    u_db = UserDatabase()
+    print(u_db.scan_table())
+
     """
      context.writeDateTime(this.dueDate, "dueDate", element);
       context.writeDateTime(this.startDate, "startDate", element);

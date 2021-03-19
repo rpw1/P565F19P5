@@ -68,11 +68,11 @@ class ContentDatabase:
             }
         )
 
-    def update_content(self, contnet_id, email, content):
+    def update_content(self, content_id, email, content):
         self.check_database()
         result = self.content_table.update_item(
             Key = {
-                'content_id': contnet_id,
+                'content_id': content_id,
                 'email' : email,
             },
             UpdateExpression = 'SET content = :val',
@@ -110,3 +110,21 @@ class ContentDatabase:
     def get_content_count(self):
         self.check_database()
         return self.content_table.item_count
+
+    def update_content(self, content_id, email, approved):
+        self.check_database()
+        result = self.content_table.update_item(
+            Key = {
+                'content_id': content_id,
+                'email' : email,
+            },
+            UpdateExpression = 'SET approved = :val',
+            ExpressionAttributeValues = {
+                ':val' : approved
+            },
+            ReturnValues = 'UPDATED_NEW'
+        ) 
+        if 'Attributes' in result:
+            return result['Attributes']
+        else:
+            return dict()
