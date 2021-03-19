@@ -62,11 +62,12 @@ def content(id):
             title = current_content['title']
             description = current_content['description']
             thumbnail_link, content_link = content_bucket.get_file_link(current_content['bucket_info'])
+            content_type = current_content['content_type']
             content_date = current_content['date']
             created_user = query_content['email']
             user_path = url_for("views.user_page", id = created_user)
             return render_template("content.html", created_user = created_user, title = title, description = description, 
-                content_link = content_link, content_date = content_date, user_path = user_page)
+                content_link = content_link, content_date = content_date, user_path = user_page, content_type = content_type)
     flash("Content did not show correctly", category="error")
     return redirect(url_for("views.home"))
 
@@ -113,19 +114,29 @@ def upload():
             if 'user_content' in old_content:
                 videos = old_content['user_content']
                 videos.append(content_id)
+                old_content['user_content'] = videos
             else:
                 old_content['user_content'] = [content_id]
-            user_db.update_fitness_professional_content(email, old_content)
             title = request.form.get("title")
+            content_type_val = int(request.form.get("ContentType"))
+            content_type = ""
+            if content_type_val == 1:
+                content_type = 'image/*'
+            elif content_type_val == 2:
+                content_type = 'application/pdf'
+            else:
+                content_type = 'video/mp4'
+            user_db.update_fitness_professional_content(email, old_content)
             description = request.form.get("description")
             current_date = date.today().strftime("%m/%d/%Y")
-            bucket_info = content_bucket.add_file(content_id, email, content_file_name, thumbnail_name)
+            bucket_info = content_bucket.add_file(content_id, email, content_file_name, thumbnail_name, content_type)
             try:
                 shutil.rmtree(config('UPLOAD_FOLDER'))
             except Exception as e:
                 print('Failed to delete %s. Reason: %s' % (config('UPLOAD_FOLDER'), e))
             uploaded_content = {
                 "title": title,
+                "content_type": content_type,
                 "description": description,
                 "date": current_date,
                 "bucket_info": bucket_info,

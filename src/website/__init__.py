@@ -33,10 +33,11 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         user_values = user_db.query_user(user_id)
-        current_user = User(
+        if user_values:
+            current_user = User(
             user_values['email'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role']
             )
-        return current_user
+            return current_user
     from .views import views
     from .auth import auth
     app.register_blueprint(views, url_prefix="/")

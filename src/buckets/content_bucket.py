@@ -20,16 +20,16 @@ class ContentBucket:
                 )
             self.transfer = S3Transfer(self.client)
 
-    def add_file(self, content_id, email, file_name_with_extension, thumbnail_name):
+    def add_file(self, content_id, email, file_name_with_extension, thumbnail_name, content_type):
         self.check_bucket()
         image_type = thumbnail_name.split(".")
         object_name = email + "/" + content_id
         try:
             self.transfer.upload_file(os.path.join(config('UPLOAD_FOLDER'), file_name_with_extension), self.bucket_name, object_name + "/" + file_name_with_extension, extra_args = {
-                'ContentType' :"text/html",
+                'ContentType': content_type,
             })
             self.transfer.upload_file(os.path.join(config('UPLOAD_FOLDER'), thumbnail_name), self.bucket_name, object_name + "/" + thumbnail_name, extra_args = {
-                'ContentType' : "image/" + image_type[len(image_type) - 1],
+                'ContentType': "image/" + image_type[len(image_type) - 1],
             })
         except Exception as e:
             print(e)
