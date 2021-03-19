@@ -219,12 +219,16 @@ def moderate():
         if request.method == "POST":
             action = request.form.get("moderate")
             content_id = request.form.get("content_id")
+            email = request.form.get("email")
+            title = request.form.get("title")
             if action == "approve":
-                message = Markup("<b>Content Title</b> approved!")
+                message = Markup("<b>{}</b> approved!".format(title))
                 flash(message, category="success")
-            else:
-                message = Markup("<b>Content Title</b> deleted")
+            elif action == "delete":
+                content_db.delete_content(content_id, email)
+                message = Markup("<b>{}</b> deleted".format(title))
                 flash(message, category="error")
+                return redirect(url_for("views.moderate"))
         return render_template("moderate.html", unapproved=unapproved)
     else:
         flash("You do not have permission to access that page!", category="error")

@@ -2,31 +2,32 @@
 {% block title %}Moderate{% endblock %}
 {% block content %}
 <h2>Pending moderation</h2>
-    {% for x in unapproved %}
+    {% for current in unapproved %}
         <div class="row">
             <div class="col-xl-12">
                 <div class="card mb-3">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-xl-3">
-                                <a href="#" target="_blank">
-                                    <img style="width: 100%;" src="{{x['content']['thumbnail_link']}}">
+                                <a href="/content/{{current['content']['bucket_info']['object_name'][-36:]}}" target="_blank">
+                                    <img style="width: 100%;" src="{{current['content']['bucket_info']['thumbnail_link']}}">
                                 </a>
                             </div>
                             <div class="col-xl-6">
                                 <h3 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                    <a href="#" target="_blank">
-                                        {{x['content']['title']}}
+                                    <a href="/content/{{current['content']['bucket_info']['object_name'][-36:]}}" target="_blank">
+                                        {{current['content']['title']}}
                                     </a>
                                 </h3>
                                 <p class="text-muted">
-                                    {{x['content']['description']}}
-                                    {{x['content']}}
+                                    {{current['content']['description']}}
                                 </p>
                             </div>
                             <div class="col-xl-3 align-items-center my-auto">
                                 <form method="POST">
-                                    <input value="{{x}}" type="hidden" name="content_id">
+                                    <input value="{{current['content']['bucket_info']['object_name'][-36:]}}" type="hidden" name="content_id">
+                                    <input value="{{current['content']['bucket_info']['object_name'][:-37]}}" type="hidden" name="email">
+                                    <input value="{{current['content']['title']}}" type="hidden" name="title">
                                     <button class="btn btn-block btn-success" name="moderate" value="approve" type="submit">Approve</button>
                                     <button class="btn btn-block btn-danger" name="moderate" value="delete" type="submit">Delete</button>
                                 </form>
