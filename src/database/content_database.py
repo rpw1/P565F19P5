@@ -121,7 +121,7 @@ class ContentDatabase:
         self.check_database()
         return self.content_table.item_count
 
-    def update_content(self, content_id, email, approved):
+    def update_approval(self, content_id, email, approved):
         self.check_database()
         result = self.content_table.update_item(
             Key = {
