@@ -52,9 +52,18 @@ def user_page(id):
         flash("That user does not exist!", category="error")
         return redirect(url_for("views.home"))
 
-@views.route("/content/<id>")
+@views.route("/content/<id>", methods=["GET","POST"])
 @login_required
 def content(id):
+    if request.method == "POST":
+        action = request.form.get("moderate")
+        title = request.form.get("title")
+        email = request.form.get("email")
+        if action == "delete":
+            content_db.delete_content(id, email)
+            message = Markup("<b>{}</b> successfully deleted".format(title))
+            flash(message, category="success")
+            return redirect(url_for("views.home"))
     query_content = content_db.query_content_by_id(id)
     if query_content:
         if 'content' in query_content:
@@ -143,7 +152,7 @@ def upload():
                 "amount_viewed": 0
             }
             content_db.insert_content(content_id, email, uploaded_content)
-            flash("Upload successful")
+            flash("Upload successful!", category="success")
             return redirect(url_for("views.content", id = content_id))
         else:
             flash("You do not have permission to upload content")
@@ -205,16 +214,22 @@ def search_query(query, page):
 @login_required
 def moderate():
     if current_user.role == 'admin':
+        unapproved = content_db.query_content_unapproved()
+        print(unapproved)
         if request.method == "POST":
             action = request.form.get("moderate")
             content_id = request.form.get("content_id")
+            email = request.form.get("email")
+            title = request.form.get("title")
             if action == "approve":
-                message = Markup("<b>Content Title</b> approved!")
+                message = Markup("<b>{}</b> approved!".format(title))
                 flash(message, category="success")
-            else:
-                message = Markup("<b>Content Title</b> deleted")
+            elif action == "delete":
+                content_db.delete_content(content_id, email)
+                message = Markup("<b>{}</b> deleted".format(title))
                 flash(message, category="error")
-        return render_template("moderate.html")
+                return redirect(url_for("views.moderate"))
+        return render_template("moderate.html", unapproved=unapproved)
     else:
         flash("You do not have permission to access that page!", category="error")
         return redirect(url_for("views.home"))

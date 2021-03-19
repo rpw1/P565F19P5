@@ -1,5 +1,5 @@
 import boto3
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key, Attr
 from decouple import config
 
 
@@ -104,6 +104,16 @@ class ContentDatabase:
         if 'Items' in response:
             if len(response["Items"]) > 0:
                 return response["Items"][0]
+        print("Unable to query content")
+        return None
+
+    def query_content_unapproved(self):
+        self.check_database()
+        response = self.content_table.scan(
+            FilterExpression = Attr('approved').eq(False)
+        )
+        if 'Items' in response:
+            return response["Items"]
         print("Unable to query content")
         return None
 
