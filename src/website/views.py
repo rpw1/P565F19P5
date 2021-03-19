@@ -52,9 +52,18 @@ def user_page(id):
         flash("That user does not exist!", category="error")
         return redirect(url_for("views.home"))
 
-@views.route("/content/<id>")
+@views.route("/content/<id>", methods=["GET","POST"])
 @login_required
 def content(id):
+    if request.method == "POST":
+        action = request.form.get("moderate")
+        title = request.form.get("title")
+        email = request.form.get("email")
+        if action == "delete":
+            content_db.delete_content(id, email)
+            message = Markup("<b>{}</b> successfully deleted".format(title))
+            flash(message, category="success")
+            return redirect(url_for("views.home"))
     query_content = content_db.query_content_by_id(id)
     if query_content:
         if 'content' in query_content:
@@ -143,7 +152,7 @@ def upload():
                 "amount_viewed": 0
             }
             content_db.insert_content(content_id, email, uploaded_content)
-            flash("Upload successful")
+            flash("Upload successful!", category="success")
             return redirect(url_for("views.content", id = content_id))
         else:
             flash("You do not have permission to upload content")
