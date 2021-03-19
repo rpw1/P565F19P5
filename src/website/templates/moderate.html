@@ -2,7 +2,7 @@
 {% block title %}Moderate{% endblock %}
 {% block content %}
 <h2>Pending moderation</h2>
-    {% for x in range(0,3) %}
+    {% for x in unapproved %}
         <div class="row">
             <div class="col-xl-12">
                 <div class="card mb-3">
@@ -10,17 +10,18 @@
                         <div class="row">
                             <div class="col-xl-3">
                                 <a href="#" target="_blank">
-                                    <img style="width: 100%;" src="https://i.ytimg.com/vi/px2Q47O0_eE/maxresdefault.jpg">
+                                    <img style="width: 100%;" src="{{x['content']['thumbnail_link']}}">
                                 </a>
                             </div>
                             <div class="col-xl-6">
                                 <h3 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                     <a href="#" target="_blank">
-                                        Content title testing for a super long title woo
+                                        {{x['content']['title']}}
                                     </a>
                                 </h3>
                                 <p class="text-muted">
-                                    Here is a test description. I don't think we have to worry about it being too long because I think I set a character limit.</p>
+                                    {{x['content']['description']}}
+                                    {{x['content']}}
                                 </p>
                             </div>
                             <div class="col-xl-3 align-items-center my-auto">

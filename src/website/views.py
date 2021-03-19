@@ -214,6 +214,8 @@ def search_query(query, page):
 @login_required
 def moderate():
     if current_user.role == 'admin':
+        unapproved = content_db.query_content_unapproved()
+        print(unapproved)
         if request.method == "POST":
             action = request.form.get("moderate")
             content_id = request.form.get("content_id")
@@ -223,7 +225,7 @@ def moderate():
             else:
                 message = Markup("<b>Content Title</b> deleted")
                 flash(message, category="error")
-        return render_template("moderate.html")
+        return render_template("moderate.html", unapproved=unapproved)
     else:
         flash("You do not have permission to access that page!", category="error")
         return redirect(url_for("views.home"))
