@@ -9,27 +9,36 @@ class ScanTables:
         self.c_db = ContentDatabase()
         self.user_scan_items = ['first_name', 'last_name', 'username', 'location', 'specialties', 'gender']
 
-    def list_get(self, current_list, index):
-        item = None
-        try:
-            item = current_list[index]
-        except Exception as e:
-            item = None
-        return item
+    def edit_distance(self, search_chars, database_chars, search_len, database_len):
+        board = [[0 for x in range(database_len + 1)] for x in range(search_len + 1)]
+        for row in range(search_len + 1):
+            for col in range(database_len + 1):
+                if row == 0:
+                    board[row][col] = col
+                elif col == 0:
+                    board[row][col] = row
+                elif search_chars[row - 1] == database_chars[col - 1]:
+                    board[row][col] = board[row - 1][col - 1]
+                else:
+                    board[row][col] = 1 + min(board[row - 1][col - 1], board[row - 1][col], board[row][col - 1])
+        return board[search_len][database_len]
+        
+
+    def common_substring(self, search_tag, database_item, search_len, database_len):
+        for x in range(database_len - search_len + 1):
+            if database_item[x:search_len + x] == search_tag:
+                return - 100
+        return 0
 
     def compareItems(self, search_tag, database_item):
-        search_tag_char = [char for char in search_tag.upper()]
-        database_item_char = [char for char in database_item.upper()]
-        digit_difference = len(search_tag_char) - len(database_item_char)
-        index_count = len(database_item_char) if digit_difference < 0 else len(search_tag_char)
-        accrue_value = 0
-        for index in range(index_count):
-            s_val = self.list_get(search_tag_char, index)
-            d_val = self.list_get(database_item_char, index)
-            if s_val == None or d_val == None:
-                break
-            accrue_value += abs(ord(s_val) - ord(d_val))
-        return accrue_value + (math.exp(abs(digit_difference)) / 3)
+        search_len = len(search_tag)
+        database_len = len(database_item)
+        search_chars = [char for char in search_tag.upper()]
+        database_chars = [char for char in database_item.upper()]
+        if search_len > database_len:
+            return self.edit_distance(search_chars, database_chars, search_len, database_len)
+        else:
+            return self.common_substring(search_tag, database_item, search_len, database_len) + self.edit_distance(search_chars, database_chars, search_len, database_len)
 
     def full_scan(self, search_tag):
         items = []
@@ -37,14 +46,14 @@ class ScanTables:
         search_dict = dict()
         for user in self.u_db.scan_table():
             user_email = user['email']
-            for key, value in user.items():
-                if key == 'specialties':
-                    for specialty in value:
+            for category in self.user_scan_items:
+                if category == 'specialties':
+                    for specialty in user[category]:
                         items.append(specialty)
                         heuristics.append(self.compareItems(search_tag, specialty))
-                elif key in self.user_scan_items:
-                    items.append(user_email + "$%$" + value)
-                    heuristics.append(self.compareItems(search_tag, value))
+                else:
+                    items.append(user_email + "$%$" + user[category])
+                    heuristics.append(self.compareItems(search_tag, user[category]))
         search_results = [(x,_) for _,x in sorted(zip(heuristics,items))]
         new_items = [x.split("$%$")[0] for x,y in search_results]
         results = []
@@ -56,4 +65,4 @@ class ScanTables:
 
 if __name__ == '__main__':
     sct = ScanTables()
-    sct.full_scan("Professional2")
+    sct.full_scan("Ryan")
