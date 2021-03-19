@@ -52,7 +52,7 @@
             {% if current_user.role == 'admin' %}
             <li class="nav-item">
                 <a class="nav-link" href="/moderate">
-                    Moderate
+                    Moderate {% if unapproved_count > 0 %} <span class="badge badge-pill badge-primary">{{unapproved_count}}</span>{% endif %}
                 </a>
             </li>
             {% endif %}

@@ -1,11 +1,13 @@
 from flask import Flask
 from flask_login import LoginManager
 from src.database.user_database import UserDatabase
+from src.database.content_database import ContentDatabase
 from .models import User
 from flask_mail import Mail, Message
 from oauthlib.oauth2 import WebApplicationClient
 
 user_db = UserDatabase()
+content_db = ContentDatabase()
 GOOGLE_CLIENT_ID = "133654944932-7jp5imq4u3k6ng5r8k9suue3rckcsdcf.apps.googleusercontent.com"
 GOOGLE_CLIENT_SECRET = "zSWURv4KexNnOvRRP2tDQZX2"
 GOOGLE_DISCOVERY_URL = (
@@ -38,6 +40,10 @@ def create_app():
             user_values['email'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role']
             )
             return current_user
+    @app.context_processor
+    def inject_unapproved_count():
+        return dict(unapproved_count = len(content_db.query_content_unapproved()))
+    unapproved_count = len(content_db.query_content_unapproved())
     from .views import views
     from .auth import auth
     app.register_blueprint(views, url_prefix="/")
