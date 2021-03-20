@@ -141,6 +141,16 @@ class ContentDatabase:
         self.check_database()
         return self.content_table.item_count
 
+    def get_uploaded_today_count(self, date):
+        self.check_database()
+        response = self.content_table.scan(
+            FilterExpression = Attr('date').eq(date)
+        )
+        if 'Items' in response:
+            return response["Items"]
+        print("Unable to query content")
+        return []
+
     def update_approval(self, content_id, email, approved):
         self.check_database()
         result = self.content_table.update_item(

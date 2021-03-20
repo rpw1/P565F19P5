@@ -24,8 +24,9 @@ def home():
     if current_user.is_authenticated:
         total_users = user_db.get_user_count()
         total_content = content_db.get_content_count()
+        uploaded_today = len(content_db.get_uploaded_today_count(date.today().strftime("%m/%d/%Y")))
         recent = content_db.query_content_approved() #change this later
-        return render_template("dashboard.html", user=current_user, total_users=total_users, total_content=total_content, recent=recent)
+        return render_template("dashboard.html", user=current_user, total_users=total_users, total_content=total_content, uploaded_today=uploaded_today, recent=recent)
     else: 
         return render_template("landing.html")
 
@@ -100,10 +101,10 @@ def upload():
                 content_file_path = os.path.join(config('UPLOAD_FOLDER'), content_file_name)
                 content_file.save(content_file_path)
             else:
-                flash("Contetnt file was not uploaded successfully", category="error")
+                flash("Content file was not uploaded successfully", category="error")
                 return render_template("upload.html")
         else:
-            flash("Contetnt file was not uploaded successfully", category="error")
+            flash("Content file was not uploaded successfully", category="error")
             return render_template("upload.html")
 
         if 'thumbnail' in request.files:
