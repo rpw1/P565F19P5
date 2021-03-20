@@ -32,10 +32,13 @@ class ScanTables:
         return 0
 
     def compareItems(self, search_tag, database_item):
+        search_tag = search_tag.upper()
+        database_item = database_item.upper()
         search_len = len(search_tag)
         database_len = len(database_item)
-        search_chars = [char for char in search_tag.upper()]
-        database_chars = [char for char in database_item.upper()]
+        search_chars = [char for char in search_tag]
+        database_chars = [char for char in database_item]
+        
         if search_len > database_len:
             return self.edit_distance(search_chars, database_chars, search_len, database_len)
         else:
@@ -72,4 +75,4 @@ class ScanTables:
 
 if __name__ == '__main__':
     sct = ScanTables()
-    sct.full_scan("Will's")
+    sct.full_scan("will's")

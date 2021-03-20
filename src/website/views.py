@@ -225,8 +225,6 @@ def search():
                 item_group.append(item_content['bucket_info']['thumbnail_link'])
                 item_group.append(url_for("views.content", id = item))
             query_results.append(item_group)
-        print(query_results)
-
         # return redirect(url_for("views.search_query", query=query, page=1))
         return render_template("search.html", query=query, results=query_results, results_len=len(query_results), item_len = len(query_results[0]))
         #users = user_db.search_user_by_email(query)
