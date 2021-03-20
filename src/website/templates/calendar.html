@@ -19,6 +19,16 @@
 
     <script src="{{ url_for('static', filename='MindFusion.Scheduling.js') }}"></script>
     <script src="{{ url_for('static', filename='ItemEvents.js') }}"></script>
+    <script>
+        $.ajax({
+            url: 'https://127.0.0.1:5000/', 
+            type: 'POST',
+            data: JSON.stringify(calendars)
+        })
+        .done(function(result){
+            console.log(result)
+        })
+    </script>
 </body>
       
 {% endblock %}
