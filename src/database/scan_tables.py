@@ -1,5 +1,5 @@
-from user_database import UserDatabase
-from content_database import ContentDatabase
+from .user_database import UserDatabase
+from .content_database import ContentDatabase
 import math
 
 class ScanTables:
@@ -8,6 +8,7 @@ class ScanTables:
         self.u_db = UserDatabase()
         self.c_db = ContentDatabase()
         self.user_scan_items = ['first_name', 'last_name', 'username', 'location', 'specialties', 'gender']
+        self.content_scan_items = ['mode_of_instruction', 'workout_type', 'date', 'title']
 
     def edit_distance(self, search_chars, database_chars, search_len, database_len):
         board = [[0 for x in range(database_len + 1)] for x in range(search_len + 1)]
@@ -44,7 +45,7 @@ class ScanTables:
         items = []
         heuristics = []
         search_dict = dict()
-        for user in self.u_db.scan_table():
+        for user in self.u_db.scan_users():
             user_email = user['email']
             for category in self.user_scan_items:
                 if category == 'specialties':
@@ -54,6 +55,12 @@ class ScanTables:
                 else:
                     items.append(user_email + "$%$" + user[category])
                     heuristics.append(self.compareItems(search_tag, user[category]))
+        for content in self.c_db.scan_content():
+            content_id = content['content_id']
+            content_items = content['content']
+            for category in self.content_scan_items:
+                items.append(content_id + "$%$" + content_items[category])
+                heuristics.append(self.compareItems(search_tag, content_items[category]))
         search_results = [(x,_) for _,x in sorted(zip(heuristics,items))]
         new_items = [x.split("$%$")[0] for x,y in search_results]
         results = []
@@ -65,4 +72,4 @@ class ScanTables:
 
 if __name__ == '__main__':
     sct = ScanTables()
-    sct.full_scan("Ryan")
+    sct.full_scan("Will's")

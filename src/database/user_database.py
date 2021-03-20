@@ -459,7 +459,7 @@ class UserDatabase:
         self.check_database()
         return self.user_table.item_count
 
-    def scan_table(self):
+    def scan_users(self):
         self.check_database()
         response = self.user_table.scan(
             FilterExpression=Key('role').eq(self.roles[1])

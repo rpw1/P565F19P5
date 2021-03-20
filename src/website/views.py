@@ -9,11 +9,13 @@ from src.buckets.content_bucket import ContentBucket
 import uuid, os, shutil
 from datetime import date
 from decouple import config
+from src.database.scan_tables import ScanTables
 
 views = Blueprint("views", __name__)
 user_db = UserDatabase()
 content_db = ContentDatabase()
 content_bucket = ContentBucket()
+scan_tb = ScanTables()
 roles = ['client', 'fitness_professional', 'admin']
 
 @views.route("/")
@@ -140,6 +142,8 @@ def upload():
             user_db.update_fitness_professional_content(email, old_content)
             description = request.form.get("description")
             current_date = date.today().strftime("%m/%d/%Y")
+            moi = request.form.get("Instruction")
+            workout_type = request.form.get("WorkoutType")
             bucket_info = content_bucket.add_file(content_id, email, content_file_name, thumbnail_name, content_type)
             try:
                 shutil.rmtree(config('UPLOAD_FOLDER'))
@@ -148,6 +152,8 @@ def upload():
             uploaded_content = {
                 "title": title,
                 "content_type": content_type,
+                "workout_type": workout_type,
+                "mode_of_instruction": moi,
                 "description": description,
                 "date": current_date,
                 "bucket_info": bucket_info,
@@ -195,7 +201,34 @@ def search():
         if query == "":
             flash("Query cannot be empty!", category="error")
             return redirect(request.referrer)
-        return redirect(url_for("views.search_query", query=query, page=1))
+        results = scan_tb.full_scan(query)
+        query_results = []
+        for item in results:
+            item_group = []
+            if "@" in item:
+                current_user = user_db.query_user(item)
+                item_group.append(current_user['first_name'] + " " + current_user['last_name'])
+                item_group.append(current_user['username'])
+                item_group.append(current_user['location'])
+                item_group.append(current_user['gender'])
+                item_group.append("specialty")
+                item_group.append(current_user['image'])
+                item_group.append(url_for("views.user_page", id = item))
+            else:
+                current_content = content_db.query_content_by_id(item)
+                item_content = current_content['content']
+                item_group.append(item_content['title'])
+                item_group.append(item_content['mode_of_instruction'])
+                item_group.append(item_content['workout_type'])
+                item_group.append(item_content['date'])
+                item_group.append("")
+                item_group.append(item_content['bucket_info']['thumbnail_link'])
+                item_group.append(url_for("views.content", id = item))
+            query_results.append(item_group)
+        print(query_results)
+
+        # return redirect(url_for("views.search_query", query=query, page=1))
+        return render_template("search.html", query=query, results=query_results, results_len=len(query_results), item_len = len(query_results[0]))
         #users = user_db.search_user_by_email(query)
         #if users:
          #   users_len = len(users)

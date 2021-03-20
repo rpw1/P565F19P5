@@ -158,3 +158,10 @@ class ContentDatabase:
             return result['Attributes']
         else:
             return dict()
+
+    def scan_content(self):
+        self.check_database()
+        response = self.content_table.scan(
+            FilterExpression=Attr('approved').eq(True)
+        )
+        return response['Items']

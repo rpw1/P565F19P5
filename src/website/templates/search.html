@@ -12,11 +12,16 @@
             </div>
         </div>
         <div class="col-xl-9">
-    {% for user in range(users_len) %}
+    {% for result in range(results_len) %}
             <div class="card w-100 mb-2 bg-light">
                 <div class="card-body">
-                    <h4>{{ users[user]['first_name'] }} {{ users[user]['last_name'] }}</h4>
-                    <p class="text-muted"> {{ users[user]['role'] }}</p>
+                    <img src="{{ results[result][5] }}" width="100%" height="500px" alt="Uploaded image">
+                    <h4>{{ results[result][0] }}</h4>
+                    <p>{{ results[result][1] }}</p>
+                    <p>{{ results[result][2] }}</p>
+                    <p>{{ results[result][3] }}</p>
+                    <p>{{ results[result][4] }}</p>
+                    <a href="{{ results[result][6] }}">Click Here to view result.</a>
                 </div>
             </div>
     {% endfor %}
