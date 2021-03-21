@@ -199,7 +199,7 @@ def progress_tracking():
 @views.route("/search", methods=["GET","POST"])
 @login_required
 def search():
-    #if request.method == "POST":
+    if request.method == "POST":
         query = request.form.get("search")
         if query == "":
             flash("Query cannot be empty!", category="error")
