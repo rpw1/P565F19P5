@@ -38,10 +38,12 @@ def profile():
     user_image = user_values['image']
     return render_template("profile.html", user=current_user, user_image = user_image)
 
-@views.route("/calendar")
+@views.route("/calendar", methods=["GET","POST"])
 @login_required
 def calendar():
-    return render_template("calendar.html", user=current_user)
+    if request.method == 'POST':
+        print(request.json)
+    return render_template("calendar.html", user=current_user, post_url = url_for('views.calendar'))
     
 @views.route("/user/<id>")
 @login_required
@@ -198,7 +200,7 @@ def progress_tracking():
 @views.route("/search", methods=["GET","POST"])
 @login_required
 def search():
-    #if request.method == "POST":
+    if request.method == "POST":
         query = request.form.get("search")
         if query == "":
             flash("Query cannot be empty!", category="error")

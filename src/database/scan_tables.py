@@ -44,13 +44,15 @@ class ScanTables:
         else:
             return self.common_substring(search_tag, database_item, search_len, database_len) + self.edit_distance(search_chars, database_chars, search_len, database_len)
 
-    def full_scan(self, search_tag):
+    def full_scan(self, search_tag, user_categories = None, content_categories = None):
+        user_categories = self.user_scan_items if user_categories == None else user_categories
+        content_categories = self.content_scan_items if content_categories == None else content_categories
         items = []
         heuristics = []
         search_dict = dict()
         for user in self.u_db.scan_users():
             user_email = user['email']
-            for category in self.user_scan_items:
+            for category in user_categories:
                 if category == 'specialties':
                     for specialty in user[category]:
                         items.append(specialty)
@@ -61,7 +63,7 @@ class ScanTables:
         for content in self.c_db.scan_content():
             content_id = content['content_id']
             content_items = content['content']
-            for category in self.content_scan_items:
+            for category in content_categories:
                 items.append(content_id + "$%$" + content_items[category])
                 heuristics.append(self.compareItems(search_tag, content_items[category]))
         search_results = [(x,_) for _,x in sorted(zip(heuristics,items))]

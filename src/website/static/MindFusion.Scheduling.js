@@ -1,28 +1,28 @@
 //calendar variables to be saved in database
-var calendars = {
-    'dueDate': dueDate,
-    'startDate': startDate,
-    'actualEnd': actualEnd,
-    'actualStart': actualStart,
-    'allDayEvent': allDayEvent,
-    'subject': subject,
-    'details': details,
-    'status': status,
-    'priority': priority,
-    'progress': progress,
-    'estimatedDuration': estimatedDuration,
-    'actualDuration': actualDuration
+// var calendars = {
+//     'dueDate': dueDate,
+//     'startDate': startDate,
+//     'actualEnd': actualEnd,
+//     'actualStart': actualStart,
+//     'allDayEvent': allDayEvent,
+//     'subject': subject,
+//     'details': details,
+//     'status': status,
+//     'priority': priority,
+//     'progress': progress,
+//     'estimatedDuration': estimatedDuration,
+//     'actualDuration': actualDuration
    
-}
+// }
 
-$.ajax({
-  url: 'https://127.0.0.1:5000/', 
-  type: 'POST',
-  data: JSON.stringify(calendars)
-})
-.done(function(result){
-  console.log(result)
-})
+// $.ajax({
+//   url: 'https://127.0.0.1:5000/', 
+//   type: 'POST',
+//   data: JSON.stringify(calendars)
+// })
+// .done(function(result){
+//   console.log(result)
+// })
 
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
