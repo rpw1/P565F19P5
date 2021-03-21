@@ -35,6 +35,9 @@
 <hr/>
 {% if class == "Trainer" %}
 <h3>Uploaded by {{user.first_name}} {{user.last_name}}</h3>
+    {% if uploads|length == 0 %}
+    <p>This user currently has no uploads. Check back later!</p>
+    {% endif %}
     <div class="row flex-row flex-nowrap overflow-auto">
         {% for item in uploads%}
         <div class="col-auto mb-3">
