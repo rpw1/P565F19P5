@@ -458,6 +458,36 @@ class UserDatabase:
     def get_user_count(self):
         self.check_database()
         return self.user_table.item_count
+    
+    def get_trainee_count(self):
+        self.check_database()
+        response = self.user_table.scan(
+            FilterExpression = Key('role').eq(self.roles[0])
+        )
+        if 'Items' in response:
+            return len(response["Items"])
+        print("Unable to query content")
+        return 0
+
+    def get_trainer_count(self):
+        self.check_database()
+        response = self.user_table.scan(
+            FilterExpression = Key('role').eq(self.roles[1])
+        )
+        if 'Items' in response:
+            return len(response["Items"])
+        print("Unable to query content")
+        return 0
+
+    def get_admin_count(self):
+        self.check_database()
+        response = self.user_table.scan(
+            FilterExpression = Key('role').eq(self.roles[2])
+        )
+        if 'Items' in response:
+            return len(response["Items"])
+        print("Unable to query content")
+        return 0
 
     def scan_users(self):
         self.check_database()
