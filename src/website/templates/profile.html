@@ -17,8 +17,11 @@
         <p class="text-muted"><small>{{class}}</small></p>
     </div>
     {% if current_user.email == user.email %}
-    <div class="col-md-1">
-        <a href="/update_password">Change password</a>
+    <div class="col-md-2">
+        <a href="/update_password"><p class="text-center" >Change password</p></a>
+        {% if current_user.role == "fitness_professional" %}
+        <p class="text-center text-muted">{} subscribers</p>
+        {% endif %}
     </div>
     {% elif class == "Trainer"%}
     <div class="col-md-2 justify-content-center">
