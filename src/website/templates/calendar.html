@@ -2,35 +2,107 @@
 {% block title %}Calendar{% endblock %}
 {% block content %}
 <head>
-    <link rel="stylesheet" href="{{url_for('static', filename='calendarstyle.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='evo-calendar.min.css')}}" >
-    <link rel="stylesheet" href="{{url_for('static', filename='evo-calendar.midnight-blue.min.css')}}" >
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
-    <script src="{{ url_for('static', filename='evo-calendar.min.js') }}"></script>
     
-    <link rel="stylesheet" href="{{url_for('static', filename='peach.css')}}">
+    <script src="{{ url_for('static', filename='ItemEvents.js') }}"></script>
+    
+    <link rel="stylesheet" href="{{url_for('static', filename='calendarstyle.css')}}">
 </head>
     
 <body>
+    <br><br>
+    <div class="container">
+        <br>
+        <div class="row">
+            <div class="calendar col-md-8 offset-md-2">
+                <div>
+                    <div class="card-header bg-primary">
+                        <ul>
+                            <li id="month" class="text-white text-uppercase text-center">
+                            </li>
+                            <li id="year" class="text-white text-uppercase text-center">
+                            </li>
+                        </ul>
+                    </div>
+                    <table class="table calendar table-bordered table-responsive-sm" id="calendar">
+                        <thead>
+                            <tr class="weekdays bg-dark">
+                              <th scope="col" class="text-white text-center">Mo</th>
+                              <th scope="col" class="text-white text-center">Tu</th>
+                              <th scope="col" class="text-white text-center">We</th>
+                              <th scope="col" class="text-white text-center">Th</th>
+                              <th scope="col" class="text-white text-center">Fr</th>
+                              <th scope="col" class="text-white text-center">Sa</th>
+                              <th scope="col" class="text-white text-center">Su</th>
+                            </tr>
+                          </thead>
+                        <tbody class="days bg-light" id="days"></tbody>
+                        <tfoot></tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
 
-<div id="calendar" style="height: 600px; width: 100%"></div>
+        <br><hr>
 
-<div id="alrt" style="margin-left: 45%"></div>
-
-    <script src="{{ url_for('static', filename='MindFusion.Scheduling.js') }}"></script>
-    <script src="{{ url_for('static', filename='ItemEvents.js') }}"></script>
-    <script>
-        function sendCalendarInfo() {
-            $.ajax({
-            url: '{{ post_url }}', 
-            type: 'POST',
-            data: JSON.stringify(calendars)
-        })
-        .done(function(result){
-            console.log(result)
-        })
-        }
-    </script>
+        <div class="row">
+            <div class="col offset-md-1">
+                <form id="form_create_appointment">
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <label class="required">Date</label>
+                            <input class="form-control date-input" type="text" id="date" data-trigger="hover" data-toggle="popover" title="Date" data-content="You can select any date from today clicking on the number in the calendar" required>
+                        </div>
+                        <div class="col form-group">
+                            <label>Description</label>
+                            <input class="form-control" type="text" id="description">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <label class="required">Start Time</label>
+                            <input class="form-control time-input" type="text" id="start_time" required>
+                        </div>
+                        <div class="col form-group">
+                            <label class="required">End Time</label>
+                            <input class="form-control time-input" type="text" id="end_time" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <button type="button" class="btn btn-warning btn-block" id="clear" onclick="clear_input()">Clear Form</button>
+                        </div>
+                        <div class="col form-group">
+                            <button type="button" class="btn btn-primary btn-block" id="submit" onclick="make_appointment()" disabled="disabled">Make Appointment</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col offset-md-1">
+                <div class="row">
+                    <div class="col">
+                        <h3>Appointments</h3>
+                    </div>
+                    <div class="col form-group">
+                        <button type="button" class="btn btn-danger btn-block" id="btn_clear_storage" onclick="clear_storage()">Clear Appointments</button>
+                    </div>
+                </div>
+                <table class="table table-bordered table-hover table-striped table-sm" id="appointment_list">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col" class="text-center align-middle">Date</th>
+                            <th scope="col" class="text-center align-middle">Description</th>
+                            <th scope="col" class="text-center align-middle">Start time</th>
+                            <th scope="col" class="text-center align-middle">End time</th>
+                            <th scope="col" class="text-center align-middle">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br><br><br>
+    </div>
 </body>
       
 {% endblock %}
