@@ -3,7 +3,6 @@
 {% block content %}
 <head>
     
-    <script src="{{ url_for('static', filename='ItemEvents.js') }}"></script>
     
     <link rel="stylesheet" href="{{url_for('static', filename='calendarstyle.css')}}">
 </head>
@@ -103,6 +102,7 @@
         </div>
         <br><br><br>
     </div>
+    <script src="{{ url_for('static', filename='ItemEvents.js') }}"></script>
 </body>
       
 {% endblock %}
