@@ -35,7 +35,7 @@
         {% for item in recent%}
         <div class="col-auto mb-3">
             <div class="card h-100" style="width:250px">
-                <img class="card-img-top" style="height: 140.625px" src="{{item['content']['bucket_info']['thumbnail_link']}}" alt="thumbnail">
+                <img class="card-img-top" style="height: 140.625px; object-fit:cover;" src="{{item['content']['bucket_info']['thumbnail_link']}}" alt="thumbnail">
                 <div class="card-body">
                     <h5 class="card-title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"><a href="/content/{{item['content']['bucket_info']['object_name'][-36:]}}">{{item['content']['title']}}</a></h5>
                     <p><small class="text-muted">Uploaded by {{item['email']}} on {{item['content']['date']}}</small></p>
