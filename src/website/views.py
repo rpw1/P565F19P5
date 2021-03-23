@@ -251,9 +251,9 @@ def progress_tracking():
 def search():
     if request.method == "POST":
         query = request.form.get("search")
-        if query == "":
+        if query == "" or query == None:
             flash("Query cannot be empty!", category="error")
-            return redirect(request.referrer)
+            return render_template("search.html", query="", results=list(), results_len=0, item_len = 0)
         results = scan_tb.full_scan(query)
         query_results = []
         for item in results:

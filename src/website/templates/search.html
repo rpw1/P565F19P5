@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Results for {{query}}{% endblock %}
+{% block search %}{{ query }}{% endblock %}
 {% block content %}
 <h1>Results for {{query}}</h1>
 <hr/>
@@ -20,25 +21,6 @@
                             <label for="content">Show content only</label>
                         </div>
                         <hr/>
-                        <!-- Specialty -->
-                        <div class="row" onclick="show_specialty_filter();">
-                            <div class="col-sm-9">
-                                <h5>Specialty</h5>
-                            </div>
-                            <div class="col-sm-3">
-                                <div id="specialty_filter_arrow">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="specialty_filter" style="display: none">
-                            <div class="form-checkbox">
-                                <input type="checkbox" id="sp1" name="sp1">
-                                <label for="today">Specialty1</label>
-                            </div>
-                        </div>
                         <!-- Gender -->
                         <div class="row" onclick="show_gender_filter();">
                             <div class="col-sm-9">
@@ -161,7 +143,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <button class="btn btn-primary btn-block">Filter</button>
+                        <button class="btn btn-primary btn-block" type="submit">Filter</button>
                     </div>
                     </form>
                 </div>
@@ -191,21 +173,6 @@
         </div>
     </div>
     <script>
-        function show_specialty_filter() {
-            var boxes = document.getElementById('specialty_filter')
-            var arrow = document.getElementById('specialty_filter_arrow')
-            if(boxes.style.display == 'block') {
-                boxes.style.display = 'none';
-                arrow.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-                                  </svg>`
-            } else {
-                boxes.style.display = 'block';
-                arrow.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-up" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
-                    </svg>`
-            }
-        }
 
         function show_gender_filter() {
             var boxes = document.getElementById('gender_filter')
