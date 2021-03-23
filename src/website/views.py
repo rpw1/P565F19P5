@@ -36,7 +36,10 @@ def home():
 def profile():
     user_values = user_db.query_user(current_user.get_id())
     user_image = user_values['image']
-    return render_template("profile.html", user=current_user, user_image = user_image)
+    uploads = []
+    if user_values['role'] == roles[1]:
+        uploads = content_db.query_content_by_user(current_user.get_id())
+    return render_template("profile.html", user=current_user, user_image = user_image, uploads=uploads)
 
 @views.route("/calendar", methods=["GET","POST"])
 @login_required
