@@ -38,11 +38,17 @@
                                 </select>
                             </div>
                             {% endif %}
+                            <label for="gender">Gender</label>
                             <div class="form-group">
-                                <input type="text" name="location" placeholder="location" class="form-control">
+                                <input type="text" id="gender" name="gender" placeholder="gender" class="form-control">
                             </div>
+                            <label for="location">Location</label>
                             <div class="form-group">
-                                <textarea placeholder="biography" name="bio" class="form-control"></textarea>
+                                <input type="text" id="location" name="location" placeholder="location" class="form-control">
+                            </div>
+                            <label for="bio">Biography</label>
+                            <div class="form-group">
+                                <textarea placeholder="biography" id="bio" name="bio" class="form-control"></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary btn-block">Update</button>
                         </form>
