@@ -8,6 +8,49 @@
             <div class="card w-100 mb-2 bg-light">
                 <div class="card-body">
                     <h2>Filters</h2>
+                    <hr/>
+                    <form method="POST">
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="users" name="users" required>
+                            <label for="users">Show users only</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="content" name="content" required>
+                            <label for="content">Show content only</label>
+                        </div>
+                        <h5>Uploaded</h5>
+                        <ul class="dropdown-menu dropdown-menu-form">
+                        <div class="form-checkbox dropdown-item">
+                            <input type="checkbox" id="today" name="today" required>
+                            <label for="today">Today</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="week" name="week" required>
+                            <label for="week">This Week</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="month" name="month" required>
+                            <label for="month">This Month</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="year" name="year" required>
+                            <label for="year">This Year</label>
+                        </div>
+                        </ul>
+                        <h5>Uploaded</h5>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <label for="terms">Today</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <label for="terms">This Week</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <label for="terms">This Year</label>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
