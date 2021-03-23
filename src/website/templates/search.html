@@ -18,25 +18,25 @@
                             <input type="checkbox" id="content" name="content" required>
                             <label for="content">Show content only</label>
                         </div>
-                        <h5>Uploaded</h5>
-                        <ul class="dropdown-menu dropdown-menu-form">
-                        <div class="form-checkbox dropdown-item">
-                            <input type="checkbox" id="today" name="today" required>
-                            <label for="today">Today</label>
+                        <h5 id="date_filter_header" onclick="show_date_filter();">Uploaded</h5>
+                        <div id="date_filter" style="display: none">
+                            <div class="form-checkbox">
+                                <input type="checkbox" id="today" name="today" required>
+                                <label for="today">Today</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" id="week" name="week" required>
+                                <label for="week">This Week</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" id="month" name="month" required>
+                                <label for="month">This Month</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" id="year" name="year" required>
+                                <label for="year">This Year</label>
+                            </div>
                         </div>
-                        <div class="form-checkbox">
-                            <input type="checkbox" id="week" name="week" required>
-                            <label for="week">This Week</label>
-                        </div>
-                        <div class="form-checkbox">
-                            <input type="checkbox" id="month" name="month" required>
-                            <label for="month">This Month</label>
-                        </div>
-                        <div class="form-checkbox">
-                            <input type="checkbox" id="year" name="year" required>
-                            <label for="year">This Year</label>
-                        </div>
-                        </ul>
                         <h5>Uploaded</h5>
                         <div class="form-checkbox">
                             <input type="checkbox" id="terms" name="terms" required>
@@ -77,4 +77,17 @@
     {% endfor %}
         </div>
     </div>
+    <script>
+        function show_date_filter() {
+            var boxes = document.getElementById('date_filter')
+            var header = document.getElementById('date_filter_header')
+            if(boxes.style.display == 'block') {
+                boxes.style.display = 'none';
+                header.innerHTML = 'Uploaded V'
+            } else {
+                boxes.style.display = 'block';
+                header.innerHTML = 'Uploaded ^'
+            }
+        }
+    </script>
 {% endblock %}
