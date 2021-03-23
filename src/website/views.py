@@ -19,7 +19,6 @@ scan_tb = ScanTables()
 roles = ['client', 'fitness_professional', 'admin']
 
 @views.route("/")
-#@login_required
 def home():
     if current_user.is_authenticated:
         total_users = user_db.get_user_count()
@@ -57,7 +56,7 @@ def calendar():
 def user_page(id):
     user_values = user_db.query_user(id)
     uploads = content_db.query_content_by_user(id)
-    if user_values:
+    if user_values and user_values['role'] == roles[1]:
         user_image = user_values['image']
         profile_user = User(
                 user_values['email'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role']
@@ -236,23 +235,8 @@ def search():
                 item_group.append(item_content['bucket_info']['thumbnail_link'])
                 item_group.append(url_for("views.content", id = item))
             query_results.append(item_group)
-        # return redirect(url_for("views.search_query", query=query, page=1))
         return render_template("search.html", query=query, results=query_results, results_len=len(query_results), item_len = len(query_results[0]))
-        #users = user_db.search_user_by_email(query)
-        #if users:
-         #   users_len = len(users)
-         #   return render_template("search.html", query=query, users=users, users_len = users_len)
-        #else:
-         #   flash("Query had no results", category="error")
-          #  return redirect(url_for("views.home"))
-    #else:
-     #   flash("You must search using the search bar!", category="error")
-      #  return redirect(url_for("views.home"))
 
-@views.route("/search/<query>/<page>")
-@login_required
-def search_query(query, page):
-    return render_template("search.html", query=query, users=[], users_len=0)
 
 @views.route("/moderate", methods=["GET","POST"])
 @login_required
