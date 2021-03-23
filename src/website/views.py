@@ -73,7 +73,6 @@ def profile():
         if 'specialty' in user_values:
             specialty = user_values['specialty']
     country_codes = list(countries_by_alpha2.keys())
-    print(flag_src)
     return render_template("profile.html", user=current_user, user_image=user_image, 
         uploads=uploads, countries=countries_by_alpha2, country_codes=country_codes, length=len(country_codes),
         specialty = specialty, gender = gender, bio = bio, flag_src = flag_src)
@@ -81,8 +80,6 @@ def profile():
 @views.route("/calendar", methods=["GET","POST"])
 @login_required
 def calendar():
-    if request.method == 'POST':
-        print(request.json)
     return render_template("calendar.html", user=current_user, post_url = url_for('views.calendar'))
     
 @views.route("/user/<id>")
@@ -92,10 +89,22 @@ def user_page(id):
     uploads = content_db.query_content_by_user(id)
     if user_values and user_values['role'] == roles[1]:
         user_image = user_values['image']
+        specialty = ""
+        flag_src = ""
+        if 'country' in user_values:
+            country_info = user_values['country']
+            if 'flag' in country_info:
+                flag_src = country_info['flag']
+        if 'specialty' in user_values:
+            specialty = user_values['specialty']
+        bio = user_values['bio']
+        gender = user_values['gender']
         profile_user = User(
                 user_values['email'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role']
                 )
-        return render_template("profile.html", user=profile_user, user_image = user_image, uploads=uploads)
+        return render_template("profile.html", user=profile_user, user_image = user_image, uploads=uploads,
+            specialty = specialty, gender = gender, bio = bio, flag_src = flag_src,
+            countries=dict(), country_codes=list(), length=0)
     else:
         flash("That user does not exist!", category="error")
         return redirect(url_for("views.home"))
@@ -253,9 +262,15 @@ def search():
                 current_user = user_db.query_user(item)
                 item_group.append(current_user['first_name'] + " " + current_user['last_name'])
                 item_group.append(current_user['username'])
-                #item_group.append(current_user['location'])
+                if 'country' in current_user and 'name' in current_user['country']:
+                    item_group.append(current_user['country']['name'])
+                else:
+                    item_group.append("")
                 item_group.append(current_user['gender'])
-                item_group.append("specialty")
+                if 'specialty' in current_user:
+                    item_group.append(current_user['specialty'])
+                else:
+                    item_group.append("")
                 item_group.append(current_user['image'])
                 item_group.append(url_for("views.user_page", id = item))
             else:

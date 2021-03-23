@@ -15,7 +15,7 @@
     <div class="col-md-8">
         <h1 class="display-3">{{user.first_name}} {{user.last_name}}</h1>
         <p class="text-muted"><small>{{class}}</small></p>
-        {% if current_user.role == 'fitness_professional' %}
+        {% if user.role == 'fitness_professional' %}
         <img src="{{ flag_src }}"/>
         <p class="text-muted">{{ gender }}</p>
         <p class="text-muted">{{ specialty }}</p>
