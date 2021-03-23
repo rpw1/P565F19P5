@@ -28,16 +28,21 @@
                     </div>
                     <div class="modal-body">
                         <form method="POST">
+                            {% if current_user.role == 'fitness_professional' %}
                             <div class="form-group">
                                 <label for="type">Specialty</label>
-                                <select id="specialty" name="specialty" class="form-control" required>
+                                <select id="specialty" name="specialty" class="form-control">
                                     <option value="1">Trainee</option>
                                     <option value="2">Trainer</option>
                                     <option value="3">Administrator</option>
                                 </select>
                             </div>
+                            {% endif %}
                             <div class="form-group">
-                                <input type="email" name="email" placeholder="e-mail" class="form-control" required>
+                                <input type="text" name="location" placeholder="location" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <textarea placeholder="biography" name="bio" class="form-control"></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary btn-block">Update</button>
                         </form>
