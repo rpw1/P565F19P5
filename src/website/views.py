@@ -233,7 +233,7 @@ def progress_tracking():
     if request.method == "POST_1":
         legend = 'Calories'
         temperatures = [10.2, 3.2, 69]
-        times = ['Monday', 'Tuesaday', 'Wed']
+        times = ['Monday', 'Tuesday', 'Wed']
         return render_template('progress_tracking.html', values=temperatures, labels=times, legend=legend, user=current_user)
     return render_template('progress_tracking.html', user=current_user)
 
