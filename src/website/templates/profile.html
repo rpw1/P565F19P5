@@ -15,6 +15,11 @@
     <div class="col-md-8">
         <h1 class="display-3">{{user.first_name}} {{user.last_name}}</h1>
         <p class="text-muted"><small>{{class}}</small></p>
+        {% if current_user.role == 'fitness_professional' %}
+        <img src="{{ flag_src }}"/>
+        <p class="text-muted">{{ gender }}</p>
+        <p class="text-muted">{{ specialty }}</p>
+        {% endif %}
     </div>
     {% if current_user.email == user.email %}
     <div class="col-md-2">
@@ -35,10 +40,16 @@
                             <div class="form-group">
                                 <input type="text" id="gender" name="gender" placeholder="gender" class="form-control">
                             </div>
-                            {% endif %}
                             <div class="form-group">
-                                <input type="text" id="location" name="location" placeholder="location" class="form-control">
+                                <label for="country">Select Country</label>
+                                <select id="country" name="country" class="form-control">
+                                    <option value="" selected></option>
+                                    {% for x in range(length) %}
+                                        <option value="{{ country_codes[x] }}">{{ countries[country_codes[x]][0] }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
+                            {% endif %}
                             <label for="bio">Biography</label>
                             <div class="form-group">
                                 <textarea placeholder="biography" id="bio" name="bio" class="form-control"></textarea>

@@ -7,7 +7,7 @@ class ScanTables:
     def __init__(self):
         self.u_db = UserDatabase()
         self.c_db = ContentDatabase()
-        self.user_scan_items = ['first_name', 'last_name', 'username', 'location', 'specialties', 'gender']
+        self.user_scan_items = ['name', 'username', 'country', 'specialty', 'gender']
         self.content_scan_items = ['mode_of_instruction', 'workout_type', 'date', 'title']
 
     def edit_distance(self, search_chars, database_chars, search_len, database_len):
@@ -53,10 +53,19 @@ class ScanTables:
         for user in self.u_db.scan_users():
             user_email = user['email']
             for category in user_categories:
-                if category == 'specialties':
-                    for specialty in user[category]:
-                        items.append(specialty)
-                        heuristics.append(self.compareItems(search_tag, specialty))
+                if category == 'name':
+                    user_name = user['first_name'] + " " + user['last_name']
+                    items.append(user_email + "$%$" + user_name)
+                    heuristics.append(self.compareItems(search_tag, user_name))
+                elif category == 'country':
+                    if 'country' in user:
+                        if 'name' in user['country']:
+                            items.append(user_email + "$%$" + user['country']['name'])
+                            heuristics.append(self.compareItems(search_tag, user['country']['name']))
+                elif category == 'specialty':
+                    if 'specialty' in user:
+                        items.append(user_email + "$%$" + user['specialty'])
+                        heuristics.append(self.compareItems(search_tag, user['specialty']))
                 else:
                     items.append(user_email + "$%$" + user[category])
                     heuristics.append(self.compareItems(search_tag, user[category]))

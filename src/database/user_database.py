@@ -124,7 +124,7 @@ class UserDatabase:
     def update_client_gender(self, email, gender):
         return self._update_gender(email, gender, self.roles[0])
 
-    def insert_fitness_professional(self, email, password, username, first_name, last_name, gender = "", location = "", bio = "",
+    def insert_fitness_professional(self, email, password, username, first_name, last_name, gender = "", country = dict(), bio = "",
         image = "https://upload.wikimedia.org/wikipedia/en/c/c6/Roisin_Murphy_-_Overpowered.png",
         specialty = "", fitness_professional_content = dict()):
         """
@@ -168,7 +168,7 @@ class UserDatabase:
                 'first_name': first_name,
                 'last_name': last_name,
                 'gender': gender,
-                'location': location,
+                'country': country,
                 'bio': bio,
                 'image': image,
                 'specialty': specialty,
@@ -185,16 +185,16 @@ class UserDatabase:
     def update_fitness_professional_content(self, email, fitness_professional_content):
         return self._update_content(email, fitness_professional_content, self.roles[1])
 
-    def update_fitness_professional_location(self, email, location):
+    def update_fitness_professional_country(self, email, country):
         self.check_database()
         result = self.user_table.update_item(
             Key = {
                 'email' : email,
                 'role': self.roles[1]
             },
-            UpdateExpression = 'SET location = :val',
+            UpdateExpression = 'SET country = :val',
             ExpressionAttributeValues = {
-                ':val' : location
+                ':val' : country
             },
             ReturnValues = 'UPDATED_NEW'
         ) 

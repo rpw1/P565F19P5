@@ -10,6 +10,7 @@ import uuid, os, shutil
 from datetime import date
 from decouple import config
 from src.database.scan_tables import ScanTables
+from iso3166 import countries_by_alpha2
 
 views = Blueprint("views", __name__)
 user_db = UserDatabase()
@@ -33,16 +34,49 @@ def home():
 @views.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
+    user_email = current_user.get_id()
     if request.method == "POST":
         bio = request.form.get("bio")
-        user_db._update_bio(current_user.get_id(), bio, current_user.get_role())
+        if bio != "":
+            user_db._update_bio(user_email, bio, current_user.get_role())
+        if current_user.get_role() == roles[1]:
+            country_code = request.form.get("country")
+            gender = request.form.get("gender")
+            specialty = request.form.get("specialty")
+            # info on flags found on https://flagpedia.net/download/api
+            if country_code != "":
+                chosen_country = countries_by_alpha2[country_code]
+                country_info = {
+                    "code": country_code,
+                    "name": chosen_country[0],
+                    "flag": "https://flagcdn.com/16x12/" + country_code.lower() + ".png"
+                }
+                user_db.update_fitness_professional_country(user_email, country_info)
+            if specialty != "":
+                user_db.update_fitness_professional_specialty(user_email, specialty)
+            if gender != "":
+                user_db.update_fitness_professional_gender(user_email, gender)
         return redirect(url_for("views.profile"))
-    user_values = user_db.query_user(current_user.get_id())
+    user_values = user_db.query_user(user_email)
     user_image = user_values['image']
+    flag_src = ""
+    bio = user_values['bio']
+    specialty = ""
+    gender = user_values['gender']
     uploads = []
     if user_values['role'] == roles[1]:
-        uploads = content_db.query_content_by_user(current_user.get_id())
-    return render_template("profile.html", user=current_user, user_image = user_image, uploads=uploads)
+        uploads = content_db.query_content_by_user(user_email)
+        if 'country' in user_values:
+            country_info = user_values['country']
+            if 'flag' in country_info:
+                flag_src = country_info['flag']
+        if 'specialty' in user_values:
+            specialty = user_values['specialty']
+    country_codes = list(countries_by_alpha2.keys())
+    print(flag_src)
+    return render_template("profile.html", user=current_user, user_image=user_image, 
+        uploads=uploads, countries=countries_by_alpha2, country_codes=country_codes, length=len(country_codes),
+        specialty = specialty, gender = gender, bio = bio, flag_src = flag_src)
 
 @views.route("/calendar", methods=["GET","POST"])
 @login_required

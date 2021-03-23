@@ -2,11 +2,11 @@ import boto3
 from boto3.dynamodb.conditions import Key
 from decouple import config
 
-class ProgressTrackingDatabase:
+class CalendarDatabase:
 
     def __init__(self, dynamodb = None):
         self.dynamodb = dynamodb
-        self.tracking_table = None
+        self.calendar_table = None
 
     def check_database(self):
         if not self.dynamodb:
@@ -16,4 +16,4 @@ class ProgressTrackingDatabase:
                 aws_secret_access_key = config('AWS_SECRET_ACCESS_KEY'),
                 region_name = config('AWS_REGION')
                 )
-        self.tracking_table = self.dynamodb.Table('progress_tracking')
+        self.calendar_table = self.dynamodb.Table('calendar')
