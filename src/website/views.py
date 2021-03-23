@@ -253,7 +253,7 @@ def search():
                 current_user = user_db.query_user(item)
                 item_group.append(current_user['first_name'] + " " + current_user['last_name'])
                 item_group.append(current_user['username'])
-                item_group.append(current_user['location'])
+                #item_group.append(current_user['location'])
                 item_group.append(current_user['gender'])
                 item_group.append("specialty")
                 item_group.append(current_user['image'])

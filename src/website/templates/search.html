@@ -11,45 +11,157 @@
                     <hr/>
                     <form method="POST">
                         <div class="form-checkbox">
-                            <input type="checkbox" id="users" name="users" required>
+                            <input type="checkbox" id="users" name="users">
                             <label for="users">Show users only</label>
                         </div>
                         <div class="form-checkbox">
-                            <input type="checkbox" id="content" name="content" required>
+                            <input type="checkbox" id="content" name="content">
                             <label for="content">Show content only</label>
                         </div>
-                        <h5 id="date_filter_header" onclick="show_date_filter();">Uploaded</h5>
+                        <hr/>
+                        <!-- Specialty -->
+                        <div class="row" onclick="show_specialty_filter();">
+                            <div class="col-sm-9">
+                                <h5>Specialty</h5>
+                            </div>
+                            <div class="col-sm-3">
+                                <div id="specialty_filter_arrow">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="specialty_filter" style="display: none">
+                            <div class="form-checkbox">
+                                <input type="checkbox" id="sp1" name="sp1">
+                                <label for="today">Specialty1</label>
+                            </div>
+                        </div>
+                        <!-- Gender -->
+                        <div class="row" onclick="show_gender_filter();">
+                            <div class="col-sm-9">
+                                <h5>Gender</h5>
+                            </div>
+                            <div class="col-sm-3">
+                                <div id="gender_filter_arrow">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="gender_filter" style="display: none">
+                            <div class="form-checkbox">
+                                <input type="checkbox" id="male" name="male">
+                                <label for="today">Male</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" id="female" name="female">
+                                <label for="today">Female</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" id="non-binary" name="non-binary">
+                                <label for="today">Non-binary</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" id="prefer" name="prefer">
+                                <label for="today">Prefer not to say</label>
+                            </div>
+                        </div>
+                        <hr/>
+                        <!-- Date -->
+                        <div class="row" onclick="show_date_filter();">
+                            <div class="col-sm-9">
+                                <h5>Uploaded</h5>
+                            </div>
+                            <div class="col-sm-3">
+                                <div id="date_filter_arrow">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
                         <div id="date_filter" style="display: none">
                             <div class="form-checkbox">
-                                <input type="checkbox" id="today" name="today" required>
+                                <input type="checkbox" id="today" name="today">
                                 <label for="today">Today</label>
                             </div>
                             <div class="form-checkbox">
-                                <input type="checkbox" id="week" name="week" required>
+                                <input type="checkbox" id="week" name="week">
                                 <label for="week">This Week</label>
                             </div>
                             <div class="form-checkbox">
-                                <input type="checkbox" id="month" name="month" required>
+                                <input type="checkbox" id="month" name="month">
                                 <label for="month">This Month</label>
                             </div>
                             <div class="form-checkbox">
-                                <input type="checkbox" id="year" name="year" required>
+                                <input type="checkbox" id="year" name="year">
                                 <label for="year">This Year</label>
                             </div>
                         </div>
-                        <h5>Uploaded</h5>
+                    <!-- Mode of instruction -->
+                    <div class="row" onclick="show_mode_filter();">
+                        <div class="col-sm-9">
+                            <h5>Mode of Instruction</h5>
+                        </div>
+                        <div class="col-sm-3">
+                            <div id="mode_filter_arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="mode_filter" style="display: none">
                         <div class="form-checkbox">
-                            <input type="checkbox" id="terms" name="terms" required>
-                            <label for="terms">Today</label>
+                            <input type="checkbox" id="video" name="video">
+                            <label for="today">Video</label>
                         </div>
                         <div class="form-checkbox">
-                            <input type="checkbox" id="terms" name="terms" required>
-                            <label for="terms">This Week</label>
+                            <input type="checkbox" id="diet_plan" name="diet_plan">
+                            <label for="week">Diet Plan</label>
                         </div>
                         <div class="form-checkbox">
-                            <input type="checkbox" id="terms" name="terms" required>
-                            <label for="terms">This Year</label>
+                            <input type="checkbox" id="workout_plan" name="workout_plan">
+                            <label for="month">Workout Plan</label>
                         </div>
+                    </div>
+                    <!-- Workout type -->
+                    <div class="row" onclick="show_type_filter();">
+                        <div class="col-sm-9">
+                            <h5>Workout Type</h5>
+                        </div>
+                        <div class="col-sm-3">
+                            <div id="type_filter_arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="type_filter" style="display: none">
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="home" name="home">
+                            <label for="today">Home</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="gym" name="gym">
+                            <label for="week">Gym</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="fitness_center" name="fitness_center">
+                            <label for="month">Fitness center</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="track" name="track">
+                            <label for="month">Track</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-block">Filter</button>
+                    </div>
                     </form>
                 </div>
             </div>
@@ -78,15 +190,83 @@
         </div>
     </div>
     <script>
-        function show_date_filter() {
-            var boxes = document.getElementById('date_filter')
-            var header = document.getElementById('date_filter_header')
+        function show_specialty_filter() {
+            var boxes = document.getElementById('specialty_filter')
+            var arrow = document.getElementById('specialty_filter_arrow')
             if(boxes.style.display == 'block') {
                 boxes.style.display = 'none';
-                header.innerHTML = 'Uploaded V'
+                arrow.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                  </svg>`
             } else {
                 boxes.style.display = 'block';
-                header.innerHTML = 'Uploaded ^'
+                arrow.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-up" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
+                    </svg>`
+            }
+        }
+
+        function show_gender_filter() {
+            var boxes = document.getElementById('gender_filter')
+            var arrow = document.getElementById('gender_filter_arrow')
+            if(boxes.style.display == 'block') {
+                boxes.style.display = 'none';
+                arrow.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                  </svg>`
+            } else {
+                boxes.style.display = 'block';
+                arrow.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-up" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
+                    </svg>`
+            }
+        }
+
+        function show_date_filter() {
+            var boxes = document.getElementById('date_filter')
+            var arrow = document.getElementById('date_filter_arrow')
+            if(boxes.style.display == 'block') {
+                boxes.style.display = 'none';
+                arrow.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                  </svg>`
+            } else {
+                boxes.style.display = 'block';
+                arrow.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-up" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
+                    </svg>`
+            }
+        }
+
+        function show_mode_filter() {
+            var boxes = document.getElementById('mode_filter')
+            var arrow = document.getElementById('mode_filter_arrow')
+            if(boxes.style.display == 'block') {
+                boxes.style.display = 'none';
+                arrow.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                  </svg>`
+            } else {
+                boxes.style.display = 'block';
+                arrow.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-up" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
+                    </svg>`
+            }
+        }
+
+        function show_type_filter() {
+            var boxes = document.getElementById('type_filter')
+            var arrow = document.getElementById('type_filter_arrow')
+            if(boxes.style.display == 'block') {
+                boxes.style.display = 'none';
+                arrow.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                  </svg>`
+            } else {
+                boxes.style.display = 'block';
+                arrow.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-up" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
+                    </svg>`
             }
         }
     </script>
