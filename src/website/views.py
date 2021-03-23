@@ -31,9 +31,13 @@ def home():
     else: 
         return render_template("landing.html")
 
-@views.route("/profile")
+@views.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
+    if request.method == "POST":
+        bio = request.form.get("bio")
+        user_db._update_bio(current_user.get_id(), bio, current_user.get_role())
+        return redirect(url_for("views.profile"))
     user_values = user_db.query_user(current_user.get_id())
     user_image = user_values['image']
     uploads = []

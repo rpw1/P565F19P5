@@ -65,6 +65,7 @@
     {% endif %}
 </div>
 <hr/>
+<p>{{user.bio}}</p>
 {% if class == "Trainer" %}
 <h3>Uploaded by {{user.first_name}} {{user.last_name}}</h3>
     {% if uploads|length == 0 %}
