@@ -126,7 +126,7 @@ class UserDatabase:
 
     def insert_fitness_professional(self, email, password, username, first_name, last_name, gender = "", location = "", bio = "",
         image = "https://upload.wikimedia.org/wikipedia/en/c/c6/Roisin_Murphy_-_Overpowered.png",
-        specialties = list(), fitness_professional_content = dict()):
+        specialty = "", fitness_professional_content = dict()):
         """
             email -> required, string \n
             password -> required, encoded password, string \n
@@ -171,7 +171,7 @@ class UserDatabase:
                 'location': location,
                 'bio': bio,
                 'image': image,
-                'specialties': specialties,
+                'specialty': specialty,
                 'content': fitness_professional_content
             }
         )
@@ -203,16 +203,16 @@ class UserDatabase:
         else:
             return dict()
 
-    def update_fitness_professional_specialties(self, email, specialties):
+    def update_fitness_professional_specialty(self, email, specialty):
         self.check_database()
         result = self.user_table.update_item(
             Key = {
                 'email' : email,
                 'role': self.roles[1]
             },
-            UpdateExpression = 'SET specialties = :val',
+            UpdateExpression = 'SET specialty = :val',
             ExpressionAttributeValues = {
-                ':val' : specialties
+                ':val' : specialty
             },
             ReturnValues = 'UPDATED_NEW'
         ) 
