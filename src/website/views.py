@@ -68,6 +68,7 @@ def profile():
         uploads = content_db.query_content_by_user(user_email)
         if 'country' in user_values:
             country_info = user_values['country']
+            country_name = country_info['code']
             if 'flag' in country_info:
                 flag_src = country_info['flag']
         if 'specialty' in user_values:
@@ -75,7 +76,7 @@ def profile():
     country_codes = list(countries_by_alpha2.keys())
     return render_template("profile.html", user=current_user, user_image=user_image, 
         uploads=uploads, countries=countries_by_alpha2, country_codes=country_codes, length=len(country_codes),
-        specialty = specialty, gender = gender, bio = bio, flag_src = flag_src)
+        specialty = specialty, gender = gender, bio = bio, flag_src = flag_src, country_name=country_name)
 
 @views.route("/calendar", methods=["GET","POST"])
 @login_required

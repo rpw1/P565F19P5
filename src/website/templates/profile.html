@@ -14,12 +14,16 @@
     </div>
     <div class="col-md-8">
         <h1 class="display-3">{{user.first_name}} {{user.last_name}}</h1>
-        <p class="text-muted"><small>{{class}}</small></p>
-        {% if user.role == 'fitness_professional' %}
-        <img src="{{ flag_src }}"/>
-        <p class="text-muted">{{ gender }}</p>
-        <p class="text-muted">{{ specialty }}</p>
-        {% endif %}
+        <p class="text-muted">
+            <small>
+            {{class}}
+            {% if user.role == 'fitness_professional' %}
+                &bull; <img src="{{ flag_src }}"/> &bull;
+                {{ gender }} &bull;
+                {{ specialty }}
+            {% endif %}
+            </small>
+        </p>
         <p class="text-muted"><small>{{bio}}</small></p>
     </div>
     {% if current_user.email == user.email %}
@@ -36,7 +40,7 @@
                         <form method="POST">
                             {% if current_user.role == 'fitness_professional' %}
                             <div class="form-group">
-                                <input type="text" name="specialty" placeholder="specialty" class="form-control">
+                                <input type="text" id="specialty" name="specialty" placeholder="specialty" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="gender">Gender</label>
@@ -103,5 +107,15 @@
         {% endfor %}
     </div>
 {% endif %}
+<script>
+    var set_gender = '{{gender}}';
+    document.getElementById("gender").value = set_gender;
+    var set_bio = '{{bio}}';
+    document.getElementById("bio").value = set_bio;
+    var set_specialty = '{{specialty}}';
+    document.getElementById("specialty").value = set_specialty;
+    var set_country = '{{country_name}}';
+    document.getElementById("country").value = set_country;
+</script>
 {{user.user_id}}
 {% endblock %}
