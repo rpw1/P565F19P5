@@ -60,6 +60,7 @@ def profile():
     user_values = user_db.query_user(user_email)
     user_image = user_values['image']
     flag_src = ""
+    country_name = ""
     bio = user_values['bio']
     specialty = ""
     gender = user_values['gender']
