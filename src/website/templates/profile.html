@@ -108,7 +108,6 @@
     </div>
 {% endif %}
 <script>
-<<<<<<< HEAD
     if ('{{ current_user.role }}' == 'fitness_professional') {
         var set_gender = '{{gender}}';
         document.getElementById("gender").value = set_gender;
@@ -120,16 +119,6 @@
     var set_bio = '{{bio}}';
     document.getElementById("bio").value = set_bio;
     
-=======
-    var set_bio = '{{bio}}';
-    document.getElementById("bio").value = set_bio;
-    var set_gender = '{{gender}}';
-    document.getElementById("gender").value = set_gender;
-    var set_specialty = '{{specialty}}';
-    document.getElementById("specialty").value = set_specialty;
-    var set_country = '{{country_name}}';
-    document.getElementById("country").value = set_country;
->>>>>>> 4071b06de02146c272a0344a7f36614ce910b50b
 </script>
 {{user.user_id}}
 {% endblock %}
