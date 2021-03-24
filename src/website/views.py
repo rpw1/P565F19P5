@@ -89,6 +89,8 @@ def calendar():
 def user_page(id):
     user_values = user_db.query_user(id)
     uploads = content_db.query_content_by_user(id)
+    if id == current_user.get_id():
+        return redirect(url_for("views.profile"))
     if user_values and user_values['role'] == roles[1]:
         user_image = user_values['image']
         specialty = ""
