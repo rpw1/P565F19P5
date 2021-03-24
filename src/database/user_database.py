@@ -489,11 +489,12 @@ class UserDatabase:
         print("Unable to query content")
         return 0
 
-    def scan_users(self):
+    def scan_fps(self):
         self.check_database()
         response = self.user_table.scan(
             FilterExpression=Key('role').eq(self.roles[1])
         )
         return response['Items']
+
 
     

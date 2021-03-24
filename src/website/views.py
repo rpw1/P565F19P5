@@ -254,7 +254,44 @@ def search():
         if query == "" or query == None:
             flash("Query cannot be empty!", category="error")
             return render_template("search.html", query="", results=list(), results_len=0, item_len = 0)
-        results = scan_tb.full_scan(query)
+        type_filter = ['users', 'content']
+        gender_filters = ['male', 'female', 'non_binary', 'prefer']
+        date_filters_temp = ['today', 'week', 'month', 'year']
+        date_filters = date_filters_temp[::-1]
+        instruction_filters = ['video', 'diet_plan', 'workout_plan']
+        workout_type_filters = ['home', 'gym', 'fitness_center', 'track']
+        user_filters = {
+            "gender": gender_filters
+            }
+        content_filters = {
+            "date": date_filters, 
+            "mode_of_instruction": instruction_filters, 
+            "workout_type": workout_type_filters
+        }
+        users_val = request.form.get('users')
+        content_val = request.form.get('content')
+        for key, items in user_filters.items():
+            temp_list = []
+            for uf in items:
+                if request.form.get(uf):
+                    users_val = True
+                    temp_list.append(uf)
+            user_filters[key] = temp_list
+        
+        for key, items in content_filters.items():
+            temp_list = []
+            for cf in items:
+                if request.form.get(cf):
+                    content_val = True
+                    temp_list.append(cf)
+            content_filters[key] = temp_list
+        
+        if users_val and not content_val:
+            results = scan_tb.full_scan(query, user_filters, None)
+        elif not users_val and content_val:
+            results = scan_tb.full_scan(query, None, content_filters)
+        else:
+            results = scan_tb.full_scan(query, user_filters, content_filters)
         query_results = []
         for item in results:
             item_group = []
@@ -284,8 +321,10 @@ def search():
                 item_group.append(item_content['bucket_info']['thumbnail_link'])
                 item_group.append(url_for("views.content", id = item))
             query_results.append(item_group)
-        return render_template("search.html", query=query, results=query_results, results_len=len(query_results), item_len = len(query_results[0]))
-
+        if len(query_results) != 0:
+            return render_template("search.html", query=query, results=query_results, results_len=len(query_results), item_len = len(query_results[0]))
+        else:
+            return render_template("search.html", query=query, results=list(), results_len=0, item_len = 0)
 
 @views.route("/moderate", methods=["GET","POST"])
 @login_required
