@@ -108,14 +108,17 @@
     </div>
 {% endif %}
 <script>
-    var set_gender = '{{gender}}';
-    document.getElementById("gender").value = set_gender;
+    if ('{{ current_user.role }}' == 'fitness_professional') {
+        var set_gender = '{{gender}}';
+        document.getElementById("gender").value = set_gender;
+        var set_specialty = '{{specialty}}';
+        document.getElementById("specialty").value = set_specialty;
+        var set_country = '{{country_name}}';
+        document.getElementById("country").value = set_country;
+    }
     var set_bio = '{{bio}}';
     document.getElementById("bio").value = set_bio;
-    var set_specialty = '{{specialty}}';
-    document.getElementById("specialty").value = set_specialty;
-    var set_country = '{{country_name}}';
-    document.getElementById("country").value = set_country;
+    
 </script>
 {{user.user_id}}
 {% endblock %}
