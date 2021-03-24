@@ -56,6 +56,7 @@ def profile():
                 user_db.update_fitness_professional_specialty(user_email, specialty)
             if gender != "":
                 user_db.update_fitness_professional_gender(user_email, gender)
+        flash("Successfully edited profile!", category="success")
         return redirect(url_for("views.profile"))
     user_values = user_db.query_user(user_email)
     user_image = user_values['image']
