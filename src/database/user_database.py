@@ -125,7 +125,7 @@ class UserDatabase:
         return self._update_gender(email, gender, self.roles[0])
 
     def subscribe(self, user_email, fitness_professional_email):
-        current_user = self.get_client(user_email)
+        current_user = self.query_user(user_email)
         fitness_prof = self.get_fitness_professional(fitness_professional_email)
         if 'subscribed_accounts' in current_user['content']:
             accounts = current_user['content']['subscribed_accounts']
@@ -136,7 +136,7 @@ class UserDatabase:
         result = self.user_table.update_item(
             Key = {
                 'email' : user_email,
-                'role': self.roles[0]
+                'role': current_user['role']
             },
             UpdateExpression = 'SET content = :val',
             ExpressionAttributeValues = {
@@ -151,7 +151,7 @@ class UserDatabase:
         result = self.user_table.update_item(
             Key = {
                 'email' : fitness_professional_email,
-                'role': self.roles[1]
+                'role': fitness_prof['role']
             },
             UpdateExpression = 'SET content = :val',
             ExpressionAttributeValues = {
