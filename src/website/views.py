@@ -85,11 +85,15 @@ def profile():
 def calendar():
     return render_template("calendar.html", user=current_user, post_url = url_for('views.calendar'))
     
-@views.route("/user/<id>")
+@views.route("/user/<id>", methods = ["GET", "POST"])
 @login_required
 def user_page(id):
     user_values = user_db.query_user(id)
     uploads = content_db.query_content_by_user(id)
+    if request.method == "POST":
+        action = request.form.get("subscribe")
+        if action == "subscribe":
+            user_db.subscribe(current_user.email, user_values['email'])
     if id == current_user.get_id():
         return redirect(url_for("views.profile"))
     if user_values and user_values['role'] == roles[1]:

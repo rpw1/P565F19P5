@@ -80,7 +80,9 @@
     {% elif class == "Trainer"%}
     <div class="col-md-2 justify-content-center">
         {% if current_user.role == "client" %}
-        <button class="btn btn-block btn-primary">Subscribe</button>
+        <form method="POST">
+            <button type="submit" name="subscribe" value="subscribe" class="btn btn-block btn-primary">Subscribe</button>
+        </form>
         {% endif %}
         <p class="text-center text-muted">{} subscribers</p>
     </div>
