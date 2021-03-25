@@ -110,7 +110,6 @@ class ScanTables:
             for key, filter_items in scan_filters.items():
                 for filter_item in filter_items:
                     if key == 'date':
-                        print
                         past = datetime.strptime(content[key], "%m/%d/%Y")
                         present = datetime.now()
                         if filter_item == 'today' and (present - timedelta(days=1)) <= past:

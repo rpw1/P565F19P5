@@ -7,7 +7,7 @@ from .models import User
 from src.database.content_database import ContentDatabase
 from src.buckets.content_bucket import ContentBucket
 import uuid, os, shutil
-from datetime import date
+from datetime import datetime, timedelta, date
 from decouple import config
 from src.database.scan_tables import ScanTables
 from iso3166 import countries_by_alpha2
@@ -24,21 +24,31 @@ def home():
     if current_user.is_authenticated:
         total_users = user_db.get_user_count()
         total_content = content_db.get_content_count()
-        todays_date = date.today().strftime("%m/%d/%Y")
-        uploaded_today = len(content_db.get_uploaded_today_count(todays_date))
+        todays_date = datetime.now()
+        uploaded_today = []
         type_count = [user_db.get_trainee_count(), user_db.get_trainer_count(), user_db.get_admin_count()]
         recent = content_db.query_content_approved() #change this later
+        diet_plans = []
+        workout_plans = []
+        for approved_content in recent:
+            item_content = approved_content['content']
+            if item_content['mode_of_instruction'] == 'diet_plan':
+                diet_plans.append(approved_content)
+            else:
+                workout_plans.append(approved_content)
+            uploaded_date = datetime.strptime(item_content['date'], "%m/%d/%Y")
+            if (todays_date - timedelta(days=1)) <= uploaded_date:
+                uploaded_today.append(approved_content)
         user_values = user_db.query_user(current_user.get_id())
         subscribed_content = []
-        diet_plans = content_db.scan_content_by_instruction(True)
-        workout_plans = content_db.scan_content_by_instruction(False)
+        uploaded_today_len = len(uploaded_today)
         if 'subscribed_accounts' in user_values['content']:
             subscribed_accounts = user_values['content']['subscribed_accounts']
             for account in subscribed_accounts:
                 subscribed_content.extend(content_db.scan_content_by_email(account))
         return render_template("dashboard.html", user=current_user, total_users=total_users, total_content=total_content, 
             uploaded_today=uploaded_today, type_count=type_count, recent=recent, subscribed_content=subscribed_content,
-            diet_plans=diet_plans, workout_plans=workout_plans)
+            diet_plans=diet_plans, workout_plans=workout_plans, uploaded_today_len=uploaded_today_len)
     else: 
         return render_template("landing.html")
 
