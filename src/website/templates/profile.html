@@ -79,11 +79,11 @@
     </div>
     {% elif class == "Trainer"%}
     <div class="col-md-2 justify-content-center">
-        {% if current_user.role == "client" and not(subscribed) %}
+        {% if current_user.role != "admin" and not(subscribed) %}
         <form method="POST">
             <button type="submit" name="subscribe" value="subscribe" class="btn btn-block btn-primary">Subscribe</button>
         </form>
-        {% elif current_user.role == "client" and subscribed %}
+        {% elif current_user.role != "admin" and subscribed %}
         <form method="POST">
             <button type="submit" name="subscribe" value="unsubscribe" class="btn btn-block btn-danger">Unsubscribe</button>
         </form>
