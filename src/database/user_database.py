@@ -158,6 +158,35 @@ class UserDatabase:
                 ':val' : fitness_prof['content']
             }
         )
+    
+    def unsubscribe(self, user_email, fitness_professional_email):
+        current_user = self.get_client(user_email)
+        fitness_prof = self.get_fitness_professional(fitness_professional_email)
+        accounts = current_user['content']['subscribed_accounts']
+        accounts.remove(fitness_professional_email)
+        current_user['content']['subscribed_accounts'] = accounts
+        result = self.user_table.update_item(
+            Key = {
+                'email' : user_email,
+                'role': self.roles[0]
+            },
+            UpdateExpression = 'SET content = :val',
+            ExpressionAttributeValues = {
+                ':val' : current_user['content']
+            }
+        )
+        subscribers = fitness_prof['content']['subscribers'] - 1
+        fitness_prof['content']['subscribers'] = subscribers
+        result = self.user_table.update_item(
+            Key = {
+                'email' : fitness_professional_email,
+                'role': self.roles[1]
+            },
+            UpdateExpression = 'SET content = :val',
+            ExpressionAttributeValues = {
+                ':val' : fitness_prof['content']
+            }
+        )
 
     def insert_fitness_professional(self, email, password, username, first_name, last_name, gender = "", country = dict(), bio = "",
         image = "https://upload.wikimedia.org/wikipedia/en/c/c6/Roisin_Murphy_-_Overpowered.png",

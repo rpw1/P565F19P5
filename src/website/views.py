@@ -89,11 +89,27 @@ def calendar():
 @login_required
 def user_page(id):
     user_values = user_db.query_user(id)
+    current_user_values = user_db.query_user(current_user.get_id())
     uploads = content_db.query_content_by_user(id)
+    subscribed_to = []
+    subscriber_count = 0
+    print(user_values)
+    print(current_user_values)
+    if current_user_values['content']:
+        subscribed_to = current_user_values['content']['subscribed_accounts']
+    if user_values['content']:
+        pass
+    subscribed = False
+    if user_values['email'] in subscribed_to:
+        subscribed = True
     if request.method == "POST":
         action = request.form.get("subscribe")
         if action == "subscribe":
             user_db.subscribe(current_user.email, user_values['email'])
+            return redirect(url_for("views.user_page", id=id))
+        elif action == "unsubscribe":
+            user_db.unsubscribe(current_user.email, user_values['email'])
+            return redirect(url_for("views.user_page", id=id))
     if id == current_user.get_id():
         return redirect(url_for("views.profile"))
     if user_values and user_values['role'] == roles[1]:
@@ -113,7 +129,7 @@ def user_page(id):
                 )
         return render_template("profile.html", user=profile_user, user_image = user_image, uploads=uploads,
             specialty = specialty, gender = gender, bio = bio, flag_src = flag_src,
-            countries=dict(), country_codes=list(), length=0)
+            countries=dict(), country_codes=list(), length=0, subscribed=subscribed)
     else:
         flash("That user does not exist!", category="error")
         return redirect(url_for("views.home"))
