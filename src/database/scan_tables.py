@@ -136,7 +136,7 @@ class ScanTables:
         print(scan_filters)
         items = list()
         heuristics = list()
-        scan_items = self.c_db.scan_content()
+        scan_items = self.c_db.query_content_approved()
         all_empty = True
         for key, filter_items in scan_filters.items():
             all_empty = all_empty if len(filter_items) == 0 else False

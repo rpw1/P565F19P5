@@ -86,14 +86,14 @@ class ContentDatabase:
         else:
             return dict()
 
-    def query_content_by_email(self, email):
+    def scan_content_by_email(self, email):
         self.check_database()
-        response = self.content_table.query(
-            KeyConditionExpression=Key('email').eq(email)
+        response = self.content_table.scan(
+            FilterExpression=Key('email').eq(email) & Attr('approved').eq(True),
         )
         if 'Items' in response:
             return response["Items"]
-        print("Unable to query content")
+        print("Unable to scan content")
         return None
 
     def query_content_by_id(self, content_id):
@@ -169,9 +169,18 @@ class ContentDatabase:
         else:
             return dict()
 
-    def scan_content(self):
+    def scan_content_by_instruction(self, is_diet_plan):
         self.check_database()
-        response = self.content_table.scan(
-            FilterExpression=Attr('approved').eq(True)
-        )
-        return response['Items']
+        response = dict()
+        if is_diet_plan:
+            response = self.content_table.scan(
+                FilterExpression = Attr('mode_of_instruction').eq('diet_plan') & Attr('approved').eq(True)
+            )
+        else:
+            response = self.content_table.scan(
+                FilterExpression = Attr('mode_of_instruction').ne('diet_plan') & Attr('approved').eq(True)
+            )
+        if 'Items' in response:
+            return response["Items"]
+        print("Unable to query content")
+        return None

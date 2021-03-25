@@ -27,7 +27,17 @@ def home():
         uploaded_today = len(content_db.get_uploaded_today_count(date.today().strftime("%m/%d/%Y")))
         type_count = [user_db.get_trainee_count(), user_db.get_trainer_count(), user_db.get_admin_count()]
         recent = content_db.query_content_approved() #change this later
-        return render_template("dashboard.html", user=current_user, total_users=total_users, total_content=total_content, uploaded_today=uploaded_today, type_count=type_count, recent=recent)
+        user_values = user_db.query_user(current_user.get_id())
+        subscribed_content = []
+        diet_plans = content_db.scan_content_by_instruction(True)
+        workout_plans = content_db.scan_content_by_instruction(False)
+        if 'subscribed_accounts' in user_values['content']:
+            subscribed_accounts = user_values['content']['subscribed_accounts']
+            for account in subscribed_accounts:
+                subscribed_content.extend(content_db.scan_content_by_email(account))
+        return render_template("dashboard.html", user=current_user, total_users=total_users, total_content=total_content, 
+            uploaded_today=uploaded_today, type_count=type_count, recent=recent, subscribed_content=subscribed_content,
+            diet_plans=diet_plans, workout_plans=workout_plans)
     else: 
         return render_template("landing.html")
 
