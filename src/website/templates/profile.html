@@ -88,7 +88,7 @@
             <button type="submit" name="subscribe" value="unsubscribe" class="btn btn-block btn-danger">Unsubscribe</button>
         </form>
         {% endif %}
-        <p class="text-center text-muted">{{subscriber_count}} subscribers</p>
+        <p class="text-center text-muted">{{subscriber_count}} subscriber{% if subscriber_count != 1%}s{% endif %}</p>
     </div>
     {% endif %}
 </div>
