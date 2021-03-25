@@ -97,8 +97,8 @@ def user_page(id):
     print(current_user_values)
     if current_user_values['content']:
         subscribed_to = current_user_values['content']['subscribed_accounts']
-    if user_values['content']:
-        pass
+    if user_values['content'] and user_values['content']['subscribers']:
+        subscriber_count = user_values['content']['subscribers']
     subscribed = False
     if user_values['email'] in subscribed_to:
         subscribed = True
@@ -129,7 +129,7 @@ def user_page(id):
                 )
         return render_template("profile.html", user=profile_user, user_image = user_image, uploads=uploads,
             specialty = specialty, gender = gender, bio = bio, flag_src = flag_src,
-            countries=dict(), country_codes=list(), length=0, subscribed=subscribed)
+            countries=dict(), country_codes=list(), length=0, subscribed=subscribed, subscriber_count=subscriber_count)
     else:
         flash("That user does not exist!", category="error")
         return redirect(url_for("views.home"))
