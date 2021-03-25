@@ -10,7 +10,7 @@
     <div class="container">
         <br>
         <div class="row">
-            <div class="calendar col-md-8 offset-md-2">
+            <div class="calendar col-md-8 offset-md-4">
                 <div>
                     <div class="card-header bg-primary">
                         <ul>
@@ -37,12 +37,7 @@
                     </table>
                 </div>
             </div>
-        </div>
-
-        <br><hr>
-
-        <div class="row">
-            <div class="col offset-md-1">
+            <div class="col offset-md-0">
                 <form id="form_create_appointment">
                     <div class="form-row">
                         <div class="col form-group">
@@ -97,7 +92,72 @@
                     </tbody>
                 </table>
             </div>
+            <form id="form_create_workout">
+                <div class="form-row">
+                    <div class="col form-group"> 
+                        <h3>Edit Custom Workout</h3>
+                        <label class="required">Title</label>
+                        <input class="form-control" type="text" id="title">
+                    </div>
+                    <div class="col form-group">
+                        <label>Description</label>
+                        <input class="form-control" type="text" id="description2">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col form-group">
+                        <label>Difficulty</label>
+                        <button class="btn btn-secondary dropdown-toggle mr-2" style="float:right" type="button" id="difficulty" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item">5</a>
+                            <a class="dropdown-item">4</a>
+                            <a class="dropdown-item">3</a>
+                            <a class="dropdown-item">2</a>
+                            <a class="dropdown-item">1</a>
+                        </div>
+                    </div>
+                    <div class="col form-group">
+                        <label class="required">Duration in Minutes</label>
+                        <input class="form-control time-input" type="text" id="duration" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col form-group">
+                        <button type="button" class="btn btn-warning btn-block" id="clear" onclick="clear_workout()">Clear Form</button>
+                    </div>
+                    <div class="col form-group">
+                        <button type="button" class="btn btn-primary btn-block" id="submit" onclick="make_custom_workout()" disabled="disabled">Make Custom Workout</button>
+                    </div>
+                </div>
+            </form>
+            <div class="col offset-md-1">
+                <div class="row">
+                    <div class="col">
+                        <h3>Workouts</h3>
+                    </div>
+                    <div class="col form-group">
+                        <button type="button" class="btn btn-danger btn-block" id="btn_clear_storage" onclick="clear_storage()">Clear Workouts</button>
+                    </div>
+                </div>
+                <table class="table table-bordered table-hover table-striped table-sm" id="appointment_list">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col" class="text-center align-middle">Title</th>
+                            <th scope="col" class="text-center align-middle">Description</th>
+                            <th scope="col" class="text-center align-middle">Difficulty</th>
+                            <th scope="col" class="text-center align-middle">Duration</th>
+                            <th scope="col" class="text-center align-middle">Training Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
+        <br><hr>
+
+        
         <br><br><br>
     </div>
     <script src="{{ url_for('static', filename='ItemEvents.js') }}"></script>

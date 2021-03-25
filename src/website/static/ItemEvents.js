@@ -1,9 +1,12 @@
 let arrAppointment;
+let arrWorkout;
 
 $(function () {
     if (typeof (Storage) !== "undefined") {
         arrAppointment = localStorage.getItem("tbAppointment");
+        arrWorkout = localStorage.getItem("tbWorkout");
         arrAppointment = JSON.parse(arrAppointment);
+        arrWorkout = JSON.parse(arrWorkout);
         $("#btn_clear_storage").prop('disabled', false);
         $(`#btn_clear_storage`).show();
         if (arrAppointment == null || arrAppointment == "[null]"){
@@ -13,16 +16,15 @@ $(function () {
             arrAppointment.push(JSON.parse(localStorage.getItem('tbAppointment')));
             localStorage.setItem('tbAppointment', JSON.stringify(arrAppointment));
         }
-    } else {
-        iziToast.warning({
-            title: 'Caution',
-            message: "Sorry, but your web browser do not support localstorage, therefore this app won't work as it suposed to. Try updating your browser first.",
-            overlay: true,
-            zindex: 999,
-            position: 'center',
-            timeout: 20000,
-        });
-    }
+        if(arrWorkout == null || arrWorkout == "[null]"){
+            $("#btn_clear_storage").prop('disabled', true);
+            $(`#btn_clear_storage`).hide();
+            arrWorkout = [];
+            arrWorkout.push(JSON.parse(localStorage.getItem('tbWorkout')));
+            localStorage.setItem('tbWorkout', JSON.stringify(arrWorkout));
+        }
+    } 
+        
 
     $('#description').inputmask('Regex', {
         regex: "(?:[\\w\\d]+(\\s)*){1,5}",
@@ -197,6 +199,52 @@ function make_appointment() {
     }
 }
 
+function make_custom_workout() {
+    if (is_empty() == false) {
+        is_past_date();
+        compare();
+        if (is_overlap() == false) {
+            var workout = {
+                title: $("#title").val(),
+                description2: $("#description2").val(),
+                difficulty: $("#difficulty").val(),
+                duration: $("#duration").val(),
+                training_type: $("#training_type").val(),
+            };
+
+            SaveDataToLocalStorage(workout);
+            $("#btn_clear_storage").prop('disabled', false);
+            $(`#btn_clear_storage`).show();
+            print();
+
+            clear_input();
+            iziToast.success({
+                title: 'Success',
+                message: 'Workout created',
+            });
+        } else {
+            clear_input();
+            iziToast.error({
+                title: 'Error',
+                message: "This workout is overlapping another one",
+                overlay: true,
+                zindex: 999,
+                position: 'center',
+                timeout: 3000,
+            });
+        }
+    } else {
+        iziToast.error({
+            title: 'Error',
+            message: "All input fields are needed in order to make a workout",
+            overlay: true,
+            zindex: 999,
+            position: 'center',
+            timeout: 3000,
+        });
+    }
+}
+
 $("#end_time, #start_time").focusout(function () {
     compare();
 });
@@ -215,6 +263,13 @@ function clear_input() {
     $("#start_time").val('');
     $("#end_time").val('');
     $("#submit").prop('disabled', true);
+}
+
+function clear_workout(){
+    $("#title").val('');
+    $("#description2").val('');
+    $("#duration").val('');
+    $("#training_type").val('');
 }
 
 function is_empty() {
@@ -388,6 +443,31 @@ function SaveDataToLocalStorage(data)
     localStorage.setItem('tbAppointment', JSON.stringify(a));
 }
 
+function SaveDataToLocalStorageWorkout(data)
+{
+    var a = [];
+    a = JSON.parse(localStorage.getItem('tbWorkout'));
+
+    var a = a.filter(function (el) {
+        return el != null;
+    });
+
+    a.push(data);
+    a.sort(function (sTime1, sTime2) {
+        let temp3 = parseInt(sTime1.date.slice(0,2))
+        let temp4 = parseInt(sTime2.date.slice(0,2))
+        let temp1 = Date.parse(get_Date(sTime1.start_time));
+        let temp2 = Date.parse(get_Date(sTime2.start_time));
+
+
+        if (temp3 > temp4) return 1;
+        if (temp3 < temp4) return -1;
+        if (temp1 > temp2) return 1;
+        if (temp1 < temp2) return -1;
+    });
+    localStorage.setItem('tbWorkout', JSON.stringify(a));
+}
+
 function clear_storage(){
     localStorage.clear();
     var arrAppointment = [];
@@ -401,6 +481,22 @@ function clear_storage(){
     iziToast.success({
         title: 'Success',
         message: 'All appointments deleted',
+    });
+}
+
+function clear_storageWorkout(){
+    localStorage.clear();
+    var arrWorkout = [];
+    arrWorkout.push(JSON.parse(localStorage.getItem('tbWorkout')));
+    localStorage.setItem('tbWorkout', JSON.stringify(arrWorkout));
+    $("#btn_clear_storage").prop('disabled', true);
+    $(`#btn_clear_storage`).hide();
+    $(`.week td.active`).removeClass('badge1');
+    $(`.week td.active`).removeAttr( "data-badge" );
+    print(true);
+    iziToast.success({
+        title: 'Success',
+        message: 'All Workouts deleted',
     });
 }
 
