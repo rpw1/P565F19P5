@@ -149,7 +149,7 @@ class ContentDatabase:
         if 'Items' in response:
             return response["Items"]
         print("Unable to query content")
-        return []
+        return None
 
     def update_approval(self, content_id, email, approved):
         self.check_database()

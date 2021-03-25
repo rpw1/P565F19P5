@@ -24,7 +24,8 @@ def home():
     if current_user.is_authenticated:
         total_users = user_db.get_user_count()
         total_content = content_db.get_content_count()
-        uploaded_today = len(content_db.get_uploaded_today_count(date.today().strftime("%m/%d/%Y")))
+        todays_date = date.today().strftime("%m/%d/%Y")
+        uploaded_today = len(content_db.get_uploaded_today_count(todays_date))
         type_count = [user_db.get_trainee_count(), user_db.get_trainer_count(), user_db.get_admin_count()]
         recent = content_db.query_content_approved() #change this later
         user_values = user_db.query_user(current_user.get_id())
@@ -103,8 +104,6 @@ def user_page(id):
     uploads = content_db.query_content_by_user(id)
     subscribed_to = []
     subscriber_count = 0
-    print(user_values)
-    print(current_user_values)
     if current_user_values['content'] and current_user.role != roles[2]:
         if 'subscribed_accounts' in current_user_values['content']:
             subscribed_to = current_user_values['content']['subscribed_accounts']
