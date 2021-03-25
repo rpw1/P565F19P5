@@ -95,12 +95,14 @@ def user_page(id):
     subscriber_count = 0
     print(user_values)
     print(current_user_values)
-    if current_user_values['content'] and current_user.role == roles[0]:
-        subscribed_to = current_user_values['content']['subscribed_accounts']
-    if user_values['role'] == roles[1] and user_values['content'] and user_values['content']['subscribers']:
-        subscriber_count = user_values['content']['subscribers']
+    if current_user_values['content'] and current_user.role != roles[2]:
+        if 'subscribed_accounts' in current_user_values['content']:
+            subscribed_to = current_user_values['content']['subscribed_accounts']
+    if 'subscribers' in user_values['content']:
+        if user_values['role'] == roles[1] and user_values['content'] and user_values['content']['subscribers']:
+            subscriber_count = user_values['content']['subscribers']
     subscribed = False
-    if user_values['email'] in subscribed_to:
+    if id in subscribed_to:
         subscribed = True
     if request.method == "POST":
         action = request.form.get("subscribe")
