@@ -123,6 +123,29 @@ class ScanTables:
                         elif filter_item == 'year' and (present - timedelta(days=365)) <= past:
                             isGood = True
                             break
+                    elif key == 'mode_of_instruction':
+                        if filter_item == 'video' and content[key] == 'video':
+                            isGood = True
+                            break
+                        elif filter_item == 'diet_plan' and content[key] == 'Diet plan':
+                            isGood = True
+                            break
+                        elif filter_item == 'workout_plan' and content[key] == 'Workout plan':
+                            isGood = True
+                            break
+                    elif key == 'workout_type':
+                        if filter_item == 'home' and content[key] == 'Home':
+                            isGood = True
+                            break
+                        elif filter_item == 'gym' and content[key] == 'Gym':
+                            isGood = True
+                            break
+                        elif filter_item == 'fitness_center' and content[key] == 'Fitness Center':
+                            isGood = True
+                            break
+                        elif filter_item == 'track' and content[key] == 'Track':
+                            isGood = True
+                            break
                     if content[key].upper() == filter_item.upper():
                         isGood = True
                         break
