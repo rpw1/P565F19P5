@@ -31,6 +31,7 @@ def home():
         total_content = len(all_content)
         diet_plans = []
         workout_plans = []
+        fitness_videos = []
         for current_content in all_content:
             item_content = current_content['content']
             uploaded_date = datetime.strptime(item_content['date'], "%m/%d/%Y")
@@ -42,8 +43,10 @@ def home():
                     continue
             if item_content['mode_of_instruction'] == 'Diet plan' and current_content['approved']:
                 diet_plans.append(current_content)
-            elif current_content['approved']:
+            elif item_content['mode_of_instruction'] == 'Workout plan' and current_content['approved']:
                 workout_plans.append(current_content)
+            elif item_content['mode_of_instruction'] == 'Video' and current_content['approved']:
+                fitness_videos.append(current_content)
         user_values = user_db.query_user(current_user.get_id())
         subscribed_content = []
         if 'subscribed_accounts' in user_values['content']:
@@ -52,7 +55,7 @@ def home():
                 subscribed_content.extend(content_db.scan_content_by_email(account))
         return render_template("dashboard.html", user=current_user, total_users=total_users, total_content=total_content, 
             uploaded_today=uploaded_today_approved, type_count=type_count, subscribed_content=subscribed_content,
-            diet_plans=diet_plans, workout_plans=workout_plans, uploaded_today_len=uploaded_today_count)
+            diet_plans=diet_plans, workout_plans=workout_plans, fitness_videos=fitness_videos, uploaded_today_len=uploaded_today_count)
     else: 
         return render_template("landing.html")
 
