@@ -184,3 +184,11 @@ class ContentDatabase:
             return response["Items"]
         print("Unable to query content")
         return None
+
+    def scan_everything(self):
+        self.check_database()
+        response = self.content_table.scan()
+        if 'Items' in response:
+            return response["Items"]
+        print("Unable to query content")
+        return None

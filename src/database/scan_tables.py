@@ -64,7 +64,6 @@ class ScanTables:
         return new_scan_items
 
     def search_users(self, search_tag, scan_filters) -> (list, list):
-        print(scan_filters)
         items = list()
         heuristics = list()
         scan_items = self.u_db.scan_fps()

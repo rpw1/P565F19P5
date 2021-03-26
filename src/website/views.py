@@ -23,32 +23,36 @@ roles = ['client', 'fitness_professional', 'admin']
 def home():
     if current_user.is_authenticated:
         total_users = user_db.get_user_count()
-        total_content = content_db.get_content_count()
         todays_date = datetime.now()
-        uploaded_today = []
+        uploaded_today_approved = []
+        uploaded_today_count = 0
         type_count = [user_db.get_trainee_count(), user_db.get_trainer_count(), user_db.get_admin_count()]
-        recent = content_db.query_content_approved() #change this later
+        all_content = content_db.scan_everything()
+        total_content = len(all_content)
         diet_plans = []
         workout_plans = []
-        for approved_content in recent:
-            item_content = approved_content['content']
-            if item_content['mode_of_instruction'] == 'diet_plan':
-                diet_plans.append(approved_content)
-            else:
-                workout_plans.append(approved_content)
+        for current_content in all_content:
+            item_content = current_content['content']
             uploaded_date = datetime.strptime(item_content['date'], "%m/%d/%Y")
             if (todays_date - timedelta(days=1)) <= uploaded_date:
-                uploaded_today.append(approved_content)
+                uploaded_today_count += 1
+                if current_content['approved']:
+                    uploaded_today_approved.append(current_content)
+                else:
+                    continue
+            if item_content['mode_of_instruction'] == 'Diet plan':
+                diet_plans.append(current_content)
+            else:
+                workout_plans.append(current_content)
         user_values = user_db.query_user(current_user.get_id())
         subscribed_content = []
-        uploaded_today_len = len(uploaded_today)
         if 'subscribed_accounts' in user_values['content']:
             subscribed_accounts = user_values['content']['subscribed_accounts']
             for account in subscribed_accounts:
                 subscribed_content.extend(content_db.scan_content_by_email(account))
         return render_template("dashboard.html", user=current_user, total_users=total_users, total_content=total_content, 
-            uploaded_today=uploaded_today, type_count=type_count, recent=recent, subscribed_content=subscribed_content,
-            diet_plans=diet_plans, workout_plans=workout_plans, uploaded_today_len=uploaded_today_len)
+            uploaded_today=uploaded_today_approved, type_count=type_count, subscribed_content=subscribed_content,
+            diet_plans=diet_plans, workout_plans=workout_plans, uploaded_today_len=uploaded_today_count)
     else: 
         return render_template("landing.html")
 
