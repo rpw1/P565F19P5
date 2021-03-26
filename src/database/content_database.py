@@ -149,7 +149,7 @@ class ContentDatabase:
         if 'Items' in response:
             return response["Items"]
         print("Unable to query content")
-        return []
+        return None
 
     def update_approval(self, content_id, email, approved):
         self.check_database()
@@ -180,6 +180,14 @@ class ContentDatabase:
             response = self.content_table.scan(
                 FilterExpression = Attr('mode_of_instruction').ne('diet_plan') & Attr('approved').eq(True)
             )
+        if 'Items' in response:
+            return response["Items"]
+        print("Unable to query content")
+        return None
+
+    def scan_everything(self):
+        self.check_database()
+        response = self.content_table.scan()
         if 'Items' in response:
             return response["Items"]
         print("Unable to query content")

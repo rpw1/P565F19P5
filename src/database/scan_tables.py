@@ -64,7 +64,6 @@ class ScanTables:
         return new_scan_items
 
     def search_users(self, search_tag, scan_filters) -> (list, list):
-        print(scan_filters)
         items = list()
         heuristics = list()
         scan_items = self.u_db.scan_fps()
@@ -110,7 +109,6 @@ class ScanTables:
             for key, filter_items in scan_filters.items():
                 for filter_item in filter_items:
                     if key == 'date':
-                        print
                         past = datetime.strptime(content[key], "%m/%d/%Y")
                         present = datetime.now()
                         if filter_item == 'today' and (present - timedelta(days=1)) <= past:

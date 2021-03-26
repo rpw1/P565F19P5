@@ -21,7 +21,7 @@
                     <div class="col-md-6">
                         <h4>Content data</h4>
                         <li>Total content count: {{total_content}}</li>
-                        <li>Uploaded today: {{uploaded_today}}</li>
+                        <li>Uploaded today: {{uploaded_today_len}}</li>
                         <li>Views today:</li>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
     <hr/>
     <h3>Recently uploaded</h3>
     <div class="row flex-row flex-nowrap overflow-auto">
-        {% for item in recent%}
+        {% for item in uploaded_today%}
         <div class="col-auto mb-3">
             <div class="card h-100" style="width:250px">
                 <img class="card-img-top" style="height: 140.625px; object-fit:cover;" src="{{item['content']['bucket_info']['thumbnail_link']}}" alt="thumbnail">
