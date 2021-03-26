@@ -30,6 +30,7 @@
     </div>
     <hr/>
     {% endif %}
+    {% if subscribed_content %}
     <h3>New from my subscriptions</h3>
     <div class="row flex-row flex-nowrap overflow-auto">
         {% for item in subscribed_content%}
@@ -45,6 +46,7 @@
         {% endfor %}
     </div>
     <hr/>
+    {% endif %}
     <h3>Recently uploaded</h3>
     <div class="row flex-row flex-nowrap overflow-auto">
         {% for item in uploaded_today%}

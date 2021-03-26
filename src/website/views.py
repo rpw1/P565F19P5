@@ -40,9 +40,9 @@ def home():
                     uploaded_today_approved.append(current_content)
                 else:
                     continue
-            if item_content['mode_of_instruction'] == 'Diet plan':
+            if item_content['mode_of_instruction'] == 'Diet plan' and current_content['approved']:
                 diet_plans.append(current_content)
-            else:
+            elif current_content['approved']:
                 workout_plans.append(current_content)
         user_values = user_db.query_user(current_user.get_id())
         subscribed_content = []
