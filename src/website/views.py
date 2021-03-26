@@ -11,12 +11,14 @@ from datetime import datetime, timedelta, date
 from decouple import config
 from src.database.scan_tables import ScanTables
 from iso3166 import countries_by_alpha2
+from src.database.progress_tracking_database import ProgressTrackingDatabase
 
 views = Blueprint("views", __name__)
 user_db = UserDatabase()
 content_db = ContentDatabase()
 content_bucket = ContentBucket()
 scan_tb = ScanTables()
+progress_db = ProgressTrackingDatabase()
 roles = ['client', 'fitness_professional', 'admin']
 
 @views.route("/")
@@ -289,12 +291,36 @@ def update_password():
 @views.route("/progress_tracking", methods=["GET","POST"])
 @login_required
 def progress_tracking():
+    today = date.today()
+    weekday = date.today().strftime('%A')
+    wk = today.isocalendar()[1]
+    print(wk)
+    print(today)
+    print(weekday)
+    monday = 0 
+    tuesday= 0 
+    wednesday=0 
+    thursday=0
+    friday=0
+    saturday =0 
+    sunday = 0
+    email = current_user.get_id()
+    weekly_cals = "0"
+    base_content = {
+        "weekly_cals": weekly_cals
+    }
+    progress_db.insert_content(email, base_content)
+    todays_date = weekday + " " + str(today)
+    email = current_user.get_id()
+    weekly_cals = progress_db.get_content(email)
+    print('AGDJHGfdas')
+    print(weekly_cals['content']['weekly_cals'])
     if request.method == "POST_1":
         legend = 'Calories'
         temperatures = [10.2, 3.2, 69]
-        times = ['Monday', 'Tuesday', 'Wed']
+        times = ['Monday', 'Tuesaday', 'Wed']
         return render_template('progress_tracking.html', values=temperatures, labels=times, legend=legend, user=current_user)
-    return render_template('progress_tracking.html', user=current_user)
+    return render_template('progress_tracking.html', user=current_user, todays_date = todays_date)
 
 @views.route("/search", methods=["GET","POST"])
 @login_required
