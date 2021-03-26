@@ -212,18 +212,18 @@ function make_custom_workout() {
                 training_type: $("#training_type").val(),
             };
 
-            SaveDataToLocalStorage(workout);
+            SaveDataToLocalStorageWorkout(workout);
             $("#btn_clear_storage").prop('disabled', false);
             $(`#btn_clear_storage`).show();
             print();
 
-            clear_input();
+            clear_workout();
             iziToast.success({
                 title: 'Success',
                 message: 'Workout created',
             });
         } else {
-            clear_input();
+            clear_workout();
             iziToast.error({
                 title: 'Error',
                 message: "This workout is overlapping another one",
@@ -418,6 +418,53 @@ function print(clear = false, init = false, edit = false) {
     }
 }
 
+function printWorkout(clear = false, init = false, edit = false) {
+    if (clear != false){
+        $("#workout_list > tbody").html("");
+        return true;
+    };
+    var data = localStorage.getItem("tbWorkout");
+    data = JSON.parse(data);
+    if (data[0] !== null) {
+        $("#workout_list > tbody").html("");
+        $(`.week td.active`).removeClass('badge1');
+        $(`.week td.active`).removeAttr( "data-badge" );
+        let date = [];
+        if (data.length !== 0) {
+            for (let i = 0; i < data.length; i++) {
+                const element = data[i];
+                $("#workout_list > tbody").append(
+                    `
+                    <tr>
+                        <td class="text-center align-middle">${element.title}</td>
+                        <td class="text-center align-middle">${element.description2}</td>
+                        <td class="text-center align-middle">${element.difficulty}</td>
+                        <td class="text-center align-middle">${element.duration}</td>
+                        <td class="text-center align-middle">${element.training_type}</td>
+                        <td class="text-center align-middle">
+                            <button class="btn btn-primary btn-sm " onclick="edit_workout(${element.id})"><i class="fas fa-pencil-alt"></i></button>
+                            <button class="btn btn-danger btn-sm " onclick="delete_workout(${element.id})"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    `
+                );
+                let currDate = element.date.split("/");
+                date.push(currDate[0]);
+            }
+            date = [...new Set(date)];
+            date.forEach(element => {
+                let cell = document.querySelector(`.week > td.active[data-day='${element}']`);
+                put_badges_new(cell);
+            });
+        } else {
+            let element = document.querySelector(`.week > td.active[data-badge]`);
+            if (element !== null) {
+                put_badges_new(element);
+            }
+        }
+    }
+}
+
 function SaveDataToLocalStorage(data)
 {
     var a = [];
@@ -518,6 +565,25 @@ function edit_appointment(id){
     }
 };
 
+function edit_workout(id){
+    var data = localStorage.getItem("tbWorkout");
+    data = JSON.parse(data);
+    if (data[0] !== null) {
+        for (let i = 0; i < data.length; i++) {
+            const element = data[i];
+            if (element.id == id) {
+                $("#title").val(element.title);
+                $("#description2").val(element.description2);
+                $("#difficulty").val(element.difficulty);
+                $("#duration").val(element.duration);
+                $("#training_type").val(element.training_type);
+                $("#submit").prop('disabled', false);
+                delete_appointment(id);
+            }
+        }
+    }
+};
+
 function delete_appointment(id){
     var data = localStorage.getItem("tbAppointment");
     data = JSON.parse(data);
@@ -540,6 +606,33 @@ function delete_appointment(id){
         iziToast.success({
             title: 'Success',
             message: 'Appointment deleted',
+        });
+
+    }
+};
+
+function delete_workout(id){
+    var data = localStorage.getItem("tbWorkout");
+    data = JSON.parse(data);
+    if (data[0] !== null) {
+        for (let i = 0; i < data.length; i++) {
+            const element = data[i];
+            if (element == null) {
+                data.splice(i, 1);
+            }
+            if (element.id == id) {
+                data.splice(i, 1);
+            }
+        }
+        data = data.filter(function (el) {
+            return el != null;
+        });
+
+        localStorage.setItem('tbWorkout', JSON.stringify(data));
+        print(false, false, true);
+        iziToast.success({
+            title: 'Success',
+            message: 'Workout deleted',
         });
 
     }
