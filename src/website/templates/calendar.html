@@ -11,11 +11,74 @@
         <br>
         <div class="row">
             <div class="col-md-4">
-                <form method="POST">
-                    <div class="form-group">
-                        <input class="form-control" type="text">
+                <form id="form_create_appointment">
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <label class="required">Date</label>
+                            <input class="form-control date-input" type="text" id="date" data-trigger="hover" data-toggle="popover" title="Date" data-content="You can select any date from today clicking on the number in the calendar" required>
+                        </div>
+                        <div class="col form-group">
+                            <label>Description</label>
+                            <input class="form-control" type="text" id="description">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <label class="required">Start Time</label>
+                            <input class="form-control time-input" type="text" id="start_time" required>
+                        </div>
+                        <div class="col form-group">
+                            <label class="required">End Time</label>
+                            <input class="form-control time-input" type="text" id="end_time" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <button type="button" class="btn btn-warning btn-block" id="clear" onclick="clear_input()">Clear Form</button>
+                        </div>
+                        <div class="col form-group">
+                            <button type="button" class="btn btn-primary btn-block" id="submit" onclick="make_appointment()" disabled="disabled">Make Appointment</button>
+                        </div>
                     </div>
                 </form>
+            {% if current_user.role == 'client' %}
+            <form id="form_create_workout">
+                <div class="form-row">
+                    <div class="col form-group"> 
+                        <label class="required">Title</label>
+                        <input class="form-control" type="text" id="title">
+                    </div>
+                    <div class="col form-group">
+                        <label>Description</label>
+                        <input class="form-control" type="text" id="description2">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col form-group">
+                        <label class="required">Difficulty (1-5)</label>
+                        <input class="form-control" type="text" id="difficulty" required>
+                    </div>
+                    <div class="col form-group">
+                        <label class="required">Duration in Minutes</label>
+                        <input class="form-control time-input" type="text" id="duration" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col form-group">
+                        <label class="required">Training Type</label>
+                        <input class="form-control time-input" type="text" id="training_type" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col form-group">
+                        <button type="button" class="btn btn-warning btn-block" id="clear" onclick="clear_workout()">Clear Form</button>
+                    </div>
+                    <div class="col form-group">
+                        <button type="button" class="btn btn-primary btn-block" id="submit" onclick="make_custom_workout()" disabled="disabled">Make Workout</button>
+                    </div>
+                </div>
+            </form>
+            {% endif %}
             </div>
             <div class="calendar col-md-8">
                 <div>
@@ -50,38 +113,6 @@
 
         <div class="row">
             <div class="col offset-md-1">
-                <form id="form_create_appointment">
-                    <div class="form-row">
-                        <div class="col form-group">
-                            <label class="required">Date</label>
-                            <input class="form-control date-input" type="text" id="date" data-trigger="hover" data-toggle="popover" title="Date" data-content="You can select any date from today clicking on the number in the calendar" required>
-                        </div>
-                        <div class="col form-group">
-                            <label>Description</label>
-                            <input class="form-control" type="text" id="description">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col form-group">
-                            <label class="required">Start Time</label>
-                            <input class="form-control time-input" type="text" id="start_time" required>
-                        </div>
-                        <div class="col form-group">
-                            <label class="required">End Time</label>
-                            <input class="form-control time-input" type="text" id="end_time" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col form-group">
-                            <button type="button" class="btn btn-warning btn-block" id="clear" onclick="clear_input()">Clear Form</button>
-                        </div>
-                        <div class="col form-group">
-                            <button type="button" class="btn btn-primary btn-block" id="submit" onclick="make_appointment()" disabled="disabled">Make Appointment</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="col offset-md-1">
                 <div class="row">
                     <div class="col">
                         <h3>Appointments</h3>
@@ -105,58 +136,16 @@
                 </table>
             </div>
             {% if current_user.role == 'client' %}
-            <form id="form_create_workout">
-                <div class="form-row">
-                    <div class="col form-group"> 
-                        <h3>Edit Custom Workout</h3>
-                        <label class="required">Title</label>
-                        <input class="form-control" type="text" id="title">
-                    </div>
-                    <div class="col form-group">
-                        <label>Description</label>
-                        <input class="form-control" type="text" id="description2">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="col form-group">
-                        <label>Difficulty</label>
-                        <button class="btn btn-secondary dropdown-toggle mr-2" style="float:right" type="button" id="difficulty" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item">5</a>
-                            <a class="dropdown-item">4</a>
-                            <a class="dropdown-item">3</a>
-                            <a class="dropdown-item">2</a>
-                            <a class="dropdown-item">1</a>
-                        </div>
-                    </div>
-                    <div class="col form-group">
-                        <label class="required">Duration in Minutes</label>
-                        <input class="form-control time-input" type="text" id="duration" required>
-                    </div>
-                    <div class="col form-group">
-                        <label class="required">Training Type</label>
-                        <input class="form-control time-input" type="text" id="training_type" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="col form-group">
-                        <button type="button" class="btn btn-warning btn-block" id="clear" onclick="clear_workout()">Clear Form</button>
-                    </div>
-                    <div class="col form-group">
-                        <button type="button" class="btn btn-primary btn-block" id="submit" onclick="make_custom_workout()" disabled="disabled">Make Custom Workout</button>
-                    </div>
-                </div>
-            </form>
             <div class="col offset-md-1">
                 <div class="row">
                     <div class="col">
                         <h3>Workouts</h3>
                     </div>
                     <div class="col form-group">
-                        <button type="button" class="btn btn-danger btn-block" id="btn_clear_storage" onclick="clear_storageWorkout()">Clear Workouts</button>
+                        <button type="button" class="btn btn-danger btn-block" id="btn_clear_storageWorkout" onclick="clear_storageWorkout()">Clear Workouts</button>
                     </div>
                 </div>
-                <table class="table table-bordered table-hover table-striped table-sm" id="appointment_list">
+                <table class="table table-bordered table-hover table-striped table-sm" id="workout_list">
                     <thead class="thead-dark">
                         <tr>
                             <th scope="col" class="text-center align-middle">Title</th>
