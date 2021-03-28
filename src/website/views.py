@@ -114,10 +114,11 @@ def profile():
     if user_values['role'] == roles[1]:
         uploads = content_db.query_content_by_user(user_email)
         if 'country' in user_values:
-            country_info = user_values['country']
-            country_name = country_info['code']
-            if 'flag' in country_info:
-                flag_src = country_info['flag']
+            if user_values['country']:
+                country_info = user_values['country']
+                country_name = country_info['code']
+                if 'flag' in country_info:
+                    flag_src = country_info['flag']
         if 'specialty' in user_values:
             specialty = user_values['specialty']
     country_codes = list(countries_by_alpha2.keys())
