@@ -294,33 +294,66 @@ def progress_tracking():
     today = date.today()
     weekday = date.today().strftime('%A')
     wk = today.isocalendar()[1]
-    print(wk)
-    print(today)
-    print(weekday)
-    monday = 0 
-    tuesday= 0 
-    wednesday=0 
-    thursday=0
-    friday=0
-    saturday =0 
-    sunday = 0
+    todays_date = today
     email = current_user.get_id()
-    weekly_cals = "0"
-    base_content = {
-        "weekly_cals": weekly_cals
-    }
-    progress_db.insert_content(email, base_content)
-    todays_date = weekday + " " + str(today)
-    email = current_user.get_id()
-    weekly_cals = progress_db.get_content(email)
-    print('AGDJHGfdas')
-    print(weekly_cals['content']['weekly_cals'])
-    if request.method == "POST_1":
-        legend = 'Calories'
-        temperatures = [10.2, 3.2, 69]
-        times = ['Monday', 'Tuesaday', 'Wed']
-        return render_template('progress_tracking.html', values=temperatures, labels=times, legend=legend, user=current_user)
-    return render_template('progress_tracking.html', user=current_user, todays_date = todays_date)
+    calories = ""
+    try :
+        progress_db.query_user(email)
+        content = progress_db.query_user(email)
+        calories = content['content']['weekly_cals']
+        print(calories)
+    except:
+        weekly_cals = "0,0,0,0,0,0,0"
+        base_content = {
+            "weekly_cals": weekly_cals
+        }
+        progress_db.insert_content(email,base_content)
+        progress_db.query_user(email)
+        content = progress_db.query_user(email)
+        calories = content['content']['weekly_cals']   
+    if request.method == "POST":
+        split = calories.split(",")
+        day_of_week = request.form.get("day_of_week")
+        new_cals = request.form.get("calories")
+        print(day_of_week)
+        print(new_cals)
+        print(split[0])
+
+        if(day_of_week == "Monday"):
+            updates_cals = int(split[0]) + int(new_cals)
+            split[0] = str(updates_cals)
+        elif(day_of_week == "Tuesday"):
+            updates_cals = int(split[1]) + int(new_cals)
+            split[1] = str(updates_cals)
+        elif(day_of_week == "Wednesday"):
+            updates_cals = int(split[2]) + int(new_cals)
+            split[2] = str(updates_cals)
+        elif(day_of_week == "Thursday"):
+            updates_cals = int(split[3]) + int(new_cals)
+            split[3] = str(updates_cals)
+        elif(day_of_week == "Friday"):
+            updates_cals = int(split[4]) + int(new_cals)
+            split[4] = str(updates_cals)
+        elif(day_of_week == "Saturday"):
+            updates_cals = int(split[5]) + int(new_cals)
+            split[5] = str(updates_cals)
+        elif(day_of_week == "Sunday"):
+            updates_cals = int(split[6]) + int(new_cals)
+            split[6] = str(updates_cals)
+        calories = ""
+        i=0
+        for x in split:
+            if(i==7):
+                calories = calories + x
+            else:
+                calories = calories + x + ","
+            i = i+1
+        base_content = {
+            "weekly_cals": calories
+        }
+        progress_db.insert_content(email,base_content)
+        return render_template('progress_tracking.html', user=current_user, todays_date = todays_date, calories = calories)
+    return render_template('progress_tracking.html', user=current_user, todays_date = todays_date, calories = calories)
 
 @views.route("/search", methods=["GET","POST"])
 @login_required

@@ -13,7 +13,9 @@
 <canvas id="myChart" width="400" height="400"></canvas>
 <script>
     Chart.defaults.global.responsive = false;
- 
+    var djangoData = "{{ calories | safe }}";
+    var split = djangoData.split(",")
+
  // define the chart data
  var chartData = {
     labels : ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
@@ -36,7 +38,7 @@
        pointHoverBorderWidth: 2,
        pointRadius: 1,
        pointHitRadius: 10,
-       data : [10.2, 3.2, 69],
+       data: split,
        spanGaps: false
    }]
  }
@@ -47,10 +49,9 @@
  // create the chart using the chart canvas
  var myChart = new Chart(ctx, {type: 'line', data: chartData,});
 </script>
-
 <h2>My Progress</h2>
 <h3> Today's Date: {{todays_date}}</h3>
-            <form method="POST_1">
+            <form method="POST">
                 <label for="day_of_week">Day:</label>
                 <select id="day_of_week" name="day_of_week">
                 <option value="Monday">Monday</option>
@@ -63,7 +64,7 @@
                 </select>
                 <input type="calories" name="calories" placeholder="calorie intake" class="form-control" required>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-block">Update Calorie Intake</button>
+                    <button type="submit" class="btn btn-primary btn-block">Add Calories</button>
                 </div>
             </form>
             <form method="POST_2">
