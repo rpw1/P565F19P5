@@ -33,6 +33,11 @@ $(function () {
         clearIncomplete: true
     });
 
+    $('#description2').inputmask('Regex', {
+        regex: "(?:[\\w\\d]+(\\s)*){1,5}",
+        clearIncomplete: true
+    });
+
     $("#start_time").inputmask("hh:mm", {
         placeholder: "hh:mm (24h)",
         alias: "datetime",
@@ -56,6 +61,12 @@ $(function () {
         clearIncomplete: true
     });
 
+    $('#title').inputmask('Regex', {
+        max_length: 10,
+        regex: "(?:[\\w\\d]+(\\s)*){1,5}",
+        clearIncomplete: true
+    });
+
     $("#difficulty").inputmask('Regex', {
         max_length: 1,
         regex: "^([1-5])",
@@ -63,6 +74,12 @@ $(function () {
         oncomplete: function(){
             $("#submit_workout").focus();
     }});
+
+    $('#duration').inputmask('Regex', {
+        max_length: 3,
+        regex: "^([0-2[0-9][0-9])",
+        clearIncomplete: true
+    });
 
     $('[data-toggle="popover"]').popover();
 
@@ -153,6 +170,19 @@ $("#days td.active").on("click", function () {
     }
 });
 
+$("#days td.active").on("click", function () {
+    if (is_emptyWorkout() == true) {
+        $("#submit_workout").prop('disabled', true);
+    } else {
+        $("#submit_workout").prop('disabled', false);
+    }
+    if ($("#description2").val() == null || $("#description2").val() == '') {
+        $("#description2").focus();
+    } else {
+        $("#submit_workout").focus();
+    }
+});
+
 $("#days td.inactive").on("click", function () {
     iziToast.error({
         title: 'Error',
@@ -233,27 +263,8 @@ function make_custom_workout() {
                 title: 'Success',
                 message: 'Workout created',
             });
-        } else {
-            clear_workout();
-            iziToast.error({
-                title: 'Error',
-                message: "This workout is overlapping another one",
-                overlay: true,
-                zindex: 999,
-                position: 'center',
-                timeout: 3000,
-            });
-        }
-    } else {
-        iziToast.error({
-            title: 'Error',
-            message: "All input fields are needed in order to make a workout",
-            overlay: true,
-            zindex: 999,
-            position: 'center',
-            timeout: 3000,
-        });
-    }
+        } 
+    } 
 }
 
 $("#end_time, #start_time").focusout(function () {
@@ -306,6 +317,18 @@ function is_empty() {
         ($("#date").val() == null || $("#date").val() == '') ||
         ($("#start_time").val() == null || $("#start_time").val() == '') ||
         ($("#end_time").val() == null || $("#end_time").val() == '')
+    ) {
+        return true;
+    }
+    return false;
+}
+
+function is_emptyWorkout() {
+    if (
+        ($("#title").val() == null || $("#title").val() == '') ||
+        ($("#difficulty").val() == null || $("#difficulty").val() == '') ||
+        ($("#duration").val() == null || $("#duration").val() == '') ||
+        ($("#training_type").val() == null || $("#training_type").val() == '')
     ) {
         return true;
     }
@@ -477,15 +500,11 @@ function printWorkout(clear = false, init = false, edit = false) {
                     </tr>
                     `
                 );
-                let currDate = element.date.split("/");
-                date.push(currDate[0]);
+                
             }
-            date = [...new Set(date)];
-            date.forEach(element => {
-                let cell = document.querySelector(`.week > td.active[data-day='${element}']`);
-                put_badges_newWorkout(cell);
-            });
-        } else {
+            
+        } 
+        else {
             let element = document.querySelector(`.week > td.active[data-badge]`);
             if (element !== null) {
                 put_badges_newWorkout(element);
