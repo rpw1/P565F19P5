@@ -34,6 +34,21 @@ def home():
         diet_plans = []
         workout_plans = []
         fitness_videos = []
+        calories = ""
+        try :
+            progress_db.query_user(current_user.email)
+            content = progress_db.query_user(current_user.email)
+            calories = content['content']['weekly_cals']
+            print(calories)
+        except:
+            weekly_cals = "0,0,0,0,0,0,0"
+            base_content = {
+                "weekly_cals": weekly_cals
+            }
+            progress_db.insert_content(email,base_content)
+            progress_db.query_user(email)
+            content = progress_db.query_user(email)
+            calories = content['content']['weekly_cals']   
         for current_content in all_content:
             item_content = current_content['content']
             uploaded_date = datetime.strptime(item_content['date'], "%m/%d/%Y")
@@ -57,7 +72,7 @@ def home():
                 subscribed_content.extend(content_db.scan_content_by_email(account))
         return render_template("dashboard.html", user=current_user, total_users=total_users, total_content=total_content, 
             uploaded_today=uploaded_today_approved, type_count=type_count, subscribed_content=subscribed_content,
-            diet_plans=diet_plans, workout_plans=workout_plans, fitness_videos=fitness_videos, uploaded_today_len=uploaded_today_count)
+            diet_plans=diet_plans, workout_plans=workout_plans, fitness_videos=fitness_videos, uploaded_today_len=uploaded_today_count, calories=calories)
     else: 
         return render_template("landing.html")
 
