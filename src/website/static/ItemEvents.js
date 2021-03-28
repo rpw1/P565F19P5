@@ -281,7 +281,7 @@ $("#difficulty").inputmask('Regex', {
     regex: "^([1-5])",
     clearIncomplete: true,
     oncomplete: function(){
-        $("#submit").focus();
+        $("#submit_workout").focus();
 }});
 
 function clear_input() {
@@ -530,6 +530,10 @@ function SaveDataToLocalStorageWorkout(data2)
 
     a.push(data2);
     localStorage.setItem('tbWorkout', JSON.stringify(a));
+    $.post('/calendar', {"workout_data":JSON.stringify(a)}, function(data, status) {
+        console.log({"workout_data":JSON.stringify(a)})
+    }, 'application/json');
+    
 }
 
 function clear_storage(){
@@ -658,6 +662,7 @@ function delete_workout(id){
 function put_badges_new(cell) {
     var data = localStorage.getItem("tbAppointment");
     data = JSON.parse(data);
+    if (data == null) {return}
     if (data[0] !== null) {
         let counter = 0;
         for (let i = 0; i < data.length; i++) {

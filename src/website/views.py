@@ -128,6 +128,13 @@ def profile():
 @views.route("/calendar", methods=["GET","POST"])
 @login_required
 def calendar():
+    if request.method == 'POST':
+        data = request.data
+        print(data)
+        print(type(data))
+        if data: 
+            print(data['workout_data'])
+        pass
     return render_template("calendar.html", user=current_user, post_url = url_for('views.calendar'))
     
 @views.route("/user/<id>", methods = ["GET", "POST"])
