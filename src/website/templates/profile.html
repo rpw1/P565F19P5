@@ -74,7 +74,7 @@
         </div>
         <a href="/update_password"><p class="text-center" >Change password</p></a>
         {% if current_user.role == "fitness_professional" %}
-        <p class="text-center text-muted">{} subscribers</p>
+        <p class="text-center text-muted">{{subscriber_count}} subscriber{% if subscriber_count != 1%}s{% endif %}</p>
         {% endif %}
     </div>
     {% elif class == "Trainer"%}
