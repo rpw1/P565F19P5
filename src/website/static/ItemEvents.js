@@ -56,6 +56,14 @@ $(function () {
         clearIncomplete: true
     });
 
+    $("#difficulty").inputmask('Regex', {
+        max_length: 1,
+        regex: "^([1-5])",
+        clearIncomplete: true,
+        oncomplete: function(){
+            $("#submit_workout").focus();
+    }});
+
     $('[data-toggle="popover"]').popover();
 
     print(false, true);
@@ -202,10 +210,10 @@ function make_appointment() {
 }
 
 function make_custom_workout() {
-    if (is_empty() == false) {
-        is_past_date();
-        compare();
-        if (is_overlap() == false) {
+    if (true) {
+        // is_past_date();
+        // compare();
+        if (true) {
             var workout = {
                 title: $("#title").val(),
                 description2: $("#description2").val(),
@@ -258,6 +266,22 @@ $("#end_time, #start_time, #date").keyup(function () {
         $("#submit").prop('disabled', false);
     }
 });
+
+$("#difficulty").keyup(function () {
+    if ($("#difficulty").val() == null || $("#difficulty").val() == '') {
+        $("#submit_workout").prop('disabled', true);
+    } else {
+        $("#submit_workout").prop('disabled', false);
+    }
+});
+
+$("#difficulty").inputmask('Regex', {
+    max_length: 1,
+    regex: "^([1-5])",
+    clearIncomplete: true,
+    oncomplete: function(){
+        $("#submit").focus();
+}});
 
 function clear_input() {
     $("#date").val('');
@@ -494,7 +518,7 @@ function SaveDataToLocalStorage(data)
     localStorage.setItem('tbAppointment', JSON.stringify(a));
 }
 
-function SaveDataToLocalStorageWorkout(data)
+function SaveDataToLocalStorageWorkout(data2)
 {
     var a = [];
     a = JSON.parse(localStorage.getItem('tbWorkout'));
