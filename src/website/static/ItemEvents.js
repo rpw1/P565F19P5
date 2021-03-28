@@ -147,7 +147,7 @@ $("#days td.active").on("click", function () {
 $("#days td.inactive").on("click", function () {
     iziToast.error({
         title: 'Error',
-        message: "You can make appointments just today and foward",
+        message: "You can make appointments just today and forward",
         overlay: true,
         zindex: 999,
         position: 'center',
@@ -427,16 +427,16 @@ function printWorkout(clear = false, init = false, edit = false) {
         $("#workout_list > tbody").html("");
         return true;
     };
-    var data = localStorage.getItem("tbWorkout");
-    data = JSON.parse(data);
-    if (data[0] !== null) {
+    var data2 = localStorage.getItem("tbWorkout");
+    data2 = JSON.parse(data2);
+    if (data2[0] !== null) {
         $("#workout_list > tbody").html("");
         $(`.week td.active`).removeClass('badge1');
         $(`.week td.active`).removeAttr( "data-badge" );
         let date = [];
-        if (data.length !== 0) {
-            for (let i = 0; i < data.length; i++) {
-                const element = data[i];
+        if (data2.length !== 0) {
+            for (let i = 0; i < data2.length; i++) {
+                const element = data2[i];
                 $("#workout_list > tbody").append(
                     `
                     <tr>
@@ -458,12 +458,12 @@ function printWorkout(clear = false, init = false, edit = false) {
             date = [...new Set(date)];
             date.forEach(element => {
                 let cell = document.querySelector(`.week > td.active[data-day='${element}']`);
-                put_badges_new(cell);
+                put_badges_newWorkout(cell);
             });
         } else {
             let element = document.querySelector(`.week > td.active[data-badge]`);
             if (element !== null) {
-                put_badges_new(element);
+                put_badges_newWorkout(element);
             }
         }
     }
@@ -503,7 +503,7 @@ function SaveDataToLocalStorageWorkout(data)
         return el != null;
     });
 
-    a.push(data);
+    a.push(data2);
     a.sort(function (sTime1, sTime2) {
         let temp3 = parseInt(sTime1.date.slice(0,2))
         let temp4 = parseInt(sTime2.date.slice(0,2))
@@ -615,23 +615,23 @@ function delete_appointment(id){
 };
 
 function delete_workout(id){
-    var data = localStorage.getItem("tbWorkout");
-    data = JSON.parse(data);
-    if (data[0] !== null) {
-        for (let i = 0; i < data.length; i++) {
-            const element = data[i];
+    var data2 = localStorage.getItem("tbWorkout");
+    data2 = JSON.parse(data2);
+    if (data2[0] !== null) {
+        for (let i = 0; i < data2.length; i++) {
+            const element = data2[i];
             if (element == null) {
-                data.splice(i, 1);
+                data2.splice(i, 1);
             }
             if (element.id == id) {
-                data.splice(i, 1);
+                data2.splice(i, 1);
             }
         }
-        data = data.filter(function (el) {
+        data2 = data2.filter(function (el) {
             return el != null;
         });
 
-        localStorage.setItem('tbWorkout', JSON.stringify(data));
+        localStorage.setItem('tbWorkout', JSON.stringify(data2));
         print(false, false, true);
         iziToast.success({
             title: 'Success',
@@ -665,6 +665,28 @@ function put_badges_new(cell) {
     }
 }
 
+function put_badges_newWorkout(cell) {
+    var data2 = localStorage.getItem("tbWorkout");
+    data2 = JSON.parse(data2);
+    if (data2[0] !== null) {
+        let counter = 0;
+        for (let i = 0; i < data2.length; i++) {
+            const element = data2[i];
+            if (cell.getAttribute("data-day") == element.date.slice(0,2)) {
+                counter++;
+            }
+        }
+
+        if (counter >= 1) {
+            cell.classList.add("badge1");
+            cell.setAttribute('data-badge', counter);
+        }
+        if (counter <= 0) {
+            cell.classList.remove("badge1");
+            cell.removeAttribute('data-badge');
+        }
+    }
+}
 function sort_database(data){
     return data.sort(function (sTime1, sTime2) {
         let temp3 = parseInt(sTime1.date.slice(0,1))

@@ -9,6 +9,11 @@
     <br><br>
     <div class="container">
         <br>
+        <div class="form-row">
+            <div class="col form-group">
+                <h2>Create Appointments</h2>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-4">
                 <form id="form_create_appointment">
@@ -42,6 +47,11 @@
                     </div>
                 </form>
             {% if current_user.role == 'client' %}
+            <div class="form-row">
+                <div class="col form-group">
+                    <h2>Create Workouts</h2>
+                </div>
+            </div>
             <form id="form_create_workout">
                 <div class="form-row">
                     <div class="col form-group"> 
