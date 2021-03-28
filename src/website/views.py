@@ -104,6 +104,10 @@ def profile():
         flash("Successfully edited profile!", category="success")
         return redirect(url_for("views.profile"))
     user_values = user_db.query_user(user_email)
+    subscriber_count = 0
+    if 'subscribers' in user_values['content']:
+        if user_values['role'] == roles[1] and user_values['content'] and user_values['content']['subscribers']:
+            subscriber_count = user_values['content']['subscribers']
     user_image = user_values['image']
     flag_src = ""
     country_name = ""
@@ -124,7 +128,7 @@ def profile():
     country_codes = list(countries_by_alpha2.keys())
     return render_template("profile.html", user=current_user, user_image=user_image, 
         uploads=uploads, countries=countries_by_alpha2, country_codes=country_codes, length=len(country_codes),
-        specialty = specialty, gender = gender, bio = bio, flag_src = flag_src, country_name=country_name)
+        specialty = specialty, gender = gender, bio = bio, flag_src = flag_src, country_name=country_name, subscriber_count=subscriber_count)
 
 @views.route("/calendar", methods=["GET","POST"])
 @login_required
