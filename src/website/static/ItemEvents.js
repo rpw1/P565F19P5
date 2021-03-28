@@ -77,7 +77,13 @@ $(function () {
 
     $('#duration').inputmask('Regex', {
         max_length: 3,
-        regex: "^([0-2][0-9][0-9])",
+        regex: "^([0-9][0-9][0-9])",
+        clearIncomplete: true
+    });
+
+    $('#training_type').inputmask('Regex', {
+        max_length: 10,
+        regex: "(?:[\\w\\d]+(\\s)*){1,5}",
         clearIncomplete: true
     });
 
@@ -241,7 +247,7 @@ function make_appointment() {
 }
 
 function make_custom_workout() {
-    if (true) {
+    if (is_emptyWorkout() == true) {
         // is_past_date();
         // compare();
         if (true) {
@@ -306,7 +312,7 @@ function clear_input() {
 function clear_workout(){
     $("#title").val('');
     $("#description2").val('');
-    $("difficulty").val('');
+    $("#difficulty").val('');
     $("#duration").val('');
     $("#training_type").val('');
     $("#submit").prop('disabled', true);
