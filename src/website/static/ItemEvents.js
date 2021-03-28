@@ -9,6 +9,8 @@ $(function () {
         arrWorkout = JSON.parse(arrWorkout);
         $("#btn_clear_storage").prop('disabled', false);
         $(`#btn_clear_storage`).show();
+        $("#btn_clear_storageWorkout").prop('disabled', false);
+        $(`#btn_clear_storageWorkout`).show();
         if (arrAppointment == null || arrAppointment == "[null]"){
             $("#btn_clear_storage").prop('disabled', true);
             $(`#btn_clear_storage`).hide();
@@ -17,8 +19,8 @@ $(function () {
             localStorage.setItem('tbAppointment', JSON.stringify(arrAppointment));
         }
         if(arrWorkout == null || arrWorkout == "[null]"){
-            $("#btn_clear_storage").prop('disabled', true);
-            $(`#btn_clear_storage`).hide();
+            $("#btn_clear_storageWorkout").prop('disabled', true);
+            $(`#btn_clear_storageWorkout`).hide();
             arrWorkout = [];
             arrWorkout.push(JSON.parse(localStorage.getItem('tbWorkout')));
             localStorage.setItem('tbWorkout', JSON.stringify(arrWorkout));
@@ -213,8 +215,8 @@ function make_custom_workout() {
             };
 
             SaveDataToLocalStorageWorkout(workout);
-            $("#btn_clear_storage").prop('disabled', false);
-            $(`#btn_clear_storage`).show();
+            $("#btn_clear_storageWorkout").prop('disabled', false);
+            $(`#btn_clear_storageWorkout`).show();
             print();
 
             clear_workout();
@@ -268,8 +270,10 @@ function clear_input() {
 function clear_workout(){
     $("#title").val('');
     $("#description2").val('');
+    $("difficulty").val('');
     $("#duration").val('');
     $("#training_type").val('');
+    $("#submit").prop('disabled', true);
 }
 
 function is_empty() {
@@ -536,10 +540,9 @@ function clear_storageWorkout(){
     var arrWorkout = [];
     arrWorkout.push(JSON.parse(localStorage.getItem('tbWorkout')));
     localStorage.setItem('tbWorkout', JSON.stringify(arrWorkout));
-    $("#btn_clear_storage").prop('disabled', true);
-    $(`#btn_clear_storage`).hide();
-    $(`.week td.active`).removeClass('badge1');
-    $(`.week td.active`).removeAttr( "data-badge" );
+    $("#btn_clear_storageWorkout").prop('disabled', true);
+    $(`#btn_clear_storageWorkout`).hide();
+    
     print(true);
     iziToast.success({
         title: 'Success',
