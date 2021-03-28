@@ -71,9 +71,7 @@ $(function () {
         max_length: 1,
         regex: "^([1-5])",
         clearIncomplete: true,
-        oncomplete: function(){
-            $("#submit_workout").focus();
-    }});
+    });
 
     $('#duration').inputmask('Regex', {
         max_length: 3,
@@ -84,8 +82,8 @@ $(function () {
     $('#training_type').inputmask('Regex', {
         max_length: 10,
         regex: "(?:[\\w\\d]+(\\s)*){1,5}",
-        clearIncomplete: true
-    });
+        clearIncomplete: true,
+       });
 
     $('[data-toggle="popover"]').popover();
 
@@ -247,29 +245,26 @@ function make_appointment() {
 }
 
 function make_custom_workout() {
-    if (is_emptyWorkout() == true) {
-        // is_past_date();
-        // compare();
-        if (true) {
-            var workout = {
-                title: $("#title").val(),
-                description2: $("#description2").val(),
-                difficulty: $("#difficulty").val(),
-                duration: $("#duration").val(),
-                training_type: $("#training_type").val(),
-            };
+    if (!is_emptyWorkout()) {
+        console.log("Here")
+        var workout = {
+            title: $("#title").val(),
+            description2: $("#description2").val(),
+            difficulty: $("#difficulty").val(),
+            duration: $("#duration").val(),
+            training_type: $("#training_type").val(),
+        };
 
-            SaveDataToLocalStorageWorkout(workout);
-            $("#btn_clear_storageWorkout").prop('disabled', false);
-            $(`#btn_clear_storageWorkout`).show();
-            printWorkout();
+        SaveDataToLocalStorageWorkout(workout);
+        $("#btn_clear_storageWorkout").prop('disabled', false);
+        $(`#btn_clear_storageWorkout`).show();
+        printWorkout();
 
-            clear_workout();
-            iziToast.success({
-                title: 'Success',
-                message: 'Workout created',
-            });
-        } 
+        clear_workout();
+        iziToast.success({
+            title: 'Success',
+            message: 'Workout created',
+        });
     } 
 }
 
@@ -285,21 +280,14 @@ $("#end_time, #start_time, #date").keyup(function () {
     }
 });
 
-$("#difficulty").keyup(function () {
-    if ($("#difficulty").val() == null || $("#difficulty").val() == '') {
+$("#difficulty, #title, #duration, #training_type").keyup(function () {
+    if (is_emptyWorkout()) {
         $("#submit_workout").prop('disabled', true);
     } else {
         $("#submit_workout").prop('disabled', false);
     }
 });
 
-$("#difficulty").inputmask('Regex', {
-    max_length: 1,
-    regex: "^([1-5])",
-    clearIncomplete: true,
-    oncomplete: function(){
-        $("#submit_workout").focus();
-}});
 
 function clear_input() {
     $("#date").val('');
@@ -315,7 +303,7 @@ function clear_workout(){
     $("#difficulty").val('');
     $("#duration").val('');
     $("#training_type").val('');
-    $("#submit").prop('disabled', true);
+    $("#submit_workout").prop('disabled', true);
 }
 
 function is_empty() {
@@ -330,6 +318,10 @@ function is_empty() {
 }
 
 function is_emptyWorkout() {
+    // console.log($("#title").val())
+    // console.log($("#difficulty").val())
+    // console.log($("#duration").val())
+    // console.log($("#training_type").val())
     if (
         ($("#title").val() == null || $("#title").val() == '') ||
         ($("#difficulty").val() == null || $("#difficulty").val() == '') ||
