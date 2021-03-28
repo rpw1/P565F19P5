@@ -25,7 +25,8 @@ class ProgressTrackingDatabase:
             {
                 weekly_cals: ""
                 weekly_calorie_goal: ""
-                weekly_calorie_totla: ""
+                weekly_calorie_total: ""
+                has_been_reset: ""
             }
         """
         self.check_database()

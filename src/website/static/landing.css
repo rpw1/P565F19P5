@@ -97,3 +97,22 @@ body {
     color: White;
     font-size: 100pt;
 }
+
+.progress-flex{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1em;
+    
+}
+.chart-form{
+    padding: 2em;
+    padding-top: 1em;
+}
+.progress-form{
+    padding: 2em;
+    padding-top: 2em;
+}
+.btn{
+    margin-top: 1em;
+}

@@ -33,6 +33,11 @@ $(function () {
         clearIncomplete: true
     });
 
+    $('#description2').inputmask('Regex', {
+        regex: "(?:[\\w\\d]+(\\s)*){1,5}",
+        clearIncomplete: true
+    });
+
     $("#start_time").inputmask("hh:mm", {
         placeholder: "hh:mm (24h)",
         alias: "datetime",
@@ -56,17 +61,34 @@ $(function () {
         clearIncomplete: true
     });
 
+    $('#title').inputmask('Regex', {
+        max_length: 10,
+        regex: "(?:[\\w\\d]+(\\s)*){1,5}",
+        clearIncomplete: true
+    });
+
     $("#difficulty").inputmask('Regex', {
         max_length: 1,
         regex: "^([1-5])",
         clearIncomplete: true,
-        oncomplete: function(){
-            $("#submit_workout").focus();
-    }});
+    });
+
+    $('#duration').inputmask('Regex', {
+        max_length: 3,
+        regex: "^([0-9][0-9][0-9])",
+        clearIncomplete: true
+    });
+
+    $('#training_type').inputmask('Regex', {
+        max_length: 10,
+        regex: "(?:[\\w\\d]+(\\s)*){1,5}",
+        clearIncomplete: true,
+       });
 
     $('[data-toggle="popover"]').popover();
 
     print(false, true);
+    printWorkout(false, true);
 
 });
 
@@ -152,6 +174,19 @@ $("#days td.active").on("click", function () {
     }
 });
 
+$("#days td.active").on("click", function () {
+    if (is_emptyWorkout() == true) {
+        $("#submit_workout").prop('disabled', true);
+    } else {
+        $("#submit_workout").prop('disabled', false);
+    }
+    if ($("#description2").val() == null || $("#description2").val() == '') {
+        $("#description2").focus();
+    } else {
+        $("#submit_workout").focus();
+    }
+});
+
 $("#days td.inactive").on("click", function () {
     iziToast.error({
         title: 'Error',
@@ -210,49 +245,27 @@ function make_appointment() {
 }
 
 function make_custom_workout() {
-    if (true) {
-        // is_past_date();
-        // compare();
-        if (true) {
-            var workout = {
-                title: $("#title").val(),
-                description2: $("#description2").val(),
-                difficulty: $("#difficulty").val(),
-                duration: $("#duration").val(),
-                training_type: $("#training_type").val(),
-            };
+    if (!is_emptyWorkout()) {
+        console.log("Here")
+        var workout = {
+            title: $("#title").val(),
+            description2: $("#description2").val(),
+            difficulty: $("#difficulty").val(),
+            duration: $("#duration").val(),
+            training_type: $("#training_type").val(),
+        };
 
-            SaveDataToLocalStorageWorkout(workout);
-            $("#btn_clear_storageWorkout").prop('disabled', false);
-            $(`#btn_clear_storageWorkout`).show();
-            print();
+        SaveDataToLocalStorageWorkout(workout);
+        $("#btn_clear_storageWorkout").prop('disabled', false);
+        $(`#btn_clear_storageWorkout`).show();
+        printWorkout();
 
-            clear_workout();
-            iziToast.success({
-                title: 'Success',
-                message: 'Workout created',
-            });
-        } else {
-            clear_workout();
-            iziToast.error({
-                title: 'Error',
-                message: "This workout is overlapping another one",
-                overlay: true,
-                zindex: 999,
-                position: 'center',
-                timeout: 3000,
-            });
-        }
-    } else {
-        iziToast.error({
-            title: 'Error',
-            message: "All input fields are needed in order to make a workout",
-            overlay: true,
-            zindex: 999,
-            position: 'center',
-            timeout: 3000,
+        clear_workout();
+        iziToast.success({
+            title: 'Success',
+            message: 'Workout created',
         });
-    }
+    } 
 }
 
 $("#end_time, #start_time").focusout(function () {
@@ -267,21 +280,14 @@ $("#end_time, #start_time, #date").keyup(function () {
     }
 });
 
-$("#difficulty").keyup(function () {
-    if ($("#difficulty").val() == null || $("#difficulty").val() == '') {
+$("#difficulty, #title, #duration, #training_type").keyup(function () {
+    if (is_emptyWorkout()) {
         $("#submit_workout").prop('disabled', true);
     } else {
         $("#submit_workout").prop('disabled', false);
     }
 });
 
-$("#difficulty").inputmask('Regex', {
-    max_length: 1,
-    regex: "^([1-5])",
-    clearIncomplete: true,
-    oncomplete: function(){
-        $("#submit").focus();
-}});
 
 function clear_input() {
     $("#date").val('');
@@ -294,10 +300,10 @@ function clear_input() {
 function clear_workout(){
     $("#title").val('');
     $("#description2").val('');
-    $("difficulty").val('');
+    $("#difficulty").val('');
     $("#duration").val('');
     $("#training_type").val('');
-    $("#submit").prop('disabled', true);
+    $("#submit_workout").prop('disabled', true);
 }
 
 function is_empty() {
@@ -305,6 +311,22 @@ function is_empty() {
         ($("#date").val() == null || $("#date").val() == '') ||
         ($("#start_time").val() == null || $("#start_time").val() == '') ||
         ($("#end_time").val() == null || $("#end_time").val() == '')
+    ) {
+        return true;
+    }
+    return false;
+}
+
+function is_emptyWorkout() {
+    // console.log($("#title").val())
+    // console.log($("#difficulty").val())
+    // console.log($("#duration").val())
+    // console.log($("#training_type").val())
+    if (
+        ($("#title").val() == null || $("#title").val() == '') ||
+        ($("#difficulty").val() == null || $("#difficulty").val() == '') ||
+        ($("#duration").val() == null || $("#duration").val() == '') ||
+        ($("#training_type").val() == null || $("#training_type").val() == '')
     ) {
         return true;
     }
@@ -476,15 +498,11 @@ function printWorkout(clear = false, init = false, edit = false) {
                     </tr>
                     `
                 );
-                let currDate = element.date.split("/");
-                date.push(currDate[0]);
+                
             }
-            date = [...new Set(date)];
-            date.forEach(element => {
-                let cell = document.querySelector(`.week > td.active[data-day='${element}']`);
-                put_badges_newWorkout(cell);
-            });
-        } else {
+            
+        } 
+        else {
             let element = document.querySelector(`.week > td.active[data-badge]`);
             if (element !== null) {
                 put_badges_newWorkout(element);
@@ -528,19 +546,11 @@ function SaveDataToLocalStorageWorkout(data2)
     });
 
     a.push(data2);
-    a.sort(function (sTime1, sTime2) {
-        let temp3 = parseInt(sTime1.date.slice(0,2))
-        let temp4 = parseInt(sTime2.date.slice(0,2))
-        let temp1 = Date.parse(get_Date(sTime1.start_time));
-        let temp2 = Date.parse(get_Date(sTime2.start_time));
-
-
-        if (temp3 > temp4) return 1;
-        if (temp3 < temp4) return -1;
-        if (temp1 > temp2) return 1;
-        if (temp1 < temp2) return -1;
-    });
     localStorage.setItem('tbWorkout', JSON.stringify(a));
+    $.post('/calendar', {"workout_data":JSON.stringify(a)}, function(data, status) {
+        console.log({"workout_data":JSON.stringify(a)})
+    }, 'application/json');
+    
 }
 
 function clear_storage(){
@@ -567,7 +577,7 @@ function clear_storageWorkout(){
     $("#btn_clear_storageWorkout").prop('disabled', true);
     $(`#btn_clear_storageWorkout`).hide();
     
-    print(true);
+    printWorkout(true);
     iziToast.success({
         title: 'Success',
         message: 'All Workouts deleted',
@@ -656,7 +666,7 @@ function delete_workout(id){
         });
 
         localStorage.setItem('tbWorkout', JSON.stringify(data2));
-        print(false, false, true);
+        printWorkout(false, false, true);
         iziToast.success({
             title: 'Success',
             message: 'Workout deleted',
@@ -669,6 +679,7 @@ function delete_workout(id){
 function put_badges_new(cell) {
     var data = localStorage.getItem("tbAppointment");
     data = JSON.parse(data);
+    if (data == null) {return}
     if (data[0] !== null) {
         let counter = 0;
         for (let i = 0; i < data.length; i++) {

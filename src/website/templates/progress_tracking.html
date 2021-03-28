@@ -8,68 +8,77 @@
 {% set class = "Admin" %}
 {% endif %}
 {% block content %}
-<h2>My Progress</h2>
-<h3>Weekly Calorie Intake</h3>
-<canvas id="myChart" width="400" height="400"></canvas>
-<script>
-    Chart.defaults.global.responsive = false;
-    var djangoData = "{{ calories | safe }}";
-    var split = djangoData.split(",")
+<link rel="stylesheet" type= "text/css" href= "{{ url_for('static', filename='landing.css') }}">
+<div class = "progress-flex">
+    <div class = "chart-form">
+        <h2>My Progress</h2>
+        <h3>Weekly Calorie Intake</h3>
+        <canvas id="myChart" width="600" height="500"></canvas>
+    </div>
+    <script>
+        Chart.defaults.global.responsive = false;
+        var djangoData = "{{ calories | safe }}";
+        var split = djangoData.split(",")
 
- // define the chart data
- var chartData = {
-    labels : ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-  datasets : [{
-      label: "Calories",
-       fill: true,
-       lineTension: 0.1,
-       backgroundColor: "rgba(75,192,192,0.4)",
-       borderColor: "rgba(75,192,192,1)",
-       borderCapStyle: 'butt',
-       borderDash: [],
-       borderDashOffset: 0.0,
-       borderJoinStyle: 'miter',
-       pointBorderColor: "rgba(75,192,192,1)",
-       pointBackgroundColor: "#fff",
-       pointBorderWidth: 1,
-       pointHoverRadius: 5,
-       pointHoverBackgroundColor: "rgba(75,192,192,1)",
-       pointHoverBorderColor: "rgba(220,220,220,1)",
-       pointHoverBorderWidth: 2,
-       pointRadius: 1,
-       pointHitRadius: 10,
-       data: split,
-       spanGaps: false
-   }]
- }
-  
- // get chart canvas
- var ctx = document.getElementById("myChart").getContext("2d");
-  
- // create the chart using the chart canvas
- var myChart = new Chart(ctx, {type: 'line', data: chartData,});
-</script>
-    <form method = "POST">
-        <h2>Weekly Calorie Goal: {{ calorie_total }} / {{calorie_goal}}</h2>
-        <h3> {{calorie_string}}</h3>
-        <input type="calorie_goal" name="calorie_goal" placeholder="Update Weekly Calorie Goal" class="form-control" >
-            <div class="form-group">
-                <button class="btn btn-primary btn-block" name="progress" value="add_goal" type="submit">Add Calorie Goal</button>      
-            </div>
-        <h3> Today's Date: {{todays_date}}</h3>
+    // define the chart data
+    var chartData = {
+        labels : ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    datasets : [{
+        label: "Calories",
+        fill: true,
+        lineTension: 0.1,
+        backgroundColor: "rgba(75,192,192,0.4)",
+        borderColor: "rgba(75,192,192,1)",
+        borderCapStyle: 'butt',
+        borderDash: [],
+        borderDashOffset: 0.0,
+        borderJoinStyle: 'miter',
+        pointBorderColor: "rgba(75,192,192,1)",
+        pointBackgroundColor: "#fff",
+        pointBorderWidth: 1,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: "rgba(75,192,192,1)",
+        pointHoverBorderColor: "rgba(220,220,220,1)",
+        pointHoverBorderWidth: 2,
+        pointRadius: 1,
+        pointHitRadius: 10,
+        data: split,
+        spanGaps: false
+    }]
+    }
+    
+    // get chart canvas
+    var ctx = document.getElementById("myChart").getContext("2d");
+    
+    // create the chart using the chart canvas
+    var myChart = new Chart(ctx, {type: 'line', data: chartData,});
+    </script>
+        <div class = "progress-form">
+            <form method = "POST">
+                <h2> Today's Date: {{todays_date}}</h2>
+                <p></p>
+                <h2>Weekly Calorie Goal: {{ calorie_total }} / {{calorie_goal}}</h2>
+                <h3> {{calorie_string}}</h3>
+                <input type="calorie_goal" name="calorie_goal" placeholder="Update Weekly Calorie Goal" class="form-control" >
+                <div class="form-group">
+                    <button class="btn btn-primary btn-block" name="progress" value="add_goal" type="submit">Update Calorie Goal</button>      
+                </div>
+                <h3> Log calories here:</h3>
                 <label for="day_of_week">Day:</label>
                 <select id="day_of_week" name="day_of_week">
-                <option value="Monday">Monday</option>
-                <option value="Tuesday">Tuesday</option>
-                <option value="Wednesday">Wednesday</option>
-                <option value="Tuesday">Thursday</option>
-                <option value="Friday">Friday</option>
-                <option value="Saturday">Saturday</option>
-                <option value="Sunday">Sunday</option>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                    <option value="Sunday">Sunday</option>
                 </select>
                 <input type="calories" name="calories" placeholder="calorie intake" class="form-control" >
                 <div class="form-group">
                     <button class="btn btn-primary btn-block" name="progress" value="add_cals" type="submit">Add Calories</button>
                 </div>
             </form>
+        </div>
+    </div>
 {% endblock %}
