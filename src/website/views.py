@@ -35,9 +35,9 @@ def home():
         workout_plans = []
         fitness_videos = []
         calories = ""
+        email = current_user.get_id()
         try :
-            progress_db.query_user(current_user.email)
-            content = progress_db.query_user(current_user.email)
+            content = progress_db.query_user(email)
             calories = content['content']['weekly_cals']
             print(calories)
         except:
@@ -64,7 +64,7 @@ def home():
                 workout_plans.append(current_content)
             elif item_content['mode_of_instruction'] == 'Video' and current_content['approved']:
                 fitness_videos.append(current_content)
-        user_values = user_db.query_user(current_user.get_id())
+        user_values = user_db.query_user(email)
         subscribed_content = []
         if 'subscribed_accounts' in user_values['content']:
             subscribed_accounts = user_values['content']['subscribed_accounts']
