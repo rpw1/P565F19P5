@@ -49,9 +49,14 @@
  // create the chart using the chart canvas
  var myChart = new Chart(ctx, {type: 'line', data: chartData,});
 </script>
-<h2>My Progress</h2>
-<h3> Today's Date: {{todays_date}}</h3>
-            <form method="POST">
+    <form method = "POST">
+        <h2>Weekly Calorie Goal: {{ calorie_total }} / {{calorie_goal}}</h2>
+        <h3> {{calorie_string}}</h3>
+        <input type="calorie_goal" name="calorie_goal" placeholder="Update Weekly Calorie Goal" class="form-control" >
+            <div class="form-group">
+                <button class="btn btn-primary btn-block" name="progress" value="add_goal" type="submit">Add Calorie Goal</button>      
+            </div>
+        <h3> Today's Date: {{todays_date}}</h3>
                 <label for="day_of_week">Day:</label>
                 <select id="day_of_week" name="day_of_week">
                 <option value="Monday">Monday</option>
@@ -62,13 +67,9 @@
                 <option value="Saturday">Saturday</option>
                 <option value="Sunday">Sunday</option>
                 </select>
-                <input type="calories" name="calories" placeholder="calorie intake" class="form-control" required>
+                <input type="calories" name="calories" placeholder="calorie intake" class="form-control" >
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-block">Add Calories</button>
+                    <button class="btn btn-primary btn-block" name="progress" value="add_cals" type="submit">Add Calories</button>
                 </div>
             </form>
-            <form method="POST_2">
-                
-            </form>
-
 {% endblock %}

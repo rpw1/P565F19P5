@@ -300,63 +300,125 @@ def progress_tracking():
     todays_date = today
     email = current_user.get_id()
     calories = ""
+    weekly_calorie_goal= ""
+    weekly_calorie_total= ""
+    calorie_string = ""
     try :
         progress_db.query_user(email)
+        print("1")
         content = progress_db.query_user(email)
+        print("2")
         calories = content['content']['weekly_cals']
         print(calories)
+        weekly_calorie_goal= content['content']['weekly_calorie_goal']
+        print("4")
+        weekly_calorie_total= content['content']['weekly_calorie_total']
+        print("5")
     except:
         weekly_cals = "0,0,0,0,0,0,0"
+        weekly_calorie_goal = "0"
+        weekly_calorie_total = "0"
         base_content = {
-            "weekly_cals": weekly_cals
+            "weekly_cals": weekly_cals,
+            "weekly_calorie_goal": weekly_calorie_goal,
+            "weekly_calorie_total": weekly_calorie_total
         }
         progress_db.insert_content(email,base_content)
         progress_db.query_user(email)
         content = progress_db.query_user(email)
         calories = content['content']['weekly_cals']   
-    if request.method == "POST":
-        split = calories.split(",")
-        day_of_week = request.form.get("day_of_week")
-        new_cals = request.form.get("calories")
-        print(day_of_week)
-        print(new_cals)
-        print(split[0])
+        weekly_calorie_goal= content['content']['weekly_calorie_goal']
+        weekly_calorie_total= content['content']['weekly_calorie_total']
 
-        if(day_of_week == "Monday"):
-            updates_cals = int(split[0]) + int(new_cals)
-            split[0] = str(updates_cals)
-        elif(day_of_week == "Tuesday"):
-            updates_cals = int(split[1]) + int(new_cals)
-            split[1] = str(updates_cals)
-        elif(day_of_week == "Wednesday"):
-            updates_cals = int(split[2]) + int(new_cals)
-            split[2] = str(updates_cals)
-        elif(day_of_week == "Thursday"):
-            updates_cals = int(split[3]) + int(new_cals)
-            split[3] = str(updates_cals)
-        elif(day_of_week == "Friday"):
-            updates_cals = int(split[4]) + int(new_cals)
-            split[4] = str(updates_cals)
-        elif(day_of_week == "Saturday"):
-            updates_cals = int(split[5]) + int(new_cals)
-            split[5] = str(updates_cals)
-        elif(day_of_week == "Sunday"):
-            updates_cals = int(split[6]) + int(new_cals)
-            split[6] = str(updates_cals)
-        calories = ""
-        i=0
-        for x in split:
-            if(i==7):
-                calories = calories + x
+    if(weekly_calorie_goal == "0"):
+        calorie_string = "Try setting a weekly calorie goal!"
+    elif(int(weekly_calorie_goal)<=int(weekly_calorie_total)):
+        calorie_string = "Congrats! You reached your goal!"
+    elif(int(weekly_calorie_goal)<=int(weekly_calorie_total)*(3/4)):
+        calorie_string = "Almost there! Keep Going!"
+    elif(int(weekly_calorie_goal)<=int(weekly_calorie_total)*(1/2)):
+        calorie_string = "You're over halfway to your goal!"
+    else:
+        calorie_string = "Log more calories to meet your goal!"
+    
+
+    if request.method == "POST":
+        action = request.form.get("progress")
+        print(action)
+        if action == "add_cals":
+            split = calories.split(",")
+            day_of_week = request.form.get("day_of_week")
+            new_cals = request.form.get("calories")
+            print(day_of_week)
+            print(new_cals)
+            print(split[0])
+            new_weekly_calorie_total = int(weekly_calorie_total) + int(new_cals)
+            if(day_of_week == "Monday"):
+                updates_cals = int(split[0]) + int(new_cals)
+                split[0] = str(updates_cals)
+            elif(day_of_week == "Tuesday"):
+                updates_cals = int(split[1]) + int(new_cals)
+                split[1] = str(updates_cals)
+            elif(day_of_week == "Wednesday"):
+                updates_cals = int(split[2]) + int(new_cals)
+                split[2] = str(updates_cals)
+            elif(day_of_week == "Thursday"):
+                updates_cals = int(split[3]) + int(new_cals)
+                split[3] = str(updates_cals)
+            elif(day_of_week == "Friday"):
+                updates_cals = int(split[4]) + int(new_cals)
+                split[4] = str(updates_cals)
+            elif(day_of_week == "Saturday"):
+                updates_cals = int(split[5]) + int(new_cals)
+                split[5] = str(updates_cals)
+            elif(day_of_week == "Sunday"):
+                updates_cals = int(split[6]) + int(new_cals)
+                split[6] = str(updates_cals)
+            calories = ""
+            i=0
+            for x in split:
+                if(i==7):
+                    calories = calories + x
+                else:
+                    calories = calories + x + ","
+                i = i+1
+            print(calories)
+            base_content = {
+                "weekly_cals": calories,
+                "weekly_calorie_goal": weekly_calorie_goal,
+                "weekly_calorie_total": new_weekly_calorie_total
+            }
+            progress_db.insert_content(email,base_content)
+            if(weekly_calorie_goal == "0"):
+                calorie_string = "Try setting a weekly calorie goal!"
+            elif(int(weekly_calorie_goal)<=int(new_weekly_calorie_total)):
+                calorie_string = "Congrats! You reached your goal!"
+            elif(int(weekly_calorie_goal)<=int(new_weekly_calorie_total)*(3/4)):
+                calorie_string = "Almost there! Keep Going!"
+            elif(int(weekly_calorie_goal)<=int(new_weekly_calorie_total)*(1/2)):
+                calorie_string = "You're over halfway to your goal!"
             else:
-                calories = calories + x + ","
-            i = i+1
-        base_content = {
-            "weekly_cals": calories
-        }
-        progress_db.insert_content(email,base_content)
-        return render_template('progress_tracking.html', user=current_user, todays_date = todays_date, calories = calories)
-    return render_template('progress_tracking.html', user=current_user, todays_date = todays_date, calories = calories)
+                calorie_string = "Log more calories to meet your goal!"
+        if action == "add_goal":
+            weekly_calorie_goal = request.form.get("calorie_goal")
+            base_content = {
+                "weekly_cals": calories,
+                "weekly_calorie_goal": weekly_calorie_goal,
+                "weekly_calorie_total": weekly_calorie_total
+            }
+            progress_db.insert_content(email,base_content)
+            if(weekly_calorie_goal == "0"):
+                calorie_string = "Try setting a weekly calorie goal!"
+            elif(int(weekly_calorie_goal)<=int(weekly_calorie_total)):
+                calorie_string = "Congrats! You reached your goal!"
+            elif(int(weekly_calorie_goal)<=int(weekly_calorie_total)*(3/4)):
+                calorie_string = "Almost there! Keep Going!"
+            elif(int(weekly_calorie_goal)<=int(weekly_calorie_total)*(1/2)):
+                calorie_string = "You're over halfway to your goal!"
+            else:
+                calorie_string = "Log more calories to meet your goal!"
+        return render_template('progress_tracking.html', user=current_user, todays_date = todays_date, calories = calories, calorie_string= calorie_string)
+    return render_template('progress_tracking.html', user=current_user, todays_date = todays_date, calories = calories, calorie_string= calorie_string)
 
 @views.route("/search", methods=["GET","POST"])
 @login_required

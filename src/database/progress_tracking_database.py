@@ -24,6 +24,8 @@ class ProgressTrackingDatabase:
             content ->
             {
                 weekly_cals: ""
+                weekly_calorie_goal: ""
+                weekly_calorie_totla: ""
             }
         """
         self.check_database()
