@@ -77,7 +77,7 @@ $(function () {
 
     $('#duration').inputmask('Regex', {
         max_length: 3,
-        regex: "^([0-2[0-9][0-9])",
+        regex: "^([0-2][0-9][0-9])",
         clearIncomplete: true
     });
 
