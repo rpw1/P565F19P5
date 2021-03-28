@@ -67,6 +67,7 @@ $(function () {
     $('[data-toggle="popover"]').popover();
 
     print(false, true);
+    printWorkout(false, true);
 
 });
 
@@ -225,7 +226,7 @@ function make_custom_workout() {
             SaveDataToLocalStorageWorkout(workout);
             $("#btn_clear_storageWorkout").prop('disabled', false);
             $(`#btn_clear_storageWorkout`).show();
-            print();
+            printWorkout();
 
             clear_workout();
             iziToast.success({
@@ -528,18 +529,6 @@ function SaveDataToLocalStorageWorkout(data2)
     });
 
     a.push(data2);
-    a.sort(function (sTime1, sTime2) {
-        let temp3 = parseInt(sTime1.date.slice(0,2))
-        let temp4 = parseInt(sTime2.date.slice(0,2))
-        let temp1 = Date.parse(get_Date(sTime1.start_time));
-        let temp2 = Date.parse(get_Date(sTime2.start_time));
-
-
-        if (temp3 > temp4) return 1;
-        if (temp3 < temp4) return -1;
-        if (temp1 > temp2) return 1;
-        if (temp1 < temp2) return -1;
-    });
     localStorage.setItem('tbWorkout', JSON.stringify(a));
 }
 
@@ -567,7 +556,7 @@ function clear_storageWorkout(){
     $("#btn_clear_storageWorkout").prop('disabled', true);
     $(`#btn_clear_storageWorkout`).hide();
     
-    print(true);
+    printWorkout(true);
     iziToast.success({
         title: 'Success',
         message: 'All Workouts deleted',
@@ -656,7 +645,7 @@ function delete_workout(id){
         });
 
         localStorage.setItem('tbWorkout', JSON.stringify(data2));
-        print(false, false, true);
+        printWorkout(false, false, true);
         iziToast.success({
             title: 'Success',
             message: 'Workout deleted',
