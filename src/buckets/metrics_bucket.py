@@ -106,5 +106,16 @@ class MetricsBucket:
         self.save_json(metrics)
 
     
+def get_most_viewed_content(self):
+        metrics = self.get_json()
+        if 'most_viewed_content' in metrics:
+            return metrics['most_viewed_content']['content_id']
+        return ""
+        
 
+def get_most_viewed_user(self):
+    metrics = self.get_json()
+    if 'most_viewed_user' in metrics:
+        return metrics['most_viewed_user']['email']
+    return ""
         
