@@ -73,10 +73,11 @@ def home():
             for account in subscribed_accounts:
                 subscribed_content.extend(content_db.scan_content_by_email(account))
         todays_views = metrics_bucket.get_todays_views()
+        total_views = metrics_bucket.get_total_view_count()
         return render_template("dashboard.html", user=current_user, total_users=total_users, total_content=total_content, 
             uploaded_today=uploaded_today_approved, type_count=type_count, subscribed_content=subscribed_content,
             diet_plans=diet_plans, workout_plans=workout_plans, fitness_videos=fitness_videos, uploaded_today_len=uploaded_today_count, 
-            calories=calories, todays_views=todays_views)
+            calories=calories, todays_views=todays_views, total_views = total_views)
     else: 
         return render_template("landing.html")
 
@@ -229,8 +230,10 @@ def content(id):
                 current_content['views'] = [user_email]
                 total_views += 1
                 metrics_bucket.add_daily_view()
+            metrics_bucket.check_most_viewed_content(id, len(current_content['views']))
             content_db.update_content(id, content_email, current_content)
             content_user['content']['total_views'] = total_views
+            metrics_bucket.check_most_viewed_user(content_email, int(total_views))
             user_db.update_fitness_professional_content(content_email, content_user['content'])
             view_count = len(current_content['views'])
             title = current_content['title']

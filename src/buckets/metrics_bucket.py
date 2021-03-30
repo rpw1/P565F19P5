@@ -78,9 +78,32 @@ class MetricsBucket:
 
     def check_most_viewed_content(self, content_id, view_count):
         metrics = self.get_json()
+        if 'most_viewed_content' in metrics:
+            most_views = metrics['most_viewed_content']['views']
+            if view_count > most_views:
+                metrics['most_viewed_content']['views'] = view_count
+                metrics['most_viewed_content']['content_id'] = content_id
+        else:
+            metrics['most_viewed_content'] = dict()
+            metrics['most_viewed_content']['content_id'] = content_id
+            metrics['most_viewed_content']['views'] = view_count
+        print(metrics)
+        self.save_json(metrics)
+        
 
     def check_most_viewed_user(self, email, view_count):
         metrics = self.get_json()
+        if 'most_viewed_user' in metrics:
+            most_views = metrics['most_viewed_user']['views']
+            if view_count > most_views:
+                metrics['most_viewed_user']['views'] = view_count
+                metrics['most_viewed_user']['email'] = email
+        else:
+            metrics['most_viewed_user'] = dict()
+            metrics['most_viewed_user']['email'] = email
+            metrics['most_viewed_user']['views'] = view_count
+        print(metrics)
+        self.save_json(metrics)
 
     
 
