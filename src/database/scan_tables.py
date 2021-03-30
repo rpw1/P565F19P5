@@ -104,7 +104,7 @@ class ScanTables:
     def filter_content(self, scan_filters, scan_items):
         new_scan_items = []
         for content_item in scan_items:
-            isGood = False
+            isGood = True
             content = content_item['content']
             for key, filter_items in scan_filters.items():
                 for filter_item in filter_items:
@@ -112,45 +112,35 @@ class ScanTables:
                         past = datetime.strptime(content[key], "%m/%d/%Y")
                         present = datetime.now()
                         if filter_item == 'today' and (present - timedelta(days=1)) <= past:
-                            isGood = True
-                            break
+                            continue
                         elif filter_item == 'week' and (present - timedelta(days=7)) <= past:
-                            isGood = True
-                            break
+                            continue
                         elif filter_item == 'month' and (present - timedelta(days=30)) <= past:
-                            isGood = True
-                            break
+                            continue
                         elif filter_item == 'year' and (present - timedelta(days=365)) <= past:
-                            isGood = True
-                            break
+                            continue
                     elif key == 'mode_of_instruction':
                         if filter_item == 'video' and content[key] == 'video':
-                            isGood = True
-                            break
+                            continue
                         elif filter_item == 'diet_plan' and content[key] == 'Diet plan':
-                            isGood = True
-                            break
+                            continue
                         elif filter_item == 'workout_plan' and content[key] == 'Workout plan':
-                            isGood = True
-                            break
+                            continue
                     elif key == 'workout_type':
                         if filter_item == 'home' and content[key] == 'Home':
-                            isGood = True
-                            break
+                            continue
                         elif filter_item == 'gym' and content[key] == 'Gym':
-                            isGood = True
-                            break
+                            continue
                         elif filter_item == 'fitness_center' and content[key] == 'Fitness Center':
-                            isGood = True
-                            break
+                            continue
                         elif filter_item == 'track' and content[key] == 'Track':
-                            isGood = True
-                            break
+                            continue
                     if content[key].upper() == filter_item.upper():
-                        isGood = True
-                        break
-                if isGood:
-                    new_scan_items.append(content_item)
+                        continue
+                    if filter_items[len(filter_items) - 1] == filter_item:
+                        isGood = False
+            if isGood:
+                new_scan_items.append(content_item)
         return new_scan_items
 
     def search_content(self, search_tag, scan_filters):
