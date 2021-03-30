@@ -47,7 +47,6 @@ class MetricsBucket:
             metrics['total_views'] = 1
         now = datetime.now()
         today = now.strftime("%m/%d/%Y")
-        print(today)
         if 'daily_views' in metrics:
             daily_views = metrics['daily_views']
             if today in daily_views:
@@ -59,6 +58,22 @@ class MetricsBucket:
             metrics['daily_views'][today] = 1
         self.save_json(metrics)
         print(metrics)
+
+    def get_total_view_count(self):
+        metrics = self.get_json()
+        if 'total_views' in metrics:
+            return metrics['total_views']
+        else:
+            return[0]
+
+    def get_todays_views(self):
+        metrics = self.get_json()
+        now = datetime.now()
+        today = now.strftime("%m/%d/%Y")
+        if 'daily_views' in metrics:
+            if today in metrics['daily_views']:
+                return metrics['daily_views'][today]
+        return 0
 
 
     def check_most_viewed_content(self, content_id, view_count):

@@ -72,9 +72,11 @@ def home():
             subscribed_accounts = user_values['content']['subscribed_accounts']
             for account in subscribed_accounts:
                 subscribed_content.extend(content_db.scan_content_by_email(account))
+        todays_views = metrics_bucket.get_todays_views()
         return render_template("dashboard.html", user=current_user, total_users=total_users, total_content=total_content, 
             uploaded_today=uploaded_today_approved, type_count=type_count, subscribed_content=subscribed_content,
-            diet_plans=diet_plans, workout_plans=workout_plans, fitness_videos=fitness_videos, uploaded_today_len=uploaded_today_count, calories=calories)
+            diet_plans=diet_plans, workout_plans=workout_plans, fitness_videos=fitness_videos, uploaded_today_len=uploaded_today_count, 
+            calories=calories, todays_views=todays_views)
     else: 
         return render_template("landing.html")
 
