@@ -120,7 +120,7 @@ class ScanTables:
                         elif filter_item == 'year' and (present - timedelta(days=365)) <= past:
                             continue
                     elif key == 'mode_of_instruction':
-                        if filter_item == 'video' and content[key] == 'video':
+                        if filter_item == 'video' and content[key] == 'Video':
                             continue
                         elif filter_item == 'diet_plan' and content[key] == 'Diet plan':
                             continue
