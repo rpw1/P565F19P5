@@ -609,8 +609,9 @@ def moderate():
                 flash(message, category="success")
                 return redirect(url_for("views.moderate"))
             elif action == "delete":
+                reason = request.form.get("reason")
                 content_db.delete_content(content_id, email)
-                message = Markup("<b>{}</b> deleted".format(title))
+                message = Markup("<b>{}</b> deleted for reason: {}".format(title, reason))
                 flash(message, category="error")
                 return redirect(url_for("views.moderate"))
         return render_template("moderate.html", unapproved=unapproved)

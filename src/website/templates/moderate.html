@@ -29,7 +29,22 @@
                                     <input value="{{current['content']['bucket_info']['object_name'][:-37]}}" type="hidden" name="email">
                                     <input value="{{current['content']['title']}}" type="hidden" name="title">
                                     <button class="btn btn-block btn-success" name="moderate" value="approve" type="submit">Approve</button>
-                                    <button class="btn btn-block btn-danger" name="moderate" value="delete" type="submit">Delete</button>
+                                    <button type="button" class="btn btn-block btn-danger" data-toggle="modal" data-target="#delete">Delete</button>
+                                    <div class="modal fade" id="delete">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h3>Delete {{current['content']['title']}}</h3>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form-group">
+                                                        <textarea class="form-control" name="reason" id="reason" placeholder="Reason"></textarea>
+                                                    </div>
+                                                    <button class="btn btn-block btn-danger" name="moderate" value="delete" type="submit">Delete</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </form>
                             </div>
                         </div>
