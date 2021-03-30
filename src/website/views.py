@@ -80,6 +80,7 @@ def home():
 @login_required
 def profile():
     user_email = current_user.get_id()
+    subscriber_list = user_db.scan_for_subscribers(current_user.email)
     if request.method == "POST":
         bio = request.form.get("bio")
         if bio != "":
@@ -128,7 +129,7 @@ def profile():
     country_codes = list(countries_by_alpha2.keys())
     return render_template("profile.html", user=current_user, user_image=user_image, 
         uploads=uploads, countries=countries_by_alpha2, country_codes=country_codes, length=len(country_codes),
-        specialty = specialty, gender = gender, bio = bio, flag_src = flag_src, country_name=country_name, subscriber_count=subscriber_count)
+        specialty = specialty, gender = gender, bio = bio, flag_src = flag_src, country_name=country_name, subscriber_count=subscriber_count, subscriber_list=subscriber_list)
 
 @views.route("/calendar", methods=["GET","POST"])
 @login_required

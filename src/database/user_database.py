@@ -1,5 +1,5 @@
 import boto3
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key, Attr
 from decouple import config
 
 
@@ -518,6 +518,16 @@ class UserDatabase:
         if response:
             return self._update_gender(email, gender, response['role'])
         return None
+
+    def scan_for_subscribers(self, email):
+        self.check_database()
+        response = self.user_table.scan(
+            FilterExpression = Attr('content.subscribed_accounts').contains(email)
+        )
+        if 'Items' in response:
+            return response["Items"]
+        print("Unable to query content")
+        return []
 
     def get_user_count(self):
         self.check_database()
