@@ -82,9 +82,14 @@
                         <h3>My subscribers</h3>
                     </div>
                     <div class="model-body">
-                        {% for user in subscriber_list %}
-                        {{user}}
-                        {% endfor %}
+                        <ul class="list-group">
+                            {% for user in subscriber_list %}
+                            <li class="list-group-item">
+                                <h5><a href="/user/{{user['email']}}">{{user['first_name']}} {{user['last_name']}}</a></h5>
+                                {{user}}
+                            </li>
+                            {% endfor %}
+                        </ul>
                     </div>
                 </div>
             </div>
