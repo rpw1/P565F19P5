@@ -114,6 +114,23 @@
 <hr/>
 <p>{{user.bio}}</p>
 {% if class == "Trainer" %}
+{% if current_user.email == user.email and pending|length > 0 %}
+<h3>Pending approval</h3>
+<div class="row flex-row flex-nowrap overflow-auto">
+    {% for item in pending%}
+    <div class="col-auto mb-3">
+        <div class="card h-100" style="width:250px">
+            <img class="card-img-top" style="height: 140.625px; object-fit:cover;" src="{{item['content']['bucket_info']['thumbnail_link']}}" alt="thumbnail">
+            <div class="card-body">
+                <h5 class="card-title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"><a href="/content/{{item['content']['bucket_info']['object_name'][-36:]}}">{{item['content']['title']}}</a></h5>
+                <p><small class="text-muted">Uploaded by {{item['email']}} on {{item['content']['date']}}</small></p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<hr/>
+{% endif %}
 <h3>Uploaded by {{user.first_name}} {{user.last_name}}</h3>
     {% if uploads|length == 0 %}
     <p>This user currently has no uploads. Check back later!</p>

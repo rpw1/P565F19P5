@@ -137,6 +137,16 @@ class ContentDatabase:
         print("Unable to query content")
         return None
 
+    def query_unapproved_content_by_user(self, email):
+        self.check_database()
+        response = self.content_table.scan(
+            FilterExpression = Key('email').eq(email) & Attr('approved').eq(False)
+        )
+        if 'Items' in response:
+            return response["Items"]
+        print("Unable to query content")
+        return None
+
     def get_content_count(self):
         self.check_database()
         return self.content_table.item_count

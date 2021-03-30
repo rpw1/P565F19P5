@@ -121,8 +121,10 @@ def profile():
     specialty = ""
     gender = user_values['gender']
     uploads = []
+    pending = []
     if user_values['role'] == roles[1]:
         uploads = content_db.query_content_by_user(user_email)
+        pending = content_db.query_unapproved_content_by_user(user_email)
         if 'country' in user_values:
             if user_values['country']:
                 country_info = user_values['country']
@@ -134,7 +136,7 @@ def profile():
     country_codes = list(countries_by_alpha2.keys())
     return render_template("profile.html", user=current_user, user_image=user_image, 
         uploads=uploads, countries=countries_by_alpha2, country_codes=country_codes, length=len(country_codes),
-        specialty = specialty, gender = gender, bio = bio, flag_src = flag_src, country_name=country_name, subscriber_count=subscriber_count, subscriber_list=subscriber_list)
+        specialty = specialty, gender = gender, bio = bio, flag_src = flag_src, country_name=country_name, subscriber_count=subscriber_count, subscriber_list=subscriber_list, pending=pending)
 
 @views.route("/calendar", methods=["GET","POST"])
 @login_required
