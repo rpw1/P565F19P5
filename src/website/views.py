@@ -232,6 +232,7 @@ def content(id):
                 metrics_bucket.add_daily_view()
             metrics_bucket.check_most_viewed_content(id, len(current_content['views']))
             content_db.update_content(id, content_email, current_content)
+            approved = query_content['approved']
             content_user['content']['total_views'] = total_views
             metrics_bucket.check_most_viewed_user(content_email, int(total_views))
             user_db.update_fitness_professional_content(content_email, content_user['content'])
@@ -245,7 +246,7 @@ def content(id):
             user_path = url_for("views.user_page", id = created_user)
             return render_template("content.html", created_user = created_user, title = title, description = description, 
                 content_link = content_link, content_date = content_date, user_path = user_page, content_type = content_type, view_count=view_count)
-    flash("Content did not show correctly", category="error")
+    flash("Content did not show correctly", category="error", approved=approved)
     return redirect(url_for("views.home"))
 
 @views.route("/upload", methods=["GET","POST"])
