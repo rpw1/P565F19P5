@@ -245,8 +245,8 @@ def content(id):
             created_user = query_content['email']
             user_path = url_for("views.user_page", id = created_user)
             return render_template("content.html", created_user = created_user, title = title, description = description, 
-                content_link = content_link, content_date = content_date, user_path = user_page, content_type = content_type, view_count=view_count)
-    flash("Content did not show correctly", category="error", approved=approved)
+                content_link = content_link, content_date = content_date, user_path = user_page, content_type = content_type, view_count=view_count, approved=approved)
+    flash("Content did not show correctly", category="error")
     return redirect(url_for("views.home"))
 
 @views.route("/upload", methods=["GET","POST"])
