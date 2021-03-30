@@ -135,8 +135,6 @@ class ScanTables:
                             continue
                         elif filter_item == 'track' and content[key] == 'Track':
                             continue
-                    if content[key].upper() == filter_item.upper():
-                        continue
                     if filter_items[len(filter_items) - 1] == filter_item:
                         isGood = False
             if isGood:
