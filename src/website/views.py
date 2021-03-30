@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 from .models import User
 from src.database.content_database import ContentDatabase
 from src.buckets.content_bucket import ContentBucket
+from src.buckets.metrics_bucket import MetricsBucket
 import uuid, os, shutil
 from datetime import datetime, timedelta, date
 from decouple import config
@@ -17,6 +18,7 @@ views = Blueprint("views", __name__)
 user_db = UserDatabase()
 content_db = ContentDatabase()
 content_bucket = ContentBucket()
+metrics_bucket = MetricsBucket()
 scan_tb = ScanTables()
 progress_db = ProgressTrackingDatabase()
 roles = ['client', 'fitness_professional', 'admin']
@@ -204,9 +206,30 @@ def content(id):
             flash(message, category="success")
             return redirect(url_for("views.home"))
     query_content = content_db.query_content_by_id(id)
+    content_email = query_content['email']
+    content_user = user_db.get_fitness_professional(content_email)
+    total_views = 0
+    if 'total_views' in content_user['content']:
+        total_views = content_user['content']['total_views']
+    user_email = current_user.get_id()
     if query_content:
         if 'content' in query_content:
             current_content = query_content['content']
+            if 'views' in current_content:
+                views = current_content['views']
+                if user_email not in views:
+                    views.append(user_email)
+                    current_content['views'] = views
+                    total_views += 1
+                    metrics_bucket.add_daily_view()
+            else:
+                current_content['views'] = [user_email]
+                total_views += 1
+                metrics_bucket.add_daily_view()
+            content_db.update_content(id, content_email, current_content)
+            content_user['content']['total_views'] = total_views
+            user_db.update_fitness_professional_content(content_email, content_user['content'])
+            view_count = len(current_content['views'])
             title = current_content['title']
             description = current_content['description']
             thumbnail_link, content_link = content_bucket.get_file_link(current_content['bucket_info'])
@@ -215,7 +238,7 @@ def content(id):
             created_user = query_content['email']
             user_path = url_for("views.user_page", id = created_user)
             return render_template("content.html", created_user = created_user, title = title, description = description, 
-                content_link = content_link, content_date = content_date, user_path = user_page, content_type = content_type)
+                content_link = content_link, content_date = content_date, user_path = user_page, content_type = content_type, view_count=view_count)
     flash("Content did not show correctly", category="error")
     return redirect(url_for("views.home"))
 
