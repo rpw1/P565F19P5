@@ -136,7 +136,8 @@ def profile():
     country_codes = list(countries_by_alpha2.keys())
     return render_template("profile.html", user=current_user, user_image=user_image, 
         uploads=uploads, countries=countries_by_alpha2, country_codes=country_codes, length=len(country_codes),
-        specialty = specialty, gender = gender, bio = bio, flag_src = flag_src, country_name=country_name, subscriber_count=subscriber_count, subscriber_list=subscriber_list, pending=pending)
+        specialty = specialty, gender = gender, bio = bio, flag_src = flag_src, country_name=country_name, subscriber_count=subscriber_count, 
+        subscriber_list=subscriber_list, pending=pending)
 
 @views.route("/calendar", methods=["GET","POST"])
 @login_required
@@ -204,6 +205,8 @@ def user_page(id):
 @login_required
 def content(id):
     if request.method == "POST":
+        has_editted = request.form.get("edit_val")
+        print(has_editted)
         action = request.form.get("moderate")
         title = request.form.get("title")
         email = request.form.get("email")
@@ -212,10 +215,27 @@ def content(id):
             message = Markup("<b>{}</b> successfully deleted".format(title))
             flash(message, category="success")
             return redirect(url_for("views.home"))
+        elif has_editted == "edit_val":
+            print("here")
+            query_content = content_db.query_content_by_id(id)
+            title = request.form.get("edit_title")
+            description = request.form.get("edit_description")
+            mode_of_instruction = request.form.get("edit_mode_of_instruction")
+            workout_type = request.form.get("edit_workout_type")
+            query_content['content']['title'] = title
+            query_content['content']['description'] = description
+            query_content['content']['mode_of_instruction'] = mode_of_instruction
+            query_content['content']['workout_type'] = workout_type
+            content_db.update_content(id, query_content['email'], query_content['content'])
+            message = Markup("<b>{}</b> successfully updated".format(title))
+            flash(message, category="success")
+            return redirect(url_for("views.content", id = id))
     query_content = content_db.query_content_by_id(id)
     content_email = query_content['email']
     content_user = user_db.get_fitness_professional(content_email)
     total_views = 0
+    has_editted = request
+
     if 'total_views' in content_user['content']:
         total_views = content_user['content']['total_views']
     user_email = current_user.get_id()
@@ -245,10 +265,13 @@ def content(id):
             thumbnail_link, content_link = content_bucket.get_file_link(current_content['bucket_info'])
             content_type = current_content['content_type']
             content_date = current_content['date']
+            workout_type = current_content['workout_type']
+            mode_of_instruction = current_content['mode_of_instruction']
             created_user = query_content['email']
             user_path = url_for("views.user_page", id = created_user)
             return render_template("content.html", created_user = created_user, title = title, description = description, 
-                content_link = content_link, content_date = content_date, user_path = user_page, content_type = content_type, view_count=view_count, approved=approved)
+                content_link = content_link, content_date = content_date, user_path = user_page, content_type = content_type, view_count=view_count, approved=approved,
+                mode_of_instruction=mode_of_instruction, workout_type=workout_type)
     flash("Content did not show correctly", category="error")
     return redirect(url_for("views.home"))
 
@@ -350,9 +373,6 @@ def update_password():
             flash("Password successfully changed!", category="success")
     return render_template("update_password.html", user=current_user)
 
-def func_bkawgkql():
-    
-    return 
 
 
 @views.route("/progress_tracking", methods=["GET","POST"])
