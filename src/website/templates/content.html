@@ -1,13 +1,77 @@
 {% extends "base.html" %}
 {% block title %}{{title}}{% endblock %}
 {% block content %}
+
     <div class="row justify-content-center">
         <div class="col-md-9">
             {% if current_user.role == "admin" or current_user.email == created_user %}
                 <form method="POST">
                     <input value="{{title}}" type="hidden" name="title">
                     <input value="{{created_user}}" type="hidden" name="email">
-                    <button type="submit" name="moderate" value="delete" class="btn btn-block btn-danger mb-3">Delete {{title}}</button>
+                    {% if current_user.email == created_user %}
+                        <div class="container">
+                            <div class="row">
+                                <div class = "col d-flex justify-content-center">
+                                    <button type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#edit">Edit {{ title }}</button>
+                                    <div class="modal fade" id="edit">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h3>Edit content information</h3>
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                </div>
+                                                <div class="modal-body" style="background-color: rgba(197, 217, 215, .6);">
+                                                    <form method="POST">
+                                                        <div class="form-group">
+                                                            <input type="text" id="edit_title" name="edit_title" placeholder="title" class="form-control" value="{{title}}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <textarea placeholder="description" id="edit_description" name="edit_description" class="form-control">{{description}}</textarea>
+                                                        </div>
+                                                        <div class="container">
+                                                            <div class="row">
+                                                                <div class="col d-flex justify-content-center">
+                                                                    <label for="edit_mode_of_instruction">Mode of Instruction</label>
+                                                                </div>
+                                                                <div class="col d-flex justify-content-center">
+                                                                    <label for="edit_workout_type">Workout Type</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <div class="col d-flex justify-content-center">
+                                                                    <select id="edit_mode_of_instruction" name="edit_mode_of_instruction" class="form-control" required>
+                                                                        <option value="Video">Video</option>
+                                                                        <option value="Diet plan">Diet plan</option>
+                                                                        <option value="Workout plan">Workout plan</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col d-flex justify-content-center">
+                                                                    <select id="edit_workout_type" name="edit_workout_type" class="form-control" required>
+                                                                        <option value="Home">Home</option>
+                                                                        <option value="Gym">Gym</option>
+                                                                        <option value="Fitness Center">Fitness Center</option>
+                                                                        <option value="Track">Track</option>
+                                                                </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-info btn-block" name="edit_val" value="edit_val">Update</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class = "col d-flex justify-content-center">
+                                    <button type="submit" name="moderate" value="delete" class="btn btn-block btn-danger">Delete {{ title }}</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border-top my-3"></div>
+                    {% elif current_user.role == "admin" %}
+                        <button type="submit" name="moderate" value="delete" class="btn btn-block btn-danger mb-3">Delete {{ title }}</button>
+                    {% endif %}
+
                 </form>
             {% endif %}
             {% if not(approved) %}
@@ -62,4 +126,12 @@
         </div>
     </div>
     {% endif %}
+    <script>
+        if ('{{current_user.email}}' == '{{created_user}}') {
+            var mode_of_instruction = '{{mode_of_instruction}}';
+            document.getElementById("edit_mode_of_instruction").value = mode_of_instruction;
+            var workout_type = '{{workout_type}}';
+            document.getElementById("edit_workout_type").value = workout_type;
+        }    
+    </script>
 {% endblock %}
