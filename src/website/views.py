@@ -154,50 +154,51 @@ def calendar():
 @login_required
 def user_page(id):
     user_values = user_db.query_user(id)
-    current_user_values = user_db.query_user(current_user.get_id())
-    uploads = content_db.query_content_by_user(id)
-    subscribed_to = []
-    subscriber_count = 0
-    if current_user_values['content'] and current_user.role != roles[2]:
-        if 'subscribed_accounts' in current_user_values['content']:
-            subscribed_to = current_user_values['content']['subscribed_accounts']
-    if 'subscribers' in user_values['content']:
-        if user_values['role'] == roles[1] and user_values['content'] and user_values['content']['subscribers']:
-            subscriber_count = user_values['content']['subscribers']
-    subscribed = False
-    if id in subscribed_to:
-        subscribed = True
-    if request.method == "POST":
-        action = request.form.get("subscribe")
-        if action == "subscribe":
-            user_db.subscribe(current_user.email, user_values['email'])
-            return redirect(url_for("views.user_page", id=id))
-        elif action == "unsubscribe":
-            user_db.unsubscribe(current_user.email, user_values['email'])
-            return redirect(url_for("views.user_page", id=id))
-    if id == current_user.get_id():
-        return redirect(url_for("views.profile"))
-    if user_values and user_values['role'] == roles[1]:
+    if user_values != None:
+        current_user_values = user_db.query_user(current_user.get_id())
+        uploads = content_db.query_content_by_user(id)
+        subscribed_to = []
+        subscriber_count = 0
+        if current_user_values['content'] and current_user.role != roles[2]:
+            if 'subscribed_accounts' in current_user_values['content']:
+                subscribed_to = current_user_values['content']['subscribed_accounts']
+        if 'subscribers' in user_values['content']:
+            if user_values['role'] == roles[1] and user_values['content'] and user_values['content']['subscribers']:
+                subscriber_count = user_values['content']['subscribers']
+        subscribed = False
+        if id in subscribed_to:
+            subscribed = True
+        if request.method == "POST":
+            action = request.form.get("subscribe")
+            if action == "subscribe":
+                user_db.subscribe(current_user.email, user_values['email'])
+                return redirect(url_for("views.user_page", id=id))
+            elif action == "unsubscribe":
+                user_db.unsubscribe(current_user.email, user_values['email'])
+                return redirect(url_for("views.user_page", id=id))
+        if id == current_user.get_id():
+            return redirect(url_for("views.profile"))
         user_image = user_values['image']
         specialty = ""
         flag_src = ""
-        if 'country' in user_values:
-            country_info = user_values['country']
-            if 'flag' in country_info:
-                flag_src = country_info['flag']
-        if 'specialty' in user_values:
-            specialty = user_values['specialty']
         bio = user_values['bio']
         gender = user_values['gender']
         profile_user = User(
-                user_values['email'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role']
+                    user_values['email'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role']
                 )
-        return render_template("profile.html", user=profile_user, user_image = user_image, uploads=uploads,
-            specialty = specialty, gender = gender, bio = bio, flag_src = flag_src,
-            countries=dict(), country_codes=list(), length=0, subscribed=subscribed, subscriber_count=subscriber_count)
+        if user_values and user_values['role'] == roles[1]:
+            if 'country' in user_values:
+                country_info = user_values['country']
+                if 'flag' in country_info:
+                    flag_src = country_info['flag']
+            if 'specialty' in user_values:
+                specialty = user_values['specialty']
     else:
         flash("That user does not exist!", category="error")
         return redirect(url_for("views.home"))
+    return render_template("profile.html", user=profile_user, user_image = user_image, uploads=uploads,
+                specialty = specialty, gender = gender, bio = bio, flag_src = flag_src,
+                countries=dict(), country_codes=list(), length=0, subscribed=subscribed, subscriber_count=subscriber_count)
 
 @views.route("/content/<id>", methods=["GET","POST"])
 @login_required

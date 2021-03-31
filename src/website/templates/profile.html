@@ -85,8 +85,15 @@
                         <ul class="list-group">
                             {% for user in subscriber_list %}
                             <li class="list-group-item">
-                                <h5><a href="/user/{{user['email']}}">{{user['first_name']}} {{user['last_name']}}</a></h5>
-                                {{user}}
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <img src="{{user['image']}}" class="rounded-circle border border-4 border-dark" style="width: 100%;">
+                                    </div>
+                                    <div class="col-md-9 align-self-center">
+                                        <h5><a href="/user/{{user['email']}}" target="_blank">{{user['first_name']}} {{user['last_name']}}</a></h5>
+                                        <p class="text-muted">{% if user['role'] == "client" %}Trainee{% else %}Trainer{% endif %}</p>
+                                    </div>
+                                </div>
                             </li>
                             {% endfor %}
                         </ul>
