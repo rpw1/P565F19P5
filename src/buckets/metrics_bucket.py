@@ -23,13 +23,12 @@ class MetricsBucket:
     def get_json(self):
         self.check_bucket()
         tf = tempfile.NamedTemporaryFile()
-        print(tf.name)
         self.bucket.download_file('metrics.json', tf.name)
         json_file = open(tf.name)
         metrics = json.load(json_file)
-        print(metrics)
         json_file.close()
         tf.close()
+        print(metrics)
         return metrics
 
     def save_json(self, metrics):
@@ -57,7 +56,6 @@ class MetricsBucket:
             metrics['daily_views'] = dict()
             metrics['daily_views'][today] = 1
         self.save_json(metrics)
-        print(metrics)
 
     def get_total_view_count(self):
         metrics = self.get_json()
@@ -87,7 +85,6 @@ class MetricsBucket:
             metrics['most_viewed_content'] = dict()
             metrics['most_viewed_content']['content_id'] = content_id
             metrics['most_viewed_content']['views'] = view_count
-        print(metrics)
         self.save_json(metrics)
         
 
@@ -102,7 +99,6 @@ class MetricsBucket:
             metrics['most_viewed_user'] = dict()
             metrics['most_viewed_user']['email'] = email
             metrics['most_viewed_user']['views'] = view_count
-        print(metrics)
         self.save_json(metrics)
 
     
