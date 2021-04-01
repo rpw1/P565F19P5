@@ -625,20 +625,41 @@ def moderate():
             email = request.form.get("email")
             title = request.form.get("title")
             if action == "approve":
-                content_db.update_approval(content_id, email, True)
                 message = Markup("<b>{}</b> approved!".format(title))
+                content_db.update_approval(content_id, email, True)
+                add_notification(message)
                 flash(message, category="success")
                 return redirect(url_for("views.moderate"))
             elif action == "delete":
                 reason = request.form.get("reason")
                 content_db.delete_content(content_id, email)
                 message = Markup("<b>{}</b> deleted for reason: {}".format(title, reason))
+                add_notification(message, reason)
                 flash(message, category="error")
                 return redirect(url_for("views.moderate"))
         return render_template("moderate.html", unapproved=unapproved)
     else:
         flash("You do not have permission to access that page!", category="error")
         return redirect(url_for("views.home"))
+
+
+def add_notification(message, reason = ""):
+    user = user_db.query_user(current_user.get_id())
+    notification_id = str(uuid.uuid4())
+    time_stamp = datetime.now()
+    user_content = user['content']
+    if 'notifications' not in user_content:
+        user_content['notification'] = dict()
+    if 'len' not in user_content['notification']:
+        user_content['notification']['len'] = 0
+    user_content['notification']['len'] += 1
+    user_content['notification'][notification_id] = {
+        'time_stamp': time_stamp,
+        'has_read': False,
+        'message': message,
+        'reason': reason
+    }
+    user_db.query_update_content(user['email'], user_content)
 
 @views.route("/messages")
 @login_required
