@@ -18,15 +18,15 @@
     </head>
     <body>
         <ul class="list-group" style="width:auto">
-            {% for notif in notifications %}
-            {% set id = notif %}
+            {% for notif_key, notif_item in notifications.items() %}
+            {% if notif_key != 'len'%}
             <li id="notif" class="list-group-item">
                 <div class="row">
                     <div class="col-md-1 align-self-center">
                         <span class="badge badge-pill badge-primary">!</span>
                     </div>
                     <div class="col-md-9 align-self-center">
-                        <p style="overflow-wrap:break-word">{{notif[id]}}</p>
+                        <p style="overflow-wrap:break-word">{{ notif_item['message'] }}</p>
                         <small class="text-muted">date</small>
                     </div>
                     <div class="col-md-2 align-self-center">
@@ -34,6 +34,7 @@
                     </div>
                 </div>
             </li>
+            {% endif %}
             {% endfor %}
         </ul>
     </body>
