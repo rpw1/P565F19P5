@@ -631,7 +631,7 @@ def moderate():
                 add_notification(email, message)
                 subscriber_list = user_db.scan_for_subscribers(email)
                 for subscriber in subscriber_list:
-                    notification_message = '{} {} just uplodaded {}. Go check it out now!'.format(uploader['first_name'], uploader['last_name'], title)
+                    notification_message = '{} {} just uploaded {}. Go check it out now!'.format(uploader['first_name'], uploader['last_name'], title)
                     add_notification(subscriber['email'], notification_message)
                 flash(message, category="success")
                 return redirect(url_for("views.moderate"))
