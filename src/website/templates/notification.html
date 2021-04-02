@@ -20,7 +20,7 @@
         <ul class="list-group" style="width:auto">
             {% for notif_key, notif_item in notifications.items() %}
             {% if notif_key != 'len'%}
-            <li id="notif" class="list-group-item">
+            <li id="notif{{ notif_key }}" class="list-group-item">
                 <div class="row">
                     <div class="col-md-1 align-self-center">
                         <span class="badge badge-pill badge-primary">!</span>
@@ -30,7 +30,7 @@
                         <small class="text-muted">date</small>
                     </div>
                     <div class="col-md-2 align-self-center">
-                        <button type="button" class="btn deleteButton">&times;</button>
+                        <button type="button" notif_id="{{notif_key}}" class="btn deleteButton">&times;</button>
                     </div>
                 </div>
             </li>
@@ -41,8 +41,9 @@
     <script>
         $(document).ready(function() {
             $('.deleteButton').on('click', function() {
-                $('#notif').fadeOut("slow", function () {
-                    $('#notif').css({display:"none"});
+                var notif_id = $(this).attr('notif_id');
+                $('#notif'+notif_id).fadeOut("slow", function () {
+                    $('#notif'+notif_id).css({display:"none"});
                 });
             });
         });
