@@ -664,7 +664,9 @@ def add_notification(message, reason = ""):
 @views.route("/notifs")
 @login_required
 def notifications():
-    return render_template("notification.html", user = user_db.query_user(current_user.get_id()))
+    user = user_db.query_user(current_user.get_id())
+    notifications = user['content']['notification']
+    return render_template("notification.html", notifications = notifications)
 
 @views.route("/messages")
 @login_required

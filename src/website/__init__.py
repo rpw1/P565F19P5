@@ -50,9 +50,9 @@ def create_app():
             user = user_db.query_user(current_user.get_id())
             user_content = user['content']
             if 'notification' not in user_content:
-                return dict(notifications = [])
-            return dict(notifications = user_content['notification'])
-        return dict(notifications = [])
+                return dict(notification_count = 0)
+            return dict(notification_count = user_content['notification']['len'])
+        return dict(notification_count = 0)
     unapproved_count = len(content_db.query_content_unapproved())
     from .views import views
     from .auth import auth
