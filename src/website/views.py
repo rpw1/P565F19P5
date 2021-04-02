@@ -627,14 +627,14 @@ def moderate():
             if action == "approve":
                 message = Markup("<b>{}</b> approved!".format(title))
                 content_db.update_approval(content_id, email, True)
-                add_notification(message)
+                add_notification(email, message)
                 flash(message, category="success")
                 return redirect(url_for("views.moderate"))
             elif action == "delete":
                 reason = request.form.get("reason")
                 content_db.delete_content(content_id, email)
                 message = Markup("<b>{}</b> deleted for reason: {}".format(title, reason))
-                add_notification(message, reason)
+                add_notification(email, message, reason)
                 flash(message, category="error")
                 return redirect(url_for("views.moderate"))
         return render_template("moderate.html", unapproved=unapproved)
@@ -643,8 +643,9 @@ def moderate():
         return redirect(url_for("views.home"))
 
 
-def add_notification(message, reason = ""):
-    user = user_db.query_user(current_user.get_id())
+def add_notification(email, message, reason = ""):
+    message = str(message).replace("<b>", "").replace("</b>", "")
+    user = user_db.query_user(email)
     notification_id = str(uuid.uuid4())
     time_stamp = datetime.now()
     user_content = user['content']

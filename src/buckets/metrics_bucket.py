@@ -28,7 +28,6 @@ class MetricsBucket:
         metrics = json.load(json_file)
         json_file.close()
         tf.close()
-        print(metrics)
         return metrics
 
     def save_json(self, metrics):
