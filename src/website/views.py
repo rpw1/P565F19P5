@@ -654,12 +654,17 @@ def add_notification(message, reason = ""):
         user_content['notification']['len'] = 0
     user_content['notification']['len'] += 1
     user_content['notification'][notification_id] = {
-        'time_stamp': time_stamp,
+        'time_stamp': 'n/a',
         'has_read': False,
         'message': message,
         'reason': reason
     }
     user_db.query_update_content(user['email'], user_content)
+
+@views.route("/notifs")
+@login_required
+def notifications():
+    return render_template("notification.html", user = user_db.query_user(current_user.get_id()))
 
 @views.route("/messages")
 @login_required

@@ -50,7 +50,7 @@ def create_app():
             user = user_db.query_user(current_user.get_id())
             user_content = user['content']
             if 'notification' not in user_content:
-                return dict(notifications = ['jaja','dhfs'])
+                return dict(notifications = [])
             return dict(notifications = user_content['notification'])
         return dict(notifications = [])
     unapproved_count = len(content_db.query_content_unapproved())
