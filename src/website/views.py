@@ -667,10 +667,19 @@ def add_notification(email, message, reason = ""):
     }
     user_db.query_update_content(user['email'], user_content)
 
-@views.route("/notifs")
+def delete_notification(email, notification_id):
+    user = user_db.query_user(email)
+    user_content = user['content']
+    del user_content['notification'][notification_id]
+    user_content['notification']['len'] -= 1
+    user_db.query_update_content(user['email'], user_content)
+
+@views.route("/notifs", methods=['GET', 'POST'])
 @login_required
 def notifications():
-    print("here")
+    if request.method == 'POST':
+        notification_id = request.form['id']
+        delete_notification(current_user.email, notification_id)
     user = user_db.query_user(current_user.get_id())
     if 'notification' not in user['content']:
         notifications = dict()

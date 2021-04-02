@@ -44,6 +44,11 @@
                 var notif_id = $(this).attr('notif_id');
                 $('#notif'+notif_id).fadeOut("slow", function () {
                     $('#notif'+notif_id).css({display:"none"});
+                req = $.ajax({
+                    url: '/notifs',
+                    type: 'POST',
+                    data: {id:notif_id}
+                });
                 });
             });
         });
