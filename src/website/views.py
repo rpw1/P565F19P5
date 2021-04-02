@@ -624,10 +624,15 @@ def moderate():
             content_id = request.form.get("content_id")
             email = request.form.get("email")
             title = request.form.get("title")
+            uploader = user_db.get_fitness_professional(email)
             if action == "approve":
                 message = Markup("<b>{}</b> approved!".format(title))
                 content_db.update_approval(content_id, email, True)
                 add_notification(email, message)
+                subscriber_list = user_db.scan_for_subscribers(email)
+                for subscriber in subscriber_list:
+                    notification_message = '{} {} just uplodaded {}. Go check it out now!'.format(uploader['first_name'], uploader['last_name'], title)
+                    add_notification(subscriber['email'], notification_message)
                 flash(message, category="success")
                 return redirect(url_for("views.moderate"))
             elif action == "delete":
