@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from src.database.user_database import UserDatabase
 from src.database.content_database import ContentDatabase
 from .models import User
@@ -43,6 +43,16 @@ def create_app():
     @app.context_processor
     def inject_unapproved_count():
         return dict(unapproved_count = len(content_db.query_content_unapproved()))
+    @app.context_processor
+    def inject_notifications():
+        print(current_user)
+        if current_user.is_authenticated:
+            user = user_db.query_user(current_user.get_id())
+            user_content = user['content']
+            if 'notification' not in user_content:
+                return dict(notifications = ['jaja','dhfs'])
+            return dict(notifications = user_content['notification'])
+        return dict(notifications = [])
     unapproved_count = len(content_db.query_content_unapproved())
     from .views import views
     from .auth import auth

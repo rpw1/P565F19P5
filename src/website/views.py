@@ -648,7 +648,7 @@ def add_notification(message, reason = ""):
     notification_id = str(uuid.uuid4())
     time_stamp = datetime.now()
     user_content = user['content']
-    if 'notifications' not in user_content:
+    if 'notification' not in user_content:
         user_content['notification'] = dict()
     if 'len' not in user_content['notification']:
         user_content['notification']['len'] = 0
