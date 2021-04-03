@@ -6,47 +6,135 @@
 </head>
     
 <body>
-    <br><br>
-    <div class="container">
-        <br>
-        <div class="form-row">
-            <div class="col form-group">
-                <h2>Create Appointments</h2>
+    <div class="tab">
+        <button class="tablinks" onclick="tab_click(event, 'Appointments')" id="defaultOpen">Appointments</button>
+        <button class="tablinks" onclick="tab_click(event, 'Workouts')">Workouts</button>
+    </div>
+
+    <script>
+        function tab_click(evt, tabName) {
+            // Declare all variables
+            var i, tabcontent, tablinks;
+        
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+            }
+        
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+        
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        } 
+        document.getElementById("defaultOpen").click();
+    </script>
+
+    <div id="Appointments" class="tabcontent">
+        <br><br>
+        <div class="container">
+            <br>
+            <div class="form-row">
+                <div class="col form-group">
+                    <h2>Create Appointments</h2>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                <form id="form_create_appointment">
-                    <div class="form-row">
-                        <div class="col form-group">
-                            <label class="required">Date</label>
-                            <input class="form-control date-input" type="text" id="date" data-trigger="hover" data-toggle="popover" title="Date" data-content="You can select any date from today clicking on the number in the calendar" required>
+            <div class="row">
+                <div class="col-md-4">
+                    <form id="form_create_appointment">
+                        <div class="form-row">
+                            <div class="col form-group">
+                                <label class="required">Date</label>
+                                <input class="form-control date-input" type="text" id="date" data-trigger="hover" data-toggle="popover" title="Date" data-content="You can select any date from today clicking on the number in the calendar" required>
+                            </div>
+                            <div class="col form-group">
+                                <label>Description</label>
+                                <input class="form-control" type="text" id="description">
+                            </div>
                         </div>
-                        <div class="col form-group">
-                            <label>Description</label>
-                            <input class="form-control" type="text" id="description">
+                        <div class="form-row">
+                            <div class="col form-group">
+                                <label class="required">Start Time</label>
+                                <input class="form-control time-input" type="text" id="start_time" required>
+                            </div>
+                            <div class="col form-group">
+                                <label class="required">End Time</label>
+                                <input class="form-control time-input" type="text" id="end_time" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col form-group">
+                                <button type="button" class="btn btn-warning btn-block" id="clear" onclick="clear_input()">Clear Form</button>
+                            </div>
+                            <div class="col form-group">
+                                <button type="button" class="btn btn-primary btn-block" id="submit" onclick="make_appointment()" disabled="disabled">Make Appointment</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="calendar col-md-8">
+                    <div>
+                        <div class="card-header bg-primary">
+                            <ul>
+                                <li id="month" class="text-white text-uppercase text-center">
+                                </li>
+                                <li id="year" class="text-white text-uppercase text-center">
+                                </li>
+                            </ul>
+                        </div>
+                        <table class="table calendar table-bordered table-responsive-sm" id="calendar">
+                            <thead>
+                                <tr class="weekdays bg-dark">
+                                <th scope="col" class="text-white text-center">Mo</th>
+                                <th scope="col" class="text-white text-center">Tu</th>
+                                <th scope="col" class="text-white text-center">We</th>
+                                <th scope="col" class="text-white text-center">Th</th>
+                                <th scope="col" class="text-white text-center">Fr</th>
+                                <th scope="col" class="text-white text-center">Sa</th>
+                                <th scope="col" class="text-white text-center">Su</th>
+                                </tr>
+                            </thead>
+                            <tbody class="days bg-light" id="days"></tbody>
+                            <tfoot></tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <br><hr>
+
+            <div class="row">
+                <div class="col offset-md-0">
+                    <div class="row">
+                        <div class="col">
+                            <h3>Appointments</h3>
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="col form-group">
-                            <label class="required">Start Time</label>
-                            <input class="form-control time-input" type="text" id="start_time" required>
-                        </div>
-                        <div class="col form-group">
-                            <label class="required">End Time</label>
-                            <input class="form-control time-input" type="text" id="end_time" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col form-group">
-                            <button type="button" class="btn btn-warning btn-block" id="clear" onclick="clear_input()">Clear Form</button>
-                        </div>
-                        <div class="col form-group">
-                            <button type="button" class="btn btn-primary btn-block" id="submit" onclick="make_appointment()" disabled="disabled">Make Appointment</button>
-                        </div>
-                    </div>
-                </form>
-            {% if current_user.role == 'client' %}
+                    <table class="table table-bordered table-hover table-striped table-sm" id="appointment_list">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col" class="text-center align-middle">Date</th>
+                                <th scope="col" class="text-center align-middle">Description</th>
+                                <th scope="col" class="text-center align-middle">Start time</th>
+                                <th scope="col" class="text-center align-middle">End time</th>
+                                <th scope="col" class="text-center align-middle">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br><br><br>
+        </div>    
+    </div>
+    {% if current_user.role == 'client' %}
+    <div id="Workouts" class="tabcontent">
             <div class="form-row">
                 <div class="col form-group">
                     <h2>Create Workouts</h2>
@@ -62,21 +150,23 @@
                         <label>Description</label>
                         <input class="form-control" type="text" id="description2">
                     </div>
-                </div>
-                <div class="form-row">
                     <div class="col form-group">
                         <label class="required">Difficulty (1-5)</label>
                         <input class="form-control" type="text" id="difficulty" required>
                     </div>
+                </div>
+                <div class="form-row">
                     <div class="col form-group">
                         <label class="required">Duration in Minutes</label>
                         <input class="form-control time-input" type="text" id="duration" required>
                     </div>
-                </div>
-                <div class="form-row">
                     <div class="col form-group">
                         <label class="required">Training Type</label>
                         <input class="form-control time-input" type="text" id="training_type" required>
+                    </div>
+                    <div class="col form-group">
+                        <label class="required">URL</label>
+                        <input class="form-control time-input" type="text" id="url" required>
                     </div>
                 </div>
                 <div class="form-row">
@@ -88,71 +178,10 @@
                     </div>
                 </div>
             </form>
-            {% endif %}
-            </div>
-            <div class="calendar col-md-8">
-                <div>
-                    <div class="card-header bg-primary">
-                        <ul>
-                            <li id="month" class="text-white text-uppercase text-center">
-                            </li>
-                            <li id="year" class="text-white text-uppercase text-center">
-                            </li>
-                        </ul>
-                    </div>
-                    <table class="table calendar table-bordered table-responsive-sm" id="calendar">
-                        <thead>
-                            <tr class="weekdays bg-dark">
-                              <th scope="col" class="text-white text-center">Mo</th>
-                              <th scope="col" class="text-white text-center">Tu</th>
-                              <th scope="col" class="text-white text-center">We</th>
-                              <th scope="col" class="text-white text-center">Th</th>
-                              <th scope="col" class="text-white text-center">Fr</th>
-                              <th scope="col" class="text-white text-center">Sa</th>
-                              <th scope="col" class="text-white text-center">Su</th>
-                            </tr>
-                          </thead>
-                        <tbody class="days bg-light" id="days"></tbody>
-                        <tfoot></tfoot>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <br><hr>
-
-        <div class="row">
-            <div class="col offset-md-1">
-                <div class="row">
-                    <div class="col">
-                        <h3>Appointments</h3>
-                    </div>
-                    <div class="col form-group">
-                        <button type="button" class="btn btn-danger btn-block" id="btn_clear_storage" onclick="clear_storage()">Clear Appointments</button>
-                    </div>
-                </div>
-                <table class="table table-bordered table-hover table-striped table-sm" id="appointment_list">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th scope="col" class="text-center align-middle">Date</th>
-                            <th scope="col" class="text-center align-middle">Description</th>
-                            <th scope="col" class="text-center align-middle">Start time</th>
-                            <th scope="col" class="text-center align-middle">End time</th>
-                            <th scope="col" class="text-center align-middle">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-            {% if current_user.role == 'client' %}
-            <div class="col offset-md-1">
+            <div class="col offset-md-0">
                 <div class="row">
                     <div class="col">
                         <h3>Workouts</h3>
-                    </div>
-                    <div class="col form-group">
-                        <button type="button" class="btn btn-danger btn-block" id="btn_clear_storageWorkout" onclick="clear_storageWorkout()">Clear Workouts</button>
                     </div>
                 </div>
                 <table class="table table-bordered table-hover table-striped table-sm" id="workout_list">
@@ -163,15 +192,14 @@
                             <th scope="col" class="text-center align-middle">Difficulty</th>
                             <th scope="col" class="text-center align-middle">Duration</th>
                             <th scope="col" class="text-center align-middle">Training Type</th>
+                            <th scope="col" class="text-center align-middle">URL</th>
                         </tr>
                     </thead>
                     <tbody>
                     </tbody>
                 </table>
             </div>
-            {% endif %}
-        </div>
-        <br><br><br>
+        {% endif %}
     </div>
     <script src="{{ url_for('static', filename='ItemEvents.js') }}"></script>
 </body>

@@ -252,6 +252,7 @@ function make_custom_workout() {
             description2: $("#description2").val(),
             difficulty: $("#difficulty").val(),
             duration: $("#duration").val(),
+            url: $("#url").val,
             training_type: $("#training_type").val(),
         };
 
@@ -280,7 +281,7 @@ $("#end_time, #start_time, #date").keyup(function () {
     }
 });
 
-$("#difficulty, #title, #duration, #training_type").keyup(function () {
+$("#difficulty, #title, #duration, #training_type, #url").keyup(function () {
     if (is_emptyWorkout()) {
         $("#submit_workout").prop('disabled', true);
     } else {
@@ -303,6 +304,7 @@ function clear_workout(){
     $("#difficulty").val('');
     $("#duration").val('');
     $("#training_type").val('');
+    $("#url").val('');
     $("#submit_workout").prop('disabled', true);
 }
 
@@ -326,7 +328,8 @@ function is_emptyWorkout() {
         ($("#title").val() == null || $("#title").val() == '') ||
         ($("#difficulty").val() == null || $("#difficulty").val() == '') ||
         ($("#duration").val() == null || $("#duration").val() == '') ||
-        ($("#training_type").val() == null || $("#training_type").val() == '')
+        ($("#training_type").val() == null || $("#training_type").val() == '') ||
+        ($("#url").val() == null || $("#url").val() == '')
     ) {
         return true;
     }
@@ -491,6 +494,7 @@ function printWorkout(clear = false, init = false, edit = false) {
                         <td class="text-center align-middle">${element.difficulty}</td>
                         <td class="text-center align-middle">${element.duration}</td>
                         <td class="text-center align-middle">${element.training_type}</td>
+                        <td class="text-center align-middle">${element.url}</td>
                         <td class="text-center align-middle">
                             <button class="btn btn-primary btn-sm " onclick="edit_workout(${element.id})"><i class="fas fa-pencil-alt"></i></button>
                             <button class="btn btn-danger btn-sm " onclick="delete_workout(${element.id})"><i class="fas fa-trash"></i></button>
@@ -614,6 +618,7 @@ function edit_workout(id){
                 $("#difficulty").val(element.difficulty);
                 $("#duration").val(element.duration);
                 $("#training_type").val(element.training_type);
+                ("#url").val(element.training_type);
                 $("#submit").prop('disabled', false);
                 delete_appointment(id);
             }
