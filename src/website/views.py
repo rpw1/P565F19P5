@@ -627,11 +627,12 @@ def moderate():
             uploader = user_db.get_fitness_professional(email)
             if action == "approve":
                 message = Markup("<b>{}</b> approved!".format(title))
+                notification_message = Markup("Your content, <a href='/content/{}' target='_blank'>{}</a>, was approved!".format(content_id, title))
                 content_db.update_approval(content_id, email, True)
-                add_notification(email, message)
+                add_notification(email, notification_message)
                 subscriber_list = user_db.scan_for_subscribers(email)
                 for subscriber in subscriber_list:
-                    notification_message = '{} {} just uploaded {}. Go check it out now!'.format(uploader['first_name'], uploader['last_name'], title)
+                    notification_message = Markup("{} {} just uploaded {}. <a href='/content/{}' target='_blank'>Go check it out now!</a>").format(uploader['first_name'], uploader['last_name'], title, content_id)
                     add_notification(subscriber['email'], notification_message)
                 flash(message, category="success")
                 return redirect(url_for("views.moderate"))
@@ -639,7 +640,8 @@ def moderate():
                 reason = request.form.get("reason")
                 content_db.delete_content(content_id, email)
                 message = Markup("<b>{}</b> deleted for reason: {}".format(title, reason))
-                add_notification(email, message, reason)
+                notification_message = Markup("{} was deleted for reason: {}".format(title, reason))
+                add_notification(email, notification_message)
                 flash(message, category="error")
                 return redirect(url_for("views.moderate"))
         return render_template("moderate.html", unapproved=unapproved)
@@ -652,7 +654,7 @@ def add_notification(email, message, reason = ""):
     message = str(message).replace("<b>", "").replace("</b>", "")
     user = user_db.query_user(email)
     notification_id = str(uuid.uuid4())
-    time_stamp = datetime.now()
+    now = datetime.now()
     user_content = user['content']
     if 'notification' not in user_content:
         user_content['notification'] = dict()
@@ -660,7 +662,7 @@ def add_notification(email, message, reason = ""):
         user_content['notification']['len'] = 0
     user_content['notification']['len'] += 1
     user_content['notification'][notification_id] = {
-        'time_stamp': 'n/a',
+        'time_stamp': now.strftime("%m/%d/%Y %H:%M:%S"),
         'has_read': False,
         'message': message,
         'reason': reason

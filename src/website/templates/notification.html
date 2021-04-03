@@ -26,8 +26,8 @@
                         <span class="badge badge-pill badge-primary">!</span>
                     </div>
                     <div class="col-md-9 align-self-center">
-                        <p style="overflow-wrap:break-word">{{ notif_item['message'] }}</p>
-                        <small class="text-muted">date</small>
+                        <p style="overflow-wrap:break-word">{{ notif_item['message']|safe }}</p>
+                        <small class="text-muted">{{notif_item['time_stamp']}}</small>
                     </div>
                     <div class="col-md-2 align-self-center">
                         <button type="button" notif_id="{{notif_key}}" class="btn deleteButton">&times;</button>

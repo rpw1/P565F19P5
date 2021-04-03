@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, Markup
 from flask_login import LoginManager, current_user
 from src.database.user_database import UserDatabase
 from src.database.content_database import ContentDatabase
