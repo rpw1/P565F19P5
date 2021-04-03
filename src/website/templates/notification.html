@@ -22,10 +22,7 @@
             {% if notif_key != 'len'%}
             <li id="notif{{ notif_key }}" class="list-group-item">
                 <div class="row">
-                    <div class="col-md-1 align-self-center">
-                        <span class="badge badge-pill badge-primary">!</span>
-                    </div>
-                    <div class="col-md-9 align-self-center">
+                    <div class="col-md-10 align-self-center">
                         <p style="overflow-wrap:break-word">{{ notif_item['message']|safe }}</p>
                         <small class="text-muted">{{notif_item['time_stamp']}}</small>
                     </div>
