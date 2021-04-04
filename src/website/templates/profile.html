@@ -13,8 +13,8 @@
         <img style="max-height:150px; height:auto; width:auto;" class="rounded-circle border border-4 border-dark" src="{{ user_image }}">
     </div>
     <div class="col-md-8">
-        <h1 class="display-3">{{user.first_name}} {{user.last_name}}</h1>
-        <p class="text-muted">
+        <h1 class="display-3" style="font-size: 60px;">{{user.first_name}} {{user.last_name}}</h1>
+        <p class="text-muted" style="font-size: 25px;">
             <small>
             {{class}}
             {% if user.role == 'fitness_professional' %}
@@ -24,11 +24,11 @@
             {% endif %}
             </small>
         </p>
-        <p class="text-muted"><small>{{bio}}</small></p>
+        <p class="text-muted" style="font-size: 22px;"><small>{{bio}}</small></p>
     </div>
     {% if current_user.email == user.email %}
     <div class="col-md-2">
-        <button type="button" class="btn btn-link btn-block" data-toggle="modal" data-target="#edit">Edit profile</button>
+        <button type="button" class="btn btn-link btn-block" data-toggle="modal" data-target="#edit" style="background-color: #C5D9D7;">Edit profile</button>
         <div class="modal fade" id="edit">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -66,15 +66,17 @@
                             <div class="form-group">
                                 <textarea placeholder="biography" id="bio" name="bio" class="form-control"></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block">Update</button>
+                            <button type="submit" class="btn btn-primary btn-block" style=" width: 50%; margin-left: 7.25em;">Update</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-        <a href="/update_password"><p class="text-center" >Change password</p></a>
-        {% if current_user.role == "fitness_professional" %}
-        <button type="button" class="btn btn-link btn-block" data-toggle="modal" data-target="#subscribers">{{subscriber_count}} subscriber{% if subscriber_count != 1%}s{% endif %}</button>
+        <div class="update-pass">
+            <a href="/update_password"><p class="text-center" style="background-color: #C5D9D7; border-radius: 5px;">Change password</p></a>
+            {% if current_user.role == "fitness_professional" %}
+            <button type="button" class="btn btn-link btn-block" data-toggle="modal" data-target="#subscribers" style="background-color: #C5D9D7;">{{subscriber_count}} subscriber{% if subscriber_count != 1%}s{% endif %}</button>
+        </div>
         <div class="modal fade" id="subscribers">
             <div class="modal-dialog" style="overflow-y:initial;">
                 <div class="modal-content">
