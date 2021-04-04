@@ -33,11 +33,14 @@ li {
     float: left;
     padding: 1em;
   }
+/*
 .entire-nav{
     position:sticky;
     top:0;
-    z-index: 10;
+    z-index:10;
 }
+.modal-backdrop{ z-index: 9;}
+*/
 .footer{
     position: absolute;
     bottom: 0;
