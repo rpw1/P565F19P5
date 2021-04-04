@@ -125,10 +125,11 @@ def profile():
     subscriptions = []
     subscriptions_count = 0
     subscription_emails = []
-    subscription_emails = user_values['content']['subscribed_accounts']
+    if 'subscribed_accounts' in user_values['content']:
+        subscription_emails = user_values['content']['subscribed_accounts']
+        for subscription in subscription_emails:
+            subscriptions.append(user_db.query_user(subscription))
     subscriptions_count = len(subscription_emails)
-    for subscription in subscription_emails:
-        subscriptions.append(user_db.query_user(subscription))
     if user_values['role'] == roles[1]:
         uploads = content_db.query_content_by_user(user_email)
         pending = content_db.query_unapproved_content_by_user(user_email)
