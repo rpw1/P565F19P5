@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-    <h1>Hello, {{user.first_name}}!</h1>
+    <h1><span style="color:#588C87;">Hello, {{user.first_name}}! </span></h1>
     <hr/>
     {% if current_user.role == 'client' %}
-    <h3>My Week</h3>
+    <h3 class = "headings">My Week</h3>
     <div class="row">
         <div class="col-xl-6">
             <table class="table table-bordered table-hover table-striped table-sm" id="workout_list">
@@ -96,7 +96,7 @@
     <hr/>
     {% endif %}
     {% if subscribed_content %}
-    <h3>New from my subscriptions</h3>
+    <h3 class = "headings2">New from my subscriptions</h3>
     <div class="row flex-row flex-nowrap overflow-auto">
         {% for item in subscribed_content%}
         <div class="col-auto mb-3">
@@ -113,7 +113,7 @@
     <hr/>
     {% endif %}
     {% if uploaded_today %}
-    <h3>Recently uploaded</h3>
+    <h3 class = "headings2">Recently uploaded</h3>
     <div class="row flex-row flex-nowrap overflow-auto">
         {% for item in uploaded_today%}
         <div class="col-auto mb-3">
@@ -129,7 +129,7 @@
     </div>
     <hr/>
     {% endif %}
-    <h3>Fitness videos</h3>
+    <h3 class = "headings2">Fitness videos</h3>
     <div class="row flex-row flex-nowrap overflow-auto">
         {% for item in fitness_videos%}
         <div class="col-auto mb-3">
@@ -144,7 +144,7 @@
         {% endfor %}
     </div>
     <hr/>
-    <h3>Diet plans</h3>
+    <h3 class = "headings2">Diet plans</h3>
     <div class="row flex-row flex-nowrap overflow-auto">
         {% for item in diet_plans%}
         <div class="col-auto mb-3">
@@ -159,7 +159,7 @@
         {% endfor %}
     </div>
     <hr/>
-    <h3>Workout plans</h3>
+    <h3 class = "headings2">Workout plans</h3>
     <div class="row flex-row flex-nowrap overflow-auto">
         {% for item in workout_plans %}
         <div class="col-auto mb-3">

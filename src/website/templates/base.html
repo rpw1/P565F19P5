@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap4-retro.min.css') }}"> -->
     <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
-    <link rel="stylesheet/scss" type= "text/css" href= "{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" type= "text/css" href= "{{ url_for('static', filename='static/styles.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
     <link rel="stylesheet" type= "text/css" href= "{{ url_for('static', filename='profile.css') }}">
@@ -21,110 +21,109 @@
     {% endblock %}
 </head>
 <body>
-    <div class ="navbar navbar-expand-sm bg-light">
-        <ul class="navbar nav">
-            {% if not(current_user.is_authenticated) %}
-            <a class="navbar-brand" href="/">
-                <img src="{{ url_for('static', filename='logo_transparent.png') }}" height="50px">
-            </a>
-            <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
-            <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
-            {% endif %}
-            {% if current_user.is_authenticated %}
-            <a class="navbar-brand" href="/">
-                <img src="{{ url_for('static', filename='logo_transparent.png') }}" height="50px">
-            </a>
-            <li class="nav-item">
-                <button class="btn btn-secondary dropdown-toggle mr-2" style="float:right" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{current_user.first_name}} {{current_user.last_name}}</button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="/profile">Profile</a>
-                    <a class="dropdown-item" href="/calendar">Calendar</a>
-                    <a class="dropdown-item" href="/progress_tracking">My Progress</a>
-                    <a class="dropdown-item" href="/logout">Logout</a>
-                </div>
-            </li>
-            <li class="nav-item">
-                <button class="btn btn-secondary mr-2" data-toggle="modal" data-target="#notifications">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
-                        <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
-                      </svg>
-                      <span class="badge badge-pill badge-light">{{notification_count}}</span>
-                </a>
-            </li>
-            <div class="modal fade" id="notifications">
-                <div class="modal-dialog" style="overflow-y:initial;">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 class="align-self-center">
-                                Notifications
-                                <span class="badge badge-pill badge-primary">{{notification_count}}</span>
-                            </h3>
+    <div id="page-container">
+        <div id = "content-wrap">
+            <div class = "entire-nav">
+            <div class ="navbar navbar-expand-sm bg-light">
+                <ul class="navbar nav">
+                    {% if not(current_user.is_authenticated) %}
+                    <a class="navbar-brand" href="/">
+                        <img src="{{ url_for('static', filename='logo_transparent.png') }}" height="50px">
+                    </a>
+                    <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
+                    <a class="navbar-brand" href="/">
+                        <img src="{{ url_for('static', filename='logo_transparent.png') }}" height="50px">
+                    </a>
+                    <li class="nav-item">
+                        <button class="btn btn-secondary dropdown-toggle mr-2" style="float:right" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{current_user.first_name}} {{current_user.last_name}}</button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="/profile">Profile</a>
+                            <a class="dropdown-item" href="/calendar">Calendar</a>
+                            <a class="dropdown-item" href="/progress_tracking">My Progress</a>
+                            <a class="dropdown-item" href="/logout">Logout</a>
                         </div>
-                        <div class="modal-body" style="max-height: 80vh; overflow-y:auto;">
-                            <iframe src="/notifs" style="border:none;" width="100%" height="500vh"></iframe>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-secondary mr-2" data-toggle="modal" data-target="#notifications">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
+                                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
+                            </svg>
+                            <span class="badge badge-pill badge-light">{{notification_count}}</span>
+                        </a>
+                    </li>
+                    <div class="modal fade" id="notifications">
+                        <div class="modal-dialog" style="overflow-y:initial;">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="align-self-center">
+                                        Notifications
+                                        <span class="badge badge-pill badge-primary">{{notification_count}}</span>
+                                    </h3>
+                                </div>
+                                <div class="modal-body" style="max-height: 80vh; overflow-y:auto;">
+                                    <iframe src="/notifs" style="border:none;" width="100%" height="500vh"></iframe>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    {% if current_user.role == 'fitness_professional' %}
+                    <li class="nav-item">
+                        <a class="btn btn-secondary" href="/upload">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16">
+                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                            </svg>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if current_user.role == 'admin' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/moderate">
+                            Moderate {% if unapproved_count > 0 %} <span class="badge badge-pill badge-primary">{{unapproved_count}}</span>{% endif %}
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                </ul>
+                {% if current_user.is_authenticated %}
+                <form class="form-inline ml-auto" method="POST" action="/search">
+                    <input class="form-control mr-sm-2" id="search" name="search" type="search" placeholder="Search" aria-label="Search" value="{% block search %}{% endblock %}">
+                    <button class="btn btn-primary my-2 my-sm-0" type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                    </button>
+                </form>
+                {% endif %}
             </div>
-            {% if current_user.role == 'fitness_professional' %}
-            <li class="nav-item">
-                <a class="btn btn-secondary" href="/upload">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16">
-                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                        <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
-                      </svg>
-                </a>
-            </li>
+        </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {% if category == "success" %}
+                        <div class="alert alert-success alert-dismissable fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-danger alert-dismissable fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endif %}
+                {% endfor %}
             {% endif %}
-            {% if current_user.role == 'admin' %}
-            <li class="nav-item">
-                <a class="nav-link" href="/moderate">
-                    Moderate {% if unapproved_count > 0 %} <span class="badge badge-pill badge-primary">{{unapproved_count}}</span>{% endif %}
-                </a>
-            </li>
-            {% endif %}
-            {% endif %}
-          </ul>
-          {% if current_user.is_authenticated %}
-          <form class="form-inline ml-auto" method="POST" action="/search">
-            <input class="form-control mr-sm-2" id="search" name="search" type="search" placeholder="Search" aria-label="Search" value="{% block search %}{% endblock %}">
-            <button class="btn btn-primary my-2 my-sm-0" type="submit">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                  </svg>
-            </button>
-          </form>
-          {% endif %}
+            {% endwith %}
+            <div class="container-xl pt-3 mb-5">{% block content %}{% endblock %}</div>
+        </div>
     </div>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            {% if category == "success" %}
-                <div class="alert alert-success alert-dismissable fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            {% else %}
-                <div class="alert alert-danger alert-dismissable fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            {% endif %}
-        {% endfor %}
-    {% endif %}
-    {% endwith %}
-    <div class="container-xl pt-3 mb-5">{% block content %}{% endblock %}</div>
-    <!--
-    <div id="footer">
-        {% block footer %}
-        <p><small>&copy; FitnessU 2021.</small></p>
-        {% endblock %}
-    </div>
-    -->
 </body>
 <script>
     $(document).ready(function() {
@@ -135,4 +134,25 @@
         });
     });
 </script>
+
+<footer id = "footer">
+    <p>FitnessU &copy;2021 All rights reserved.</p>
+    <ul class ="footer-grid">
+        <li class ="icon-item">
+            <a href="">
+                <img src="{{ url_for('static', filename='iconfinder_BW_Facebook_2_glyph_svg_5305153.png') }}" height="50px">
+            </a>
+        </li>
+        <li class ="icon-item">
+            <a href="">
+                <img src="{{ url_for('static', filename='iconfinder_BW_Linkedin_glyph_svg_5305157.png') }}" height="50px">
+            </a>
+        </li>
+        <li class ="icon-item">
+            <a href="">
+                <img src="{{ url_for('static', filename='iconfinder_BW_Twitter_glyph_svg_5305170.png') }}" height="50px">
+            </a>
+        </li>
+    </ul>
+</footer>
 </html>
