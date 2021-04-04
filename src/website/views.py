@@ -122,6 +122,13 @@ def profile():
     gender = user_values['gender']
     uploads = []
     pending = []
+    subscriptions = []
+    subscriptions_count = 0
+    subscription_emails = []
+    subscription_emails = user_values['content']['subscribed_accounts']
+    subscriptions_count = len(subscription_emails)
+    for subscription in subscription_emails:
+        subscriptions.append(user_db.query_user(subscription))
     if user_values['role'] == roles[1]:
         uploads = content_db.query_content_by_user(user_email)
         pending = content_db.query_unapproved_content_by_user(user_email)
@@ -137,7 +144,7 @@ def profile():
     return render_template("profile.html", user=current_user, user_image=user_image, 
         uploads=uploads, countries=countries_by_alpha2, country_codes=country_codes, length=len(country_codes),
         specialty = specialty, gender = gender, bio = bio, flag_src = flag_src, country_name=country_name, subscriber_count=subscriber_count, 
-        subscriber_list=subscriber_list, pending=pending)
+        subscriber_list=subscriber_list, pending=pending, subscriptions=subscriptions, subscriptions_count=subscriptions_count)
 
 @views.route("/calendar", methods=["GET","POST"])
 @login_required
