@@ -246,7 +246,6 @@ function make_appointment() {
 
 function make_custom_workout() {
     if (!is_emptyWorkout()) {
-        console.log("Here")
         var workout = {
             title: $("#title").val(),
             description2: $("#description2").val(),
@@ -551,9 +550,18 @@ function SaveDataToLocalStorageWorkout(data2)
 
     a.push(data2);
     localStorage.setItem('tbWorkout', JSON.stringify(a));
-    $.post('/calendar', {"workout_data":JSON.stringify(a)}, function(data, status) {
-        console.log({"workout_data":JSON.stringify(a)})
-    }, 'application/json');
+    console.log(data2)
+    $.ajax(post_url, {
+        type: 'POST',
+        data: [data2],
+        success: function(data) {
+            // console.log(data)
+        }
+    })
+    // $.post('/calendar', JSON.stringify({"workout_data": a}), function(data, status) {
+    //     console.log(JSON.stringify({"workout_data": data}));
+    //     console.log(status);
+    // }, 'application/json');
     
 }
 

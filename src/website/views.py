@@ -151,6 +151,7 @@ def profile():
 @login_required
 def calendar():
     if request.method == 'POST':
+        print("In Post method")
         data = request.data
         print(data)
         print(type(data))
