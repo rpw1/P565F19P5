@@ -8,7 +8,9 @@
 <body>
     <div class="tab">
         <button class="tablinks" onclick="tab_click(event, 'Appointments')" id="defaultOpen">Appointments</button>
+        {% if current_user.role == 'client' %}
         <button class="tablinks" onclick="tab_click(event, 'Workouts')">Workouts</button>
+        {% endif %}
     </div>
 
     <script>
@@ -186,8 +188,8 @@
                         </select>
                     </div>
                     <div class="col form-group">
-                        <label class="required">URL</label>
-                        <input class="form-control" type="text" id="url" name="url" required>
+                        <label class="required">content_id</label>
+                        <input class="form-control" type="text" id="content_id" name="content_id">
                     </div>
                 </div>
                 <div class="form-row">
@@ -213,10 +215,33 @@
                             <th scope="col" class="text-center align-middle">Difficulty</th>
                             <th scope="col" class="text-center align-middle">Duration</th>
                             <th scope="col" class="text-center align-middle">Training Type</th>
-                            <th scope="col" class="text-center align-middle">URL</th>
+                            <th scope="col" class="text-center align-middle">Content ID</th>
+                            <th scope="col" class="text-center align-middle">Complete/Delete</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {% for id, workout in custom_workouts.items() %}
+                        <tr>
+                            <td scope="col" class="text-center align-middle">{{ workout['title'] }}</td>
+                            <td scope="col" class="text-center align-middle">{{ workout['description'] }}</td>
+                            <td scope="col" class="text-center align-middle">{{ workout['difficulty'] }}</td>
+                            <td scope="col" class="text-center align-middle">{{ workout['duration'] }}</td>
+                            <td scope="col" class="text-center align-middle">{{ workout['training_type'] }}</td>
+                            <td scope="col" class="text-center align-middle">
+                                {% if workout['content_id'] != "" %}
+                                <form method="POST">
+                                    <button type="submit" name="content_button" class="btn btn-primary" value="{{workout['content_id']}}">Go to {{workout['content_id']}}</button>
+                                </form>
+                                {% endif %}
+                            </td>
+                            <td class="text-center align-middle">
+                                <form method="POST">
+                                    <button type="submit" class="btn btn-secondary btn-sm" name="complete_workout" value="{{workout['workout_id']}}"></button><i class="fas"></i></button>
+                                    <button type="submit" class="btn btn-danger btn-sm" name="delete_workout" value="{{workout['workout_id']}}"></button><i class="fas fa-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

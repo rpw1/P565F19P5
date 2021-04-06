@@ -67,6 +67,11 @@ def home():
             elif item_content['mode_of_instruction'] == 'Video' and current_content['approved']:
                 fitness_videos.append(current_content)
         user_values = user_db.query_user(email)
+        custom_workouts = dict()
+        if user_values['role'] == 'client':
+            client_content = user_values['content']
+            if 'current_custom_workout' in client_content and client_content['current_custom_workout']:
+                custom_workouts = client_content['current_custom_workout']
         subscribed_content = []
         if 'subscribed_accounts' in user_values['content']:
             subscribed_accounts = user_values['content']['subscribed_accounts']
@@ -77,7 +82,7 @@ def home():
         return render_template("dashboard.html", user=current_user, total_users=total_users, total_content=total_content, 
             uploaded_today=uploaded_today_approved, type_count=type_count, subscribed_content=subscribed_content,
             diet_plans=diet_plans, workout_plans=workout_plans, fitness_videos=fitness_videos, uploaded_today_len=uploaded_today_count, 
-            calories=calories, todays_views=todays_views, total_views = total_views)
+            calories=calories, todays_views=todays_views, total_views = total_views, custom_workouts=custom_workouts)
     else: 
         return render_template("landing.html")
 
@@ -150,30 +155,77 @@ def profile():
 @views.route("/calendar", methods=["GET","POST"])
 @login_required
 def calendar():
+    current_user_values = user_db.query_user(current_user.get_id())
+    client_content = current_user_values['content']
+    if 'custom_workout' not in client_content:
+        client_content['custom_workout'] = dict()
+    if 'current_custom_workout' not in client_content:
+        client_content['current_custom_workout'] = dict()
     if request.method == 'POST':
+        complete_workout = request.form.get("complete_workout")
+        if complete_workout:
+            del client_content['current_custom_workout'][complete_workout]
+            user_db.update_client_content(current_user.get_id(), client_content)
+            return render_template("calendar.html", user=current_user, isWorkout=True, 
+                custom_workouts=client_content['current_custom_workout'])
+        url_content = request.form.get("content_button")
+        delete_workout = request.form.get("delete_workout")
+        if delete_workout:
+            current_workout = client_content['custom_workout'][delete_workout]
+            current_content = content_db.query_content_by_id(current_workout['content_id'])
+            if current_content:
+                current_content_content = current_content['content']
+                if 'workout_plans' not in current_content_content or not current_content_content['workout_plans']:
+                    current_content_content['workout_plans'] = []
+                if delete_workout in current_content_content['workout_plans']:
+                    current_content_content['workout_plans'] = current_content_content['workout_plans'].remove(delete_workout)
+                    content_db.update_content(current_content['content_id'], current_content['email'], current_content_content)
+            del client_content['custom_workout'][delete_workout]
+            del client_content['current_workout_plans'][delete_workout]
+            user_db.update_client_content(current_user.get_id(), client_content)
+            return render_template("calendar.html", user=current_user, isWorkout=True, 
+                custom_workouts=client_content['current_custom_workout'])
+        url_content = request.form.get("content_button")
+        if url_content:
+            return redirect(url_for('views.content', id=url_content))
         title = request.form.get("title")
         description = request.form.get("description2")
         difficulty = request.form.get("difficulty")
         duration = request.form.get("duration")
         training_type = request.form.get("training_type")
-        url : str = str(request.form.get("url"))
-        url_split = url.split("/")
-        content_id = url_split[len(url_split) - 1]
-        url_content = content_db.query_content(content_id)
-        if not url_content:
-            flash("Error: Url was incorrect")
-            return render_template("calendar.html", user=current_user)
-        print(
-            {
+        content_id = request.form.get("content_id")
+        url_content = content_db.query_content_by_id(content_id)
+        if not url_content and content_id:
+            flash("Error: Content ID was incorrect")
+            return render_template("calendar.html", user=current_user, isWorkout=True, 
+                custom_workouts=client_content['current_custom_workout'])
+        else:
+            workout_id = str(uuid.uuid4())
+            custom_workout = {
+                "workout_id": workout_id,
                 "title": title,
                 "description": description,
                 "difficulty": difficulty,
                 "duration": duration,
                 "training_type": training_type,
-                "url": url
+                "content_id": content_id,
             }
-        )
-    return render_template("calendar.html", user=current_user, isWorkout = False)
+            client_content['custom_workout'][workout_id] = custom_workout
+            client_content['current_custom_workout'][workout_id] = custom_workout
+            user_db.update_client_content(current_user.get_id(), client_content)
+            if url_content:
+                content_url = url_content['content']
+                if 'workout_plans' in content_url and content_url['workout_plans']:
+                    workout_plans = content_url['workout_plans']
+                    workout_plans.append(workout_id)
+                    content_url['workout_plans'] = workout_plans
+                else:
+                    content_url['workout_plans'] = [workout_id]
+                content_db.update_content(url_content['content_id'], url_content['email'], content_url)
+            return render_template("calendar.html", user=current_user, isWorkout=True, 
+                custom_workouts=client_content['current_custom_workout'])
+    return render_template("calendar.html", user=current_user, isWorkout = False, 
+        custom_workouts=client_content['current_custom_workout'])
     
 @views.route("/user/<id>", methods = ["GET", "POST"])
 @login_required
@@ -292,10 +344,18 @@ def content(id):
             workout_type = current_content['workout_type']
             mode_of_instruction = current_content['mode_of_instruction']
             created_user = query_content['email']
+            if 'workout_plans' in current_content:
+                workout_plans = current_content['workout_plans']
+            else:
+                workout_plans = None
+            if workout_plans:
+                plan_count = len(workout_plans)
+            else:
+                plan_count = 0
             user_path = url_for("views.user_page", id = created_user)
             return render_template("content.html", created_user = created_user, title = title, description = description, 
                 content_link = content_link, content_date = content_date, user_path = user_page, content_type = content_type, view_count=view_count, approved=approved,
-                mode_of_instruction=mode_of_instruction, workout_type=workout_type)
+                mode_of_instruction=mode_of_instruction, workout_type=workout_type, workout_plans=plan_count)
     flash("Content did not show correctly", category="error")
     return redirect(url_for("views.home"))
 
