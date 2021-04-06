@@ -720,3 +720,8 @@ def messages():
     #all senders are clients, so we can check the user's role to see what fields to look for
     #pass that list of conversations to the template
     return render_template("messages.html")
+
+@views.route("/conversation/<id>")
+@login_required
+def conversation(id):
+    return render_template("conversation.html")
