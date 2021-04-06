@@ -784,4 +784,4 @@ def messages():
 @views.route("/conversation/<id>")
 @login_required
 def conversation(id):
-    return render_template("conversation.html")
+    return render_template("conversation.html", id=id)

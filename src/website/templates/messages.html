@@ -16,7 +16,7 @@
         <div class="tab-content" id="nav-tabContent">
             {% for x in range(0,4) %}
             <div class="tab-pane" id="conv_{{x}}" role="tabpanel">
-                <iframe src="/notifs" width="100%"></iframe>
+                <iframe src="/conversation/test{{x}}" width="100%" style="border:none;"></iframe>
                 test{{x}}
             </div>
             {% endfor %}
