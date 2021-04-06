@@ -93,7 +93,7 @@
                 <div class="card-body">
                     <h1 class="card-title">{{ title }}</h1>
                     <p>{{ description }}</p>
-                    <p class="text-muted">Uploaded on {{ content_date }} by <a href="{{url_for('views.user_page', id=created_user)}}">{{ created_user }}</a></p>
+                    <p class="text-muted">Uploaded on {{ content_date }} by <a href="{{url_for('users.user_page', id=created_user)}}">{{ created_user }}</a></p>
                 </div>
             </div>
         </div>

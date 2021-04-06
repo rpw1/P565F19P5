@@ -254,9 +254,9 @@ def content(id):
                 plan_count = len(workout_plans)
             else:
                 plan_count = 0
-            user_path = url_for("views.user_page", id = created_user)
+            user_path = url_for("users.user_page", id = created_user)
             return render_template("content.html", created_user = created_user, title = title, description = description, 
-                content_link = content_link, content_date = content_date, user_path = user_page, content_type = content_type, view_count=view_count, approved=approved,
+                content_link = content_link, content_date = content_date, user_path = user_path, content_type = content_type, view_count=view_count, approved=approved,
                 mode_of_instruction=mode_of_instruction, workout_type=workout_type, workout_plans=plan_count)
     flash("Content did not show correctly", category="error")
     return redirect(url_for("views.home"))
