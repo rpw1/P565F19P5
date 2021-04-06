@@ -10,6 +10,7 @@
         <button class="tablinks" onclick="tab_click(event, 'Appointments')" id="defaultOpen">Appointments</button>
         {% if current_user.role == 'client' %}
         <button class="tablinks" onclick="tab_click(event, 'Workouts')">Workouts</button>
+        <button class="tablinks" onclick="tab_click(event, 'Meals')">Meals</button>
         {% endif %}
     </div>
 
@@ -245,8 +246,48 @@
                     </tbody>
                 </table>
             </div>
-        {% endif %}
     </div>
+    <div id="Meals" class="tabcontent">
+        <div class="form-row">
+            <div class="col form-group">
+                <h2>Track Calorie Consumption</h2>
+            </div>
+        </div>
+
+            <form id="form_create_meal" method="POST">
+                <div class="form-row">
+                    <div class="col form-group"> 
+                        <label class="required">Entree</label>
+                        <input class="form-control" type="text" id="entree" name="entree">
+                    </div>
+                    <div class="col form-group">
+                        <label>Sides</label>
+                        <input class="form-control" type="text" id="sides" name="sides">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col form-group">
+                        <label class="required">Drink</label>
+                        <input class="form-control" type="text" id="drink" name="drink" required>
+                    </div>
+                    <div class="col form-group">
+                        <label class="required">Total Calories</label>
+                        <input class="form-control" type="text" id="total_calories" name="total_calories" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col form-group">
+                        <button type="button" class="btn btn-warning btn-block" id="clear" onclick="clear_meal()">Clear Form</button>
+                    </div>
+                    <div class="col form-group">
+                        <button type="submit" class="btn btn-primary btn-block" id="submit_workout" disabled="disabled">Add Meal</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+    {% endif %}
     <script src="{{ url_for('static', filename='ItemEvents.js') }}"></script>
 </body>
       

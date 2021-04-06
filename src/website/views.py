@@ -159,6 +159,8 @@ def calendar():
     client_content = current_user_values['content']
     if 'custom_workout' not in client_content:
         client_content['custom_workout'] = dict()
+    if 'meal' not in client_content:
+        client_content['meal'] = dict()
     if 'current_custom_workout' not in client_content:
         client_content['current_custom_workout'] = dict()
     if request.method == 'POST':
@@ -209,6 +211,13 @@ def calendar():
                 "duration": duration,
                 "training_type": training_type,
                 "content_id": content_id,
+            }
+
+            meals = {
+                "entree": entree,
+                "sides": sides,
+                "drink": drink,
+                "total_calories": total_calories,
             }
             client_content['custom_workout'][workout_id] = custom_workout
             client_content['current_custom_workout'][workout_id] = custom_workout

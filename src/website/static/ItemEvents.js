@@ -1,16 +1,21 @@
 let arrAppointment;
 let arrWorkout;
+let arrMeal;
 
 $(function () {
     if (typeof (Storage) !== "undefined") {
         arrAppointment = localStorage.getItem("tbAppointment");
         arrWorkout = localStorage.getItem("tbWorkout");
+        arrWorkout = localStorage.getItem("tbMeal");
         arrAppointment = JSON.parse(arrAppointment);
         arrWorkout = JSON.parse(arrWorkout);
+        arrMeal = JSON.parse(arrMeal);
         $("#btn_clear_storage").prop('disabled', false);
         $(`#btn_clear_storage`).show();
         $("#btn_clear_storageWorkout").prop('disabled', false);
         $(`#btn_clear_storageWorkout`).show();
+        $("#btn_clear_storage_Meal").prop('disabled', false);
+        $(`#btn_clear_storage_Meal`).show();
         if (arrAppointment == null || arrAppointment == "[null]"){
             $("#btn_clear_storage").prop('disabled', true);
             $(`#btn_clear_storage`).hide();
@@ -24,6 +29,13 @@ $(function () {
             arrWorkout = [];
             arrWorkout.push(JSON.parse(localStorage.getItem('tbWorkout')));
             localStorage.setItem('tbWorkout', JSON.stringify(arrWorkout));
+        }
+        if(arrMeal == null || arrMeal == "[null]"){
+            $("#btn_clear_storage_Meal").prop('disabled', true);
+            $(`#btn_clear_storage_Meal`).hide();
+            arrMeal = [];
+            arrMeal.push(JSON.parse(localStorage.getItem('tbMeal')));
+            localStorage.setItem('tbMeal', JSON.stringify(arrMeal));
         }
     } 
         
@@ -76,6 +88,12 @@ $(function () {
     $("#duration").inputmask('Regex', {
         max_length: 3,
         regex: "^([0-9]){1,3}",
+        clearIncomplete: true,
+    });
+
+    $("#calories_burned").inputmask('Regex', {
+        max_length: 4,
+        regex: "^([0-9]){1,4}",
         clearIncomplete: true,
     });
 
@@ -186,6 +204,19 @@ $("#days td.active").on("click", function () {
     }
 });
 
+$("#days td.active").on("click", function () {
+    if (is_emptyWorkout() == true) {
+        $("#submit_meal").prop('disabled', true);
+    } else {
+        $("#submit_meal").prop('disabled', false);
+    }
+    if ($("#calories_burned").val() == null || $("#calories_burned").val() == '') {
+        $("#calories_burned").focus();
+    } else {
+        $("#submit_meal").focus();
+    }
+});
+
 $("#days td.inactive").on("click", function () {
     iziToast.error({
         title: 'Error',
@@ -281,6 +312,14 @@ function clear_workout(){
     $("#training_type").val('');
     $("#content_id").val('');
     $("#submit_workout").prop('disabled', true);
+}
+
+function clear_meal() {
+    $("#entree").val('');
+    $("#sides").val('');
+    $("#drink").val('');
+    $("#total_calories").val('');
+    $("#submit").prop('disabled', true);
 }
 
 function is_empty() {
