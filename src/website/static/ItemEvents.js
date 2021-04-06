@@ -73,10 +73,10 @@ $(function () {
         clearIncomplete: true,
     });
 
-    $('#duration').inputmask('Regex', {
+    $("#duration").inputmask('Regex', {
         max_length: 3,
-        regex: "^([0-9][0-9][0-9])",
-        clearIncomplete: true
+        regex: "^([0-9]){1,3}",
+        clearIncomplete: true,
     });
 
     $('#training_type').inputmask('Regex', {
@@ -550,19 +550,6 @@ function SaveDataToLocalStorageWorkout(data2)
 
     a.push(data2);
     localStorage.setItem('tbWorkout', JSON.stringify(a));
-    console.log(data2)
-    $.ajax(post_url, {
-        type: 'POST',
-        data: [data2],
-        success: function(data) {
-            // console.log(data)
-        }
-    })
-    // $.post('/calendar', JSON.stringify({"workout_data": a}), function(data, status) {
-    //     console.log(JSON.stringify({"workout_data": data}));
-    //     console.log(status);
-    // }, 'application/json');
-    
 }
 
 function clear_storage(){

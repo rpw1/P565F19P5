@@ -151,14 +151,29 @@ def profile():
 @login_required
 def calendar():
     if request.method == 'POST':
-        print("In Post method")
-        data = request.data
-        print(data)
-        print(type(data))
-        if data: 
-            print(data['workout_data'])
-        pass
-    return render_template("calendar.html", user=current_user, post_url = url_for('views.calendar'))
+        title = request.form.get("title")
+        description = request.form.get("description2")
+        difficulty = request.form.get("difficulty")
+        duration = request.form.get("duration")
+        training_type = request.form.get("training_type")
+        url : str = str(request.form.get("url"))
+        url_split = url.split("/")
+        content_id = url_split[len(url_split) - 1]
+        url_content = content_db.query_content(content_id)
+        if not url_content:
+            flash("Error: Url was incorrect")
+            return render_template("calendar.html", user=current_user)
+        print(
+            {
+                "title": title,
+                "description": description,
+                "difficulty": difficulty,
+                "duration": duration,
+                "training_type": training_type,
+                "url": url
+            }
+        )
+    return render_template("calendar.html", user=current_user, isWorkout = False)
     
 @views.route("/user/<id>", methods = ["GET", "POST"])
 @login_required

@@ -12,6 +12,14 @@
     </div>
 
     <script>
+        $(document).ready(function() {
+            let isWorkout = '{{ isWorkout }}' == 'True'
+            if (isWorkout) {
+                tab_click(event, 'Workouts')
+            } else {
+                tab_click(event, 'Appointments')
+            }
+        });
         function tab_click(evt, tabName) {
             // Declare all variables
             var i, tabcontent, tablinks;
@@ -33,7 +41,6 @@
             evt.currentTarget.className += " active";
         } 
         document.getElementById("defaultOpen").click();
-        post_url = '{{ post_url }}';
     </script>
 
     <div id="Appointments" class="tabcontent">
@@ -141,33 +148,46 @@
                     <h2>Create Workouts</h2>
                 </div>
             </div>
-            <form id="form_create_workout">
+            <form id="form_create_workout" method="POST">
                 <div class="form-row">
                     <div class="col form-group"> 
                         <label class="required">Title</label>
-                        <input class="form-control" type="text" id="title">
+                        <input class="form-control" type="text" id="title" name="title">
                     </div>
                     <div class="col form-group">
                         <label>Description</label>
-                        <input class="form-control" type="text" id="description2">
+                        <input class="form-control" type="text" id="description2" name="description2">
                     </div>
                     <div class="col form-group">
-                        <label class="required">Difficulty (1-5)</label>
-                        <input class="form-control" type="text" id="difficulty" required>
+                        <label class="required">Difficulty</label>
+                        <select id="difficulty" name="difficulty" class="form-control" required>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="col form-group">
                         <label class="required">Duration in Minutes</label>
-                        <input class="form-control time-input" type="text" id="duration" required>
+                        <input class="form-control" type="text" id="duration" name="duration" required>
                     </div>
                     <div class="col form-group">
                         <label class="required">Training Type</label>
-                        <input class="form-control time-input" type="text" id="training_type" required>
+                        <select id="training_type" name="training_type" class="form-control" required>
+                            <option value="Cardio">Cardio</option>
+                            <option value="Strength Training">Strength Training</option>
+                            <option value="Flexibility">Flexibility</option>
+                            <option value="Endurance Training">Endurance Training</option>
+                            <option value="Core Training">Core Training</option>
+                            <option value="Other" selected>Other</option>
+                        </select>
                     </div>
                     <div class="col form-group">
                         <label class="required">URL</label>
-                        <input class="form-control time-input" type="text" id="url" required>
+                        <input class="form-control" type="text" id="url" name="url" required>
                     </div>
                 </div>
                 <div class="form-row">
@@ -175,7 +195,7 @@
                         <button type="button" class="btn btn-warning btn-block" id="clear" onclick="clear_workout()">Clear Form</button>
                     </div>
                     <div class="col form-group">
-                        <button type="button" class="btn btn-primary btn-block" id="submit_workout" onclick="make_custom_workout()" disabled="disabled">Make Workout</button>
+                        <button type="submit" class="btn btn-primary btn-block" id="submit_workout" disabled="disabled">Make Workout</button>
                     </div>
                 </div>
             </form>
