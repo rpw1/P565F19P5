@@ -173,37 +173,9 @@ def calendar():
         duration = request.form.get("duration")
         training_type = request.form.get("training_type")
         content_id = request.form.get("content_id")
-        url_content = content_db.query_content_by_id(content_id)
-        if not url_content and content_id:
-            flash("Error: Content ID was incorrect")
-            return render_template("calendar.html", user=current_user, isWorkout=True, 
-                custom_workouts=client_content['current_custom_workout'])
-        else:
-            workout_id = str(uuid.uuid4())
-            custom_workout = {
-                "workout_id": workout_id,
-                "title": title,
-                "description": description,
-                "difficulty": difficulty,
-                "duration": duration,
-                "training_type": training_type,
-                "content_id": content_id,
-            }
-
-            client_content['custom_workout'][workout_id] = custom_workout
-            client_content['current_custom_workout'][workout_id] = custom_workout
-            user_db.update_client_content(current_user.get_id(), client_content)
-            if url_content:
-                content_url = url_content['content']
-                if 'workout_plans' in content_url and content_url['workout_plans']:
-                    workout_plans = content_url['workout_plans']
-                    workout_plans.append(workout_id)
-                    content_url['workout_plans'] = workout_plans
-                else:
-                    content_url['workout_plans'] = [workout_id]
-                content_db.update_content(url_content['content_id'], url_content['email'], content_url)
-            return render_template("calendar.html", user=current_user, isWorkout=True, 
-                custom_workouts=client_content['current_custom_workout'])
+        client_content = add_custom_workout(title, description, difficulty, duration, training_type, content_id, client_content)
+        return render_template("calendar.html", user=current_user, isWorkout=True, 
+            custom_workouts=client_content['current_custom_workout'])
     return render_template("calendar.html", user=current_user, isWorkout = False, 
         custom_workouts=client_content['current_custom_workout'])
     
