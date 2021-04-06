@@ -3,9 +3,9 @@
 {% block content %}
 <div class="row">
     <div class="col-xl-4">
-        <div class="list-group">
+        <div class="list-group" id="messages">
             {% for x in range(0,4) %}
-            <a class="list-group-item list-group-item-action" id="list-{{x}}-list" data-toggle="list" href="#{x}}" role="tab" aria-controls="{{x}}">
+            <a class="list-group-item list-group-item-action" data-toggle="list" href="#conv_{{x}}" role="tab">
                 <h5>Other Person</h5>
                 <p class="text-muted mb-1">latest message</p>
             </a>
@@ -15,10 +15,16 @@
     <div class="col-xl-8">
         <div class="tab-content" id="nav-tabContent">
             {% for x in range(0,4) %}
-            <div class="tab-pane fade show" id="{{x}}" role="tabpanel" aria-labelledby="list-{{x}}-list">...</div>
+            <div class="tab-pane" id="conv_{{x}}" role="tabpanel">test{{x}}</div>
             {% endfor %}
         </div>
         <p>display conversation using javascript here (and maybe iframes)</p>
     </div>
 </div>
+<script>
+    $('#messages a').on('click', function (e) {
+        e.preventDefault()
+        $(this).tab('show')
+    })
+</script>
 {% endblock %}
