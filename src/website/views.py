@@ -86,71 +86,63 @@ def home():
     else: 
         return render_template("landing.html")
 
-@views.route("/profile", methods=["GET", "POST"])
-@login_required
-def profile():
-    user_email = current_user.get_id()
-    subscriber_list = user_db.scan_for_subscribers(current_user.email)
-    if request.method == "POST":
-        bio = request.form.get("bio")
-        if bio != "":
-            user_db._update_bio(user_email, bio, current_user.get_role())
-        if current_user.get_role() == roles[1]:
-            country_code = request.form.get("country")
-            gender = request.form.get("gender")
-            specialty = request.form.get("specialty")
-            # info on flags found on https://flagpedia.net/download/api
-            if country_code != "":
-                chosen_country = countries_by_alpha2[country_code]
-                country_info = {
-                    "code": country_code,
-                    "name": chosen_country[0],
-                    "flag": "https://flagcdn.com/16x12/" + country_code.lower() + ".png"
-                }
-                user_db.update_fitness_professional_country(user_email, country_info)
-            if specialty != "":
-                user_db.update_fitness_professional_specialty(user_email, specialty)
-            if gender != "":
-                user_db.update_fitness_professional_gender(user_email, gender)
-        flash("Successfully edited profile!", category="success")
-        return redirect(url_for("views.profile"))
-    user_values = user_db.query_user(user_email)
-    subscriber_count = 0
-    if 'subscribers' in user_values['content']:
-        if user_values['role'] == roles[1] and user_values['content'] and user_values['content']['subscribers']:
-            subscriber_count = user_values['content']['subscribers']
-    user_image = user_values['image']
-    flag_src = ""
-    country_name = ""
-    bio = user_values['bio']
-    specialty = ""
-    gender = user_values['gender']
-    uploads = []
-    pending = []
-    subscriptions = []
-    subscriptions_count = 0
-    subscription_emails = []
-    if 'subscribed_accounts' in user_values['content']:
-        subscription_emails = user_values['content']['subscribed_accounts']
-        for subscription in subscription_emails:
-            subscriptions.append(user_db.query_user(subscription))
-    subscriptions_count = len(subscription_emails)
-    if user_values['role'] == roles[1]:
-        uploads = content_db.query_content_by_user(user_email)
-        pending = content_db.query_unapproved_content_by_user(user_email)
-        if 'country' in user_values:
-            if user_values['country']:
-                country_info = user_values['country']
-                country_name = country_info['code']
-                if 'flag' in country_info:
-                    flag_src = country_info['flag']
-        if 'specialty' in user_values:
-            specialty = user_values['specialty']
-    country_codes = list(countries_by_alpha2.keys())
-    return render_template("profile.html", user=current_user, user_image=user_image, 
-        uploads=uploads, countries=countries_by_alpha2, country_codes=country_codes, length=len(country_codes),
-        specialty = specialty, gender = gender, bio = bio, flag_src = flag_src, country_name=country_name, subscriber_count=subscriber_count, 
-        subscriber_list=subscriber_list, pending=pending, subscriptions=subscriptions, subscriptions_count=subscriptions_count)
+
+def delete_custom_workout(delete_workout, client_content):
+    """
+    This function takes a workout_id and the current client's content and removes the workout from the client and content.
+    """
+    current_workout = client_content['custom_workout'][delete_workout]
+    current_content = content_db.query_content_by_id(current_workout['content_id'])
+    if current_content:
+        current_content_content = current_content['content']
+        if 'workout_plans' not in current_content_content or not current_content_content['workout_plans']:
+            current_content_content['workout_plans'] = []
+        if delete_workout in current_content_content['workout_plans']:
+            current_content_content['workout_plans'] = current_content_content['workout_plans'].remove(delete_workout)
+            content_db.update_content(current_content['content_id'], current_content['email'], current_content_content)
+    del client_content['custom_workout'][delete_workout]
+    del client_content['current_workout_plans'][delete_workout]
+    user_db.update_client_content(current_user.get_id(), client_content)
+    return client_content['current_custom_workout']
+
+def complete_custom_workout(complete_workout, client_content):
+    """
+        removes complete_workout's custom workout id from the list of current custom workouts
+    """
+    del client_content['current_custom_workout'][complete_workout]
+    user_db.update_client_content(current_user.get_id(), client_content)
+    return client_content['current_custom_workout']
+
+def add_custom_workout(title, description, difficulty, duration, training_type, content_id, client_content):
+    url_content = content_db.query_content_by_id(content_id)
+    if not url_content and content_id:
+        flash("Error: Content ID was incorrect")
+        return render_template("calendar.html", user=current_user, isWorkout=True, 
+            custom_workouts=client_content['current_custom_workout'])
+    else:
+        workout_id = str(uuid.uuid4())
+        custom_workout = {
+            "workout_id": workout_id,
+            "title": title,
+            "description": description,
+            "difficulty": difficulty,
+            "duration": duration,
+            "training_type": training_type,
+            "content_id": content_id,
+        }
+        client_content['custom_workout'][workout_id] = custom_workout
+        client_content['current_custom_workout'][workout_id] = custom_workout
+        user_db.update_client_content(current_user.get_id(), client_content)
+        if url_content:
+            content_url = url_content['content']
+            if 'workout_plans' in content_url and content_url['workout_plans']:
+                workout_plans = content_url['workout_plans']
+                workout_plans.append(workout_id)
+                content_url['workout_plans'] = workout_plans
+            else:
+                content_url['workout_plans'] = [workout_id]
+            content_db.update_content(url_content['content_id'], url_content['email'], content_url)
+        return client_content
 
 @views.route("/calendar", methods=["GET","POST"])
 @login_required
@@ -164,27 +156,14 @@ def calendar():
     if request.method == 'POST':
         complete_workout = request.form.get("complete_workout")
         if complete_workout:
-            del client_content['current_custom_workout'][complete_workout]
-            user_db.update_client_content(current_user.get_id(), client_content)
+            current_custom_workouts = complete_custom_workout(complete_workout, client_content)
             return render_template("calendar.html", user=current_user, isWorkout=True, 
-                custom_workouts=client_content['current_custom_workout'])
-        url_content = request.form.get("content_button")
+                custom_workouts=current_custom_workouts)
         delete_workout = request.form.get("delete_workout")
         if delete_workout:
-            current_workout = client_content['custom_workout'][delete_workout]
-            current_content = content_db.query_content_by_id(current_workout['content_id'])
-            if current_content:
-                current_content_content = current_content['content']
-                if 'workout_plans' not in current_content_content or not current_content_content['workout_plans']:
-                    current_content_content['workout_plans'] = []
-                if delete_workout in current_content_content['workout_plans']:
-                    current_content_content['workout_plans'] = current_content_content['workout_plans'].remove(delete_workout)
-                    content_db.update_content(current_content['content_id'], current_content['email'], current_content_content)
-            del client_content['custom_workout'][delete_workout]
-            del client_content['current_workout_plans'][delete_workout]
-            user_db.update_client_content(current_user.get_id(), client_content)
+            current_custom_workouts = delete_custom_workout(delete_workout, client_content)
             return render_template("calendar.html", user=current_user, isWorkout=True, 
-                custom_workouts=client_content['current_custom_workout'])
+                custom_workouts=current_custom_workouts)
         url_content = request.form.get("content_button")
         if url_content:
             return redirect(url_for('views.content', id=url_content))
@@ -194,89 +173,12 @@ def calendar():
         duration = request.form.get("duration")
         training_type = request.form.get("training_type")
         content_id = request.form.get("content_id")
-        url_content = content_db.query_content_by_id(content_id)
-        if not url_content and content_id:
-            flash("Error: Content ID was incorrect")
-            return render_template("calendar.html", user=current_user, isWorkout=True, 
-                custom_workouts=client_content['current_custom_workout'])
-        else:
-            workout_id = str(uuid.uuid4())
-            custom_workout = {
-                "workout_id": workout_id,
-                "title": title,
-                "description": description,
-                "difficulty": difficulty,
-                "duration": duration,
-                "training_type": training_type,
-                "content_id": content_id,
-            }
-            client_content['custom_workout'][workout_id] = custom_workout
-            client_content['current_custom_workout'][workout_id] = custom_workout
-            user_db.update_client_content(current_user.get_id(), client_content)
-            if url_content:
-                content_url = url_content['content']
-                if 'workout_plans' in content_url and content_url['workout_plans']:
-                    workout_plans = content_url['workout_plans']
-                    workout_plans.append(workout_id)
-                    content_url['workout_plans'] = workout_plans
-                else:
-                    content_url['workout_plans'] = [workout_id]
-                content_db.update_content(url_content['content_id'], url_content['email'], content_url)
-            return render_template("calendar.html", user=current_user, isWorkout=True, 
-                custom_workouts=client_content['current_custom_workout'])
+        client_content = add_custom_workout(title, description, difficulty, duration, training_type, content_id, client_content)
+        return render_template("calendar.html", user=current_user, isWorkout = True, 
+            custom_workouts=client_content['current_custom_workout'])
     return render_template("calendar.html", user=current_user, isWorkout = False, 
         custom_workouts=client_content['current_custom_workout'])
     
-@views.route("/user/<id>", methods = ["GET", "POST"])
-@login_required
-def user_page(id):
-    user_values = user_db.query_user(id)
-    if user_values != None:
-        current_user_values = user_db.query_user(current_user.get_id())
-        uploads = content_db.query_content_by_user(id)
-        subscribed_to = []
-        subscriber_count = 0
-        if current_user_values['content'] and current_user.role != roles[2]:
-            if 'subscribed_accounts' in current_user_values['content']:
-                subscribed_to = current_user_values['content']['subscribed_accounts']
-        if 'subscribers' in user_values['content']:
-            if user_values['role'] == roles[1] and user_values['content'] and user_values['content']['subscribers']:
-                subscriber_count = user_values['content']['subscribers']
-        subscribed = False
-        if id in subscribed_to:
-            subscribed = True
-        if request.method == "POST":
-            action = request.form.get("subscribe")
-            if action == "subscribe":
-                user_db.subscribe(current_user.email, user_values['email'])
-                return redirect(url_for("views.user_page", id=id))
-            elif action == "unsubscribe":
-                user_db.unsubscribe(current_user.email, user_values['email'])
-                return redirect(url_for("views.user_page", id=id))
-        if id == current_user.get_id():
-            return redirect(url_for("views.profile"))
-        user_image = user_values['image']
-        specialty = ""
-        flag_src = ""
-        bio = user_values['bio']
-        gender = user_values['gender']
-        profile_user = User(
-                    user_values['email'], user_values['password'], user_values['first_name'], user_values['last_name'], user_values['role']
-                )
-        if user_values and user_values['role'] == roles[1]:
-            if 'country' in user_values:
-                country_info = user_values['country']
-                if 'flag' in country_info:
-                    flag_src = country_info['flag']
-            if 'specialty' in user_values:
-                specialty = user_values['specialty']
-    else:
-        flash("That user does not exist!", category="error")
-        return redirect(url_for("views.home"))
-    return render_template("profile.html", user=profile_user, user_image = user_image, uploads=uploads,
-                specialty = specialty, gender = gender, bio = bio, flag_src = flag_src,
-                countries=dict(), country_codes=list(), length=0, subscribed=subscribed, subscriber_count=subscriber_count)
-
 @views.route("/content/<id>", methods=["GET","POST"])
 @login_required
 def content(id):
@@ -442,21 +344,14 @@ def upload():
             return redirect(url_for("views.home"))
     return render_template("upload.html")
 
-@views.route("/update_password", methods=["GET","POST"])
-@login_required
-def update_password():
-    if request.method == "POST":
-        new_password = request.form.get("password")
-        confirm = request.form.get("confirm")
-        email = current_user.get_id()
-        password = generate_password_hash(new_password, method="sha256")
-        if new_password != confirm:
-            flash("Password must equal confirmation", category="error")
-        else:
-            user_db.update_client_password(email, password)
-            flash("Password successfully changed!", category="success")
-    return render_template("update_password.html", user=current_user)
 
+@views.route("/messages")
+@login_required
+def messages():
+    #get a list of all conversations user is involved in
+    #all senders are clients, so we can check the user's role to see what fields to look for
+    #pass that list of conversations to the template
+    return render_template("messages.html")
 
 
 @views.route("/progress_tracking", methods=["GET","POST"])
@@ -617,171 +512,3 @@ def progress_tracking():
         return render_template('progress_tracking.html', user=current_user, todays_date = todays_date, calories = calories, calorie_string= calorie_string, calorie_goal = weekly_calorie_goal, calorie_total = weekly_calorie_total)
     return render_template('progress_tracking.html', user=current_user, todays_date = todays_date, calories = calories, calorie_string= calorie_string, calorie_goal = weekly_calorie_goal, calorie_total = weekly_calorie_total)
 
-@views.route("/search", methods=["GET","POST"])
-@login_required
-def search():
-    if request.method == "POST":
-        query = request.form.get("search")
-        if query == "" or query == None:
-            flash("Query cannot be empty!", category="error")
-            return render_template("search.html", query="", results=list(), results_len=0, item_len = 0)
-        type_filter = ['users', 'content']
-        gender_filters = ['male', 'female', 'non_binary', 'prefer']
-        date_filters_temp = ['today', 'week', 'month', 'year']
-        date_filters = date_filters_temp[::-1]
-        instruction_filters = ['video', 'diet_plan', 'workout_plan']
-        workout_type_filters = ['home', 'gym', 'fitness_center', 'track']
-        user_filters = {
-            "gender": gender_filters
-            }
-        content_filters = {
-            "date": date_filters, 
-            "mode_of_instruction": instruction_filters, 
-            "workout_type": workout_type_filters
-        }
-        users_val = request.form.get('users')
-        content_val = request.form.get('content')
-        for key, items in user_filters.items():
-            temp_list = []
-            for uf in items:
-                if request.form.get(uf):
-                    users_val = True
-                    temp_list.append(uf)
-            user_filters[key] = temp_list
-        
-        for key, items in content_filters.items():
-            temp_list = []
-            for cf in items:
-                if request.form.get(cf):
-                    content_val = True
-                    temp_list.append(cf)
-            content_filters[key] = temp_list
-        
-        if users_val and not content_val:
-            results = scan_tb.full_scan(query, user_filters, None)
-        elif not users_val and content_val:
-            results = scan_tb.full_scan(query, None, content_filters)
-        else:
-            results = scan_tb.full_scan(query, user_filters, content_filters)
-        query_results = []
-        for item in results:
-            item_group = []
-            if "@" in item:
-                current_user = user_db.query_user(item)
-                item_group.append(current_user['first_name'] + " " + current_user['last_name'])
-                item_group.append(current_user['username'])
-                if 'country' in current_user and 'name' in current_user['country']:
-                    item_group.append(current_user['country']['name'])
-                else:
-                    item_group.append("")
-                item_group.append(current_user['gender'])
-                if 'specialty' in current_user:
-                    item_group.append(current_user['specialty'])
-                else:
-                    item_group.append("")
-                item_group.append(current_user['image'])
-                item_group.append(url_for("views.user_page", id = item))
-            else:
-                current_content = content_db.query_content_by_id(item)
-                item_content = current_content['content']
-                item_group.append(item_content['title'])
-                item_group.append(item_content['mode_of_instruction'])
-                item_group.append(item_content['workout_type'])
-                item_group.append(item_content['date'])
-                item_group.append("")
-                item_group.append(item_content['bucket_info']['thumbnail_link'])
-                item_group.append(url_for("views.content", id = item))
-            query_results.append(item_group)
-        if len(query_results) != 0:
-            return render_template("search.html", query=query, results=query_results, results_len=len(query_results), item_len = len(query_results[0]))
-        else:
-            return render_template("search.html", query=query, results=list(), results_len=0, item_len = 0)
-
-@views.route("/moderate", methods=["GET","POST"])
-@login_required
-def moderate():
-    if current_user.role == 'admin':
-        unapproved = content_db.query_content_unapproved()
-        print(unapproved)
-        if request.method == "POST":
-            action = request.form.get("moderate")
-            content_id = request.form.get("content_id")
-            email = request.form.get("email")
-            title = request.form.get("title")
-            uploader = user_db.get_fitness_professional(email)
-            if action == "approve":
-                message = Markup("<b>{}</b> approved!".format(title))
-                notification_message = Markup("Your content, <a href='/content/{}' target='_blank'>{}</a>, was approved!".format(content_id, title))
-                content_db.update_approval(content_id, email, True)
-                add_notification(email, notification_message)
-                subscriber_list = user_db.scan_for_subscribers(email)
-                for subscriber in subscriber_list:
-                    notification_message = Markup("{} {} just uploaded {}. <a href='/content/{}' target='_blank'>Go check it out now!</a>").format(uploader['first_name'], uploader['last_name'], title, content_id)
-                    add_notification(subscriber['email'], notification_message)
-                flash(message, category="success")
-                return redirect(url_for("views.moderate"))
-            elif action == "delete":
-                reason = request.form.get("reason")
-                content_db.delete_content(content_id, email)
-                message = Markup("<b>{}</b> deleted for reason: {}".format(title, reason))
-                notification_message = Markup("{} was deleted for reason: {}".format(title, reason))
-                add_notification(email, notification_message)
-                flash(message, category="error")
-                return redirect(url_for("views.moderate"))
-        return render_template("moderate.html", unapproved=unapproved)
-    else:
-        flash("You do not have permission to access that page!", category="error")
-        return redirect(url_for("views.home"))
-
-
-def add_notification(email, message, reason = ""):
-    message = str(message).replace("<b>", "").replace("</b>", "")
-    user = user_db.query_user(email)
-    notification_id = str(uuid.uuid4())
-    now = datetime.now()
-    user_content = user['content']
-    if 'notification' not in user_content:
-        user_content['notification'] = dict()
-    if 'len' not in user_content['notification']:
-        user_content['notification']['len'] = 0
-    user_content['notification']['len'] += 1
-    user_content['notification'][notification_id] = {
-        'time_stamp': now.strftime("%m/%d/%Y %H:%M:%S"),
-        'has_read': False,
-        'message': message,
-        'reason': reason
-    }
-    user_db.query_update_content(user['email'], user_content)
-
-def delete_notification(email, notification_id):
-    user = user_db.query_user(email)
-    user_content = user['content']
-    del user_content['notification'][notification_id]
-    user_content['notification']['len'] -= 1
-    user_db.query_update_content(user['email'], user_content)
-
-@views.route("/notifs", methods=['GET', 'POST'])
-@login_required
-def notifications():
-    if request.method == 'POST':
-        notification_id = request.form['id']
-        delete_notification(current_user.email, notification_id)
-    user = user_db.query_user(current_user.get_id())
-    if 'notification' not in user['content']:
-        notifications = dict()
-    else:
-        notifications = user['content']['notification']
-    return render_template("notification.html", notifications = notifications)
-
-@views.route("/messages")
-@login_required
-def messages():
-    #get a list of all conversations user is involved in
-    #all senders are clients, so we can check the user's role to see what fields to look for
-    #pass that list of conversations to the template
-    return render_template("messages.html")
-
-@views.route("/conversation/<id>")
-@login_required
-def conversation(id):
-    return render_template("conversation.html", id=id)
