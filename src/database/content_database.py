@@ -98,14 +98,17 @@ class ContentDatabase:
 
     def query_content_by_id(self, content_id):
         self.check_database()
-        response = self.content_table.query(
-            KeyConditionExpression=Key('content_id').eq(content_id)
-        )
-        if 'Items' in response:
-            if len(response["Items"]) > 0:
-                return response["Items"][0]
-        print("Unable to query content")
-        return None
+        try:
+            response = self.content_table.query(
+                KeyConditionExpression=Key('content_id').eq(content_id)
+            )
+            if 'Items' in response:
+                if len(response["Items"]) > 0:
+                    return response["Items"][0]
+            print("Unable to query content")
+            return None
+        except:
+            return None
 
     def query_content_unapproved(self):
         self.check_database()

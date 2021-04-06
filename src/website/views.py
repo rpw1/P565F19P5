@@ -150,30 +150,63 @@ def profile():
 @views.route("/calendar", methods=["GET","POST"])
 @login_required
 def calendar():
+    current_user_values = user_db.query_user(current_user.get_id())
+    client_content = current_user_values['content']
+    if 'custom_workout' not in client_content:
+        client_content['custom_workout'] = dict()
     if request.method == 'POST':
+        delete_workout = request.form.get("delete_workout")
+        if delete_workout:
+            current_workout = client_content['custom_workout'][delete_workout]
+            current_content = content_db.query_content_by_id(current_workout['content_id'])
+            if current_content:
+                if 'workout_plans' not in current_content:
+                    current_content['workout_plans'] = []
+                if delete_workout in current_content['workout_plans']:
+                    current_content['workout_plans'] = current_content['workout_plans'].remove(delete_workout)
+                    content_db.update_content(url_content['content_id'], url_content['email'], current_content)
+            del client_content['custom_workout'][delete_workout]
+            user_db.update_client_content(current_user.get_id(), client_content)
+            return render_template("calendar.html", user=current_user, isWorkout=True, 
+                custom_workouts=client_content['custom_workout'])
+        url_content = request.form.get("content_button")
+        if url_content:
+            return redirect(url_for('views.content', id=url_content))
         title = request.form.get("title")
         description = request.form.get("description2")
         difficulty = request.form.get("difficulty")
         duration = request.form.get("duration")
         training_type = request.form.get("training_type")
-        url : str = str(request.form.get("url"))
-        url_split = url.split("/")
-        content_id = url_split[len(url_split) - 1]
-        url_content = content_db.query_content(content_id)
-        if not url_content:
-            flash("Error: Url was incorrect")
-            return render_template("calendar.html", user=current_user)
-        print(
-            {
+        content_id = request.form.get("content_id")
+        url_content = content_db.query_content_by_id(content_id)
+        if not url_content and content_id:
+            flash("Error: Content ID was incorrect")
+            return render_template("calendar.html", user=current_user, isWorkout=True, 
+                custom_workouts=client_content['custom_workout'])
+        else:
+            workout_id = str(uuid.uuid4())
+            custom_workout = {
+                "workout_id": workout_id,
                 "title": title,
                 "description": description,
                 "difficulty": difficulty,
                 "duration": duration,
                 "training_type": training_type,
-                "url": url
+                "content_id": content_id
             }
-        )
-    return render_template("calendar.html", user=current_user, isWorkout = False)
+            client_content['custom_workout'][workout_id] = custom_workout
+            user_db.update_client_content(current_user.get_id(), client_content)
+            if url_content:
+                print("here")
+                content_url = url_content['content']
+                workout_plans = []
+                content_url['workout_plans'] = workout_plans.append(workout_id)
+                content_db.update_content(url_content['content_id'], url_content['email'], content_url)
+                print(content_url)
+            return render_template("calendar.html", user=current_user, isWorkout=True, 
+                custom_workouts=client_content['custom_workout'])
+    return render_template("calendar.html", user=current_user, isWorkout = False, 
+        custom_workouts=client_content['custom_workout'])
     
 @views.route("/user/<id>", methods = ["GET", "POST"])
 @login_required
@@ -292,10 +325,15 @@ def content(id):
             workout_type = current_content['workout_type']
             mode_of_instruction = current_content['mode_of_instruction']
             created_user = query_content['email']
+            workout_plans = current_content['workout_plans']
+            if workout_plans:
+                plan_count = len(workout_plans)
+            else:
+                plan_count = 0
             user_path = url_for("views.user_page", id = created_user)
             return render_template("content.html", created_user = created_user, title = title, description = description, 
                 content_link = content_link, content_date = content_date, user_path = user_page, content_type = content_type, view_count=view_count, approved=approved,
-                mode_of_instruction=mode_of_instruction, workout_type=workout_type)
+                mode_of_instruction=mode_of_instruction, workout_type=workout_type, workout_plans=plan_count)
     flash("Content did not show correctly", category="error")
     return redirect(url_for("views.home"))
 
