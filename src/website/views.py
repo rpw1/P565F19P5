@@ -160,11 +160,12 @@ def calendar():
             current_workout = client_content['custom_workout'][delete_workout]
             current_content = content_db.query_content_by_id(current_workout['content_id'])
             if current_content:
-                if 'workout_plans' not in current_content:
-                    current_content['workout_plans'] = []
-                if delete_workout in current_content['workout_plans']:
-                    current_content['workout_plans'] = current_content['workout_plans'].remove(delete_workout)
-                    content_db.update_content(url_content['content_id'], url_content['email'], current_content)
+                current_content_content = current_content['content']
+                if 'workout_plans' not in current_content_content:
+                    current_content_content['workout_plans'] = []
+                if delete_workout in current_content_content['workout_plans']:
+                    current_content_content['workout_plans'] = current_content_content['workout_plans'].remove(delete_workout)
+                    content_db.update_content(current_content['content_id'], current_content['email'], current_content_content)
             del client_content['custom_workout'][delete_workout]
             user_db.update_client_content(current_user.get_id(), client_content)
             return render_template("calendar.html", user=current_user, isWorkout=True, 
@@ -197,12 +198,10 @@ def calendar():
             client_content['custom_workout'][workout_id] = custom_workout
             user_db.update_client_content(current_user.get_id(), client_content)
             if url_content:
-                print("here")
                 content_url = url_content['content']
                 workout_plans = []
                 content_url['workout_plans'] = workout_plans.append(workout_id)
                 content_db.update_content(url_content['content_id'], url_content['email'], content_url)
-                print(content_url)
             return render_template("calendar.html", user=current_user, isWorkout=True, 
                 custom_workouts=client_content['custom_workout'])
     return render_template("calendar.html", user=current_user, isWorkout = False, 
@@ -325,7 +324,10 @@ def content(id):
             workout_type = current_content['workout_type']
             mode_of_instruction = current_content['mode_of_instruction']
             created_user = query_content['email']
-            workout_plans = current_content['workout_plans']
+            if 'workout_plans' in current_content:
+                workout_plans = current_content['workout_plans']
+            else:
+                workout_plans = None
             if workout_plans:
                 plan_count = len(workout_plans)
             else:
