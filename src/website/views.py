@@ -67,6 +67,11 @@ def home():
             elif item_content['mode_of_instruction'] == 'Video' and current_content['approved']:
                 fitness_videos.append(current_content)
         user_values = user_db.query_user(email)
+        custom_workouts = dict()
+        if user_values['role'] == 'client':
+            client_content = user_values['content']
+            if 'custom_workout' in client_content and client_content['custom_workout']:
+                custom_workouts = client_content['custom_workout']
         subscribed_content = []
         if 'subscribed_accounts' in user_values['content']:
             subscribed_accounts = user_values['content']['subscribed_accounts']
@@ -77,7 +82,7 @@ def home():
         return render_template("dashboard.html", user=current_user, total_users=total_users, total_content=total_content, 
             uploaded_today=uploaded_today_approved, type_count=type_count, subscribed_content=subscribed_content,
             diet_plans=diet_plans, workout_plans=workout_plans, fitness_videos=fitness_videos, uploaded_today_len=uploaded_today_count, 
-            calories=calories, todays_views=todays_views, total_views = total_views)
+            calories=calories, todays_views=todays_views, total_views = total_views, custom_workouts=custom_workouts)
     else: 
         return render_template("landing.html")
 

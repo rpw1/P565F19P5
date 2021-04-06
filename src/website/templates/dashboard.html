@@ -18,6 +18,15 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for id, workout in custom_workouts.items() %}
+                    <tr>
+                        <td scope="col" class="text-center align-middle">{{ workout['title'] }}</td>
+                        <td scope="col" class="text-center align-middle">{{ workout['description'] }}</td>
+                        <td scope="col" class="text-center align-middle">{{ workout['difficulty'] }}</td>
+                        <td scope="col" class="text-center align-middle">{{ workout['duration'] }}</td>
+                        <td scope="col" class="text-center align-middle">{{ workout['training_type'] }}</td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -174,39 +183,6 @@
         {% endfor %}
     </div>
     <script>
-        $(document).ready(function() {
-            var data2 = localStorage.getItem("tbWorkout");
-            data2 = JSON.parse(data2);
-            if (data2[0] !== null) {
-                $("#workout_list > tbody").html("");
-                $(`.week td.active`).removeClass('badge1');
-                $(`.week td.active`).removeAttr( "data-badge" );
-                let date = [];
-                if (data2.length !== 0) {
-                    for (let i = 0; i < data2.length; i++) {
-                        const element = data2[i];
-                        $("#workout_list > tbody").append(
-                            `
-                            <tr>
-                                <td class="text-center align-middle">${element.title}</td>
-                                <td class="text-center align-middle">${element.description2}</td>
-                                <td class="text-center align-middle">${element.difficulty}</td>
-                                <td class="text-center align-middle">${element.duration}</td>
-                                <td class="text-center align-middle">${element.training_type}</td>
-                            </tr>
-                            `
-                        );
-                    }
-                    let cell = document.querySelector(`.week > td.active[data-day='${element}']`);
-                    put_badges_newWorkout(cell);
-                } else {
-                    let element = document.querySelector(`.week > td.active[data-badge]`);
-                    if (element !== null) {
-                        put_badges_newWorkout(element);
-                    }
-                }
-            }
-        });
         var user_chart = document.getElementById("user_chart");
         user_chart.width = 300;
         user_chart.height = 300;
