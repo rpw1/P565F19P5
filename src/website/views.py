@@ -161,7 +161,7 @@ def calendar():
             current_content = content_db.query_content_by_id(current_workout['content_id'])
             if current_content:
                 current_content_content = current_content['content']
-                if 'workout_plans' not in current_content_content:
+                if 'workout_plans' not in current_content_content or not current_content_content['workout_plans']:
                     current_content_content['workout_plans'] = []
                 if delete_workout in current_content_content['workout_plans']:
                     current_content_content['workout_plans'] = current_content_content['workout_plans'].remove(delete_workout)
@@ -199,8 +199,12 @@ def calendar():
             user_db.update_client_content(current_user.get_id(), client_content)
             if url_content:
                 content_url = url_content['content']
-                workout_plans = []
-                content_url['workout_plans'] = workout_plans.append(workout_id)
+                if 'workout_plans' in content_url and content_url['workout_plans']:
+                    workout_plans = content_url['workout_plans']
+                    workout_plans.append(workout_id)
+                    content_url['workout_plans'] = workout_plans
+                else:
+                    content_url['workout_plans'] = [workout_id]
                 content_db.update_content(url_content['content_id'], url_content['email'], content_url)
             return render_template("calendar.html", user=current_user, isWorkout=True, 
                 custom_workouts=client_content['custom_workout'])
