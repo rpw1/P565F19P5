@@ -88,7 +88,6 @@ $(function () {
     $('[data-toggle="popover"]').popover();
 
     print(false, true);
-    printWorkout(false, true);
 
 });
 
@@ -244,29 +243,6 @@ function make_appointment() {
     }
 }
 
-function make_custom_workout() {
-    if (!is_emptyWorkout()) {
-        var workout = {
-            title: $("#title").val(),
-            description2: $("#description2").val(),
-            difficulty: $("#difficulty").val(),
-            duration: $("#duration").val(),
-            content_id: $("#content_id").val,
-            training_type: $("#training_type").val(),
-        };
-
-        SaveDataToLocalStorageWorkout(workout);
-        $("#btn_clear_storageWorkout").prop('disabled', false);
-        $(`#btn_clear_storageWorkout`).show();
-        printWorkout();
-
-        clear_workout();
-        iziToast.success({
-            title: 'Success',
-            message: 'Workout created',
-        });
-    } 
-}
 
 $("#end_time, #start_time").focusout(function () {
     compare();
@@ -469,118 +445,6 @@ function print(clear = false, init = false, edit = false) {
     }
 }
 
-function printWorkout(clear = false, init = false, edit = false) {
-    if (clear != false){
-        $("#workout_list > tbody").html("");
-        return true;
-    };
-    var data2 = localStorage.getItem("tbWorkout");
-    data2 = JSON.parse(data2);
-    if (data2[0] !== null) {
-        $("#workout_list > tbody").html("");
-        $(`.week td.active`).removeClass('badge1');
-        $(`.week td.active`).removeAttr( "data-badge" );
-        let date = [];
-        if (data2.length !== 0) {
-            for (let i = 0; i < data2.length; i++) {
-                const element = data2[i];
-                $("#workout_list > tbody").append(
-                    `
-                    <tr>
-                        <td class="text-center align-middle">${element.title}</td>
-                        <td class="text-center align-middle">${element.description2}</td>
-                        <td class="text-center align-middle">${element.difficulty}</td>
-                        <td class="text-center align-middle">${element.duration}</td>
-                        <td class="text-center align-middle">${element.training_type}</td>
-                        <td class="text-center align-middle">${element.content_id}</td>
-                        <td class="text-center align-middle">
-                            <button class="btn btn-primary btn-sm " onclick="edit_workout(${element.id})"><i class="fas fa-pencil-alt"></i></button>
-                            <button class="btn btn-danger btn-sm " onclick="delete_workout(${element.id})"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                    `
-                );
-                
-            }
-            
-        } 
-        else {
-            let element = document.querySelector(`.week > td.active[data-badge]`);
-            if (element !== null) {
-                put_badges_newWorkout(element);
-            }
-        }
-    }
-}
-
-function SaveDataToLocalStorage(data)
-{
-    var a = [];
-    a = JSON.parse(localStorage.getItem('tbAppointment'));
-
-    var a = a.filter(function (el) {
-        return el != null;
-    });
-
-    a.push(data);
-    a.sort(function (sTime1, sTime2) {
-        let temp3 = parseInt(sTime1.date.slice(0,2))
-        let temp4 = parseInt(sTime2.date.slice(0,2))
-        let temp1 = Date.parse(get_Date(sTime1.start_time));
-        let temp2 = Date.parse(get_Date(sTime2.start_time));
-
-
-        if (temp3 > temp4) return 1;
-        if (temp3 < temp4) return -1;
-        if (temp1 > temp2) return 1;
-        if (temp1 < temp2) return -1;
-    });
-    localStorage.setItem('tbAppointment', JSON.stringify(a));
-}
-
-function SaveDataToLocalStorageWorkout(data2)
-{
-    var a = [];
-    a = JSON.parse(localStorage.getItem('tbWorkout'));
-
-    var a = a.filter(function (el) {
-        return el != null;
-    });
-
-    a.push(data2);
-    localStorage.setItem('tbWorkout', JSON.stringify(a));
-}
-
-function clear_storage(){
-    localStorage.clear();
-    var arrAppointment = [];
-    arrAppointment.push(JSON.parse(localStorage.getItem('tbAppointment')));
-    localStorage.setItem('tbAppointment', JSON.stringify(arrAppointment));
-    $("#btn_clear_storage").prop('disabled', true);
-    $(`#btn_clear_storage`).hide();
-    $(`.week td.active`).removeClass('badge1');
-    $(`.week td.active`).removeAttr( "data-badge" );
-    print(true);
-    iziToast.success({
-        title: 'Success',
-        message: 'All appointments deleted',
-    });
-}
-
-function clear_storageWorkout(){
-    localStorage.clear();
-    var arrWorkout = [];
-    arrWorkout.push(JSON.parse(localStorage.getItem('tbWorkout')));
-    localStorage.setItem('tbWorkout', JSON.stringify(arrWorkout));
-    $("#btn_clear_storageWorkout").prop('disabled', true);
-    $(`#btn_clear_storageWorkout`).hide();
-    
-    printWorkout(true);
-    iziToast.success({
-        title: 'Success',
-        message: 'All Workouts deleted',
-    });
-}
 
 function edit_appointment(id){
     var data = localStorage.getItem("tbAppointment");
@@ -600,25 +464,6 @@ function edit_appointment(id){
     }
 };
 
-function edit_workout(id){
-    var data = localStorage.getItem("tbWorkout");
-    data = JSON.parse(data);
-    if (data[0] !== null) {
-        for (let i = 0; i < data.length; i++) {
-            const element = data[i];
-            if (element.id == id) {
-                $("#title").val(element.title);
-                $("#description2").val(element.description2);
-                $("#difficulty").val(element.difficulty);
-                $("#duration").val(element.duration);
-                $("#training_type").val(element.training_type);
-                ("#content_id").val(element.content_id);
-                $("#submit").prop('disabled', false);
-                delete_appointment(id);
-            }
-        }
-    }
-};
 
 function delete_appointment(id){
     var data = localStorage.getItem("tbAppointment");
@@ -642,33 +487,6 @@ function delete_appointment(id){
         iziToast.success({
             title: 'Success',
             message: 'Appointment deleted',
-        });
-
-    }
-};
-
-function delete_workout(id){
-    var data2 = localStorage.getItem("tbWorkout");
-    data2 = JSON.parse(data2);
-    if (data2[0] !== null) {
-        for (let i = 0; i < data2.length; i++) {
-            const element = data2[i];
-            if (element == null) {
-                data2.splice(i, 1);
-            }
-            if (element.id == id) {
-                data2.splice(i, 1);
-            }
-        }
-        data2 = data2.filter(function (el) {
-            return el != null;
-        });
-
-        localStorage.setItem('tbWorkout', JSON.stringify(data2));
-        printWorkout(false, false, true);
-        iziToast.success({
-            title: 'Success',
-            message: 'Workout deleted',
         });
 
     }
@@ -699,28 +517,6 @@ function put_badges_new(cell) {
     }
 }
 
-function put_badges_newWorkout(cell) {
-    var data2 = localStorage.getItem("tbWorkout");
-    data2 = JSON.parse(data2);
-    if (data2[0] !== null) {
-        let counter = 0;
-        for (let i = 0; i < data2.length; i++) {
-            const element = data2[i];
-            if (cell.getAttribute("data-day") == element.date.slice(0,2)) {
-                counter++;
-            }
-        }
-
-        if (counter >= 1) {
-            cell.classList.add("badge1");
-            cell.setAttribute('data-badge', counter);
-        }
-        if (counter <= 0) {
-            cell.classList.remove("badge1");
-            cell.removeAttribute('data-badge');
-        }
-    }
-}
 function sort_database(data){
     return data.sort(function (sTime1, sTime2) {
         let temp3 = parseInt(sTime1.date.slice(0,1))
