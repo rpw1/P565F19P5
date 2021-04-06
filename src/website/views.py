@@ -70,8 +70,8 @@ def home():
         custom_workouts = dict()
         if user_values['role'] == 'client':
             client_content = user_values['content']
-            if 'custom_workout' in client_content and client_content['custom_workout']:
-                custom_workouts = client_content['custom_workout']
+            if 'current_custom_workout' in client_content and client_content['current_custom_workout']:
+                custom_workouts = client_content['current_custom_workout']
         subscribed_content = []
         if 'subscribed_accounts' in user_values['content']:
             subscribed_accounts = user_values['content']['subscribed_accounts']
@@ -159,7 +159,16 @@ def calendar():
     client_content = current_user_values['content']
     if 'custom_workout' not in client_content:
         client_content['custom_workout'] = dict()
+    if 'current_custom_workout' not in client_content:
+        client_content['current_custom_workout'] = dict()
     if request.method == 'POST':
+        complete_workout = request.form.get("complete_workout")
+        if complete_workout:
+            del client_content['current_custom_workout'][complete_workout]
+            user_db.update_client_content(current_user.get_id(), client_content)
+            return render_template("calendar.html", user=current_user, isWorkout=True, 
+                custom_workouts=client_content['current_custom_workout'])
+        url_content = request.form.get("content_button")
         delete_workout = request.form.get("delete_workout")
         if delete_workout:
             current_workout = client_content['custom_workout'][delete_workout]
@@ -172,9 +181,10 @@ def calendar():
                     current_content_content['workout_plans'] = current_content_content['workout_plans'].remove(delete_workout)
                     content_db.update_content(current_content['content_id'], current_content['email'], current_content_content)
             del client_content['custom_workout'][delete_workout]
+            del client_content['current_workout_plans'][delete_workout]
             user_db.update_client_content(current_user.get_id(), client_content)
             return render_template("calendar.html", user=current_user, isWorkout=True, 
-                custom_workouts=client_content['custom_workout'])
+                custom_workouts=client_content['current_custom_workout'])
         url_content = request.form.get("content_button")
         if url_content:
             return redirect(url_for('views.content', id=url_content))
@@ -188,7 +198,7 @@ def calendar():
         if not url_content and content_id:
             flash("Error: Content ID was incorrect")
             return render_template("calendar.html", user=current_user, isWorkout=True, 
-                custom_workouts=client_content['custom_workout'])
+                custom_workouts=client_content['current_custom_workout'])
         else:
             workout_id = str(uuid.uuid4())
             custom_workout = {
@@ -198,9 +208,10 @@ def calendar():
                 "difficulty": difficulty,
                 "duration": duration,
                 "training_type": training_type,
-                "content_id": content_id
+                "content_id": content_id,
             }
             client_content['custom_workout'][workout_id] = custom_workout
+            client_content['current_custom_workout'][workout_id] = custom_workout
             user_db.update_client_content(current_user.get_id(), client_content)
             if url_content:
                 content_url = url_content['content']
@@ -212,9 +223,9 @@ def calendar():
                     content_url['workout_plans'] = [workout_id]
                 content_db.update_content(url_content['content_id'], url_content['email'], content_url)
             return render_template("calendar.html", user=current_user, isWorkout=True, 
-                custom_workouts=client_content['custom_workout'])
+                custom_workouts=client_content['current_custom_workout'])
     return render_template("calendar.html", user=current_user, isWorkout = False, 
-        custom_workouts=client_content['custom_workout'])
+        custom_workouts=client_content['current_custom_workout'])
     
 @views.route("/user/<id>", methods = ["GET", "POST"])
 @login_required
