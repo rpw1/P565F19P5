@@ -56,6 +56,10 @@ def create_app():
     unapproved_count = len(content_db.query_content_unapproved())
     from .views import views
     from .auth import auth
+    from .user_pages import users
+    from .nav_bar import nav_bar
     app.register_blueprint(views, url_prefix="/")
     app.register_blueprint(auth, url_prefix="/")
+    app.register_blueprint(users, url_prefix="/")
+    app.register_blueprint(nav_bar, url_prefix="/")
     return app
