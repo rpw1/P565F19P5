@@ -180,3 +180,8 @@ def search():
             return render_template("search.html", query=query, results=query_results, results_len=len(query_results), item_len = len(query_results[0]))
         else:
             return render_template("search.html", query=query, results=list(), results_len=0, item_len = 0)
+
+@nav_bar.route("/conversation/<id>")
+@login_required
+def conversation(id):
+    return render_template("conversation.html", id=id)
