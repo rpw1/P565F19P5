@@ -17,15 +17,19 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script> -->
     </head>
     <body>
-    <div class="container-xl">
-        {{conversation['conversation']}}
-        {{conversation}}
+    <div class="container-xl pt-1">
         {% for x in range(0,conversation['conversation']|length) %}
-        <div class="row ml-1">
-            <p><b>{% if conversation['conversation'][x][0] == 0 %}{{conversation['sender_id']}} {% else %} {{conversation['recipient_id']}} {% endif %}</b></p>
-            <p>{{conversation['conversation'][x][1]}}</p>
-            </hr>
-        </div>
+            {% if conversation['conversation'][x][0] == 0 %}
+            <div class="row ml-1 w-100">
+                <span class="float-right badge badge-primary">{{conversation['sender_id']}}</span>
+            </div>
+            <div class="row ml-1 w-100">
+                <p class="float-right">test message</p>
+            </div>
+            <hr/>
+            {% else %}
+            <p>test</p>
+            {% endif %}
         {% endfor %}
         <div class="fixed-bottom">
             <div class ="navbar navbar-expand-sm bg-light">
