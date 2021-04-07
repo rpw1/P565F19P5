@@ -17,14 +17,16 @@ class MessagesDatabase:
                 aws_secret_access_key = config('AWS_SECRET_ACCESS_KEY'),
                 region_name = config('AWS_REGION')
                 )
-        self.content_table = self.dynamodb.Table('conversations')
+        self.messages_table = self.dynamodb.Table('conversations')
 
-    def insert_conversation(self, sender_id, recipient_id, message):
+    def insert_conversation(self, conversation_id, sender_id, recipient_id, message):
         self.check_database()
-        response = self.content_table.put_item(
+        response = self.messages_table.put_item(
             Item = {
-                'sender_id': content_id,
-                'recipient_id': email,
+                'conversation_id': conversation_id
+                'sender_id': sender_id,
+                'recipient_id': recipient_id,
+                'conversation': [[0, message]]
                 #'conversation': content
                 #make a new list containing an item that has the first message, as well as who sent it
                 #possibly 0 for person who initiated, and 1 for recipient, and it can be stored in a list
