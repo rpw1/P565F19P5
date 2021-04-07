@@ -4,8 +4,8 @@
 <div class="row">
     <div class="col-xl-4">
         <div class="list-group" style="height:80vh; overflow:scroll;" id="messages">
-            {% for x in range(0,10) %}
-            <a class="list-group-item list-group-item-action" data-toggle="list" href="#conv_{{x}}" role="tab">
+            {% for x in conversations %}
+            <a class="list-group-item list-group-item-action" data-toggle="list" href="#conv_{{x['conversation_id']}}" role="tab">
                 <h5>person {{x}}</h5>
                 <p class="text-muted mb-1">latest message</p>
             </a>
@@ -14,9 +14,9 @@
     </div>
     <div class="col-xl-8">
         <div class="tab-content" id="nav-tabContent">
-            {% for x in range(0,10) %}
-            <div class="tab-pane" id="conv_{{x}}" role="tabpanel">
-                <iframe src="/conversation/test{{x}}" style="height: 80vh; border:none;" width="100%"></iframe>
+            {% for x in conversations %}
+            <div class="tab-pane" id="conv_{{x['conversation_id']}}" role="tabpanel">
+                <iframe src="/conversation/{{x['conversation_id']}}" style="height: 80vh; border:none;" width="100%"></iframe>
                 test{{x}}
             </div>
             {% endfor %}

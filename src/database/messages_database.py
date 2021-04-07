@@ -18,18 +18,20 @@ class MessagesDatabase:
                 region_name = config('AWS_REGION')
                 )
         self.messages_table = self.dynamodb.Table('conversations')
-"""
+
     def insert_conversation(self, conversation_id, sender_id, recipient_id, message):
-            conversation_id -> required, string \n
-            sender_id -> required, string \n
-            recipient_id -> required, string \n
-            conversation -> required, list
+        """
+        sender_id -> required, string \n
+        recipient_id -> required, string \n
+        conversation_id -> required, string \n
+        conversation -> required, list
+        """
         self.check_database()
         response = self.messages_table.put_item(
             Item = {
-                'conversation_id': conversation_id
                 'sender_id': sender_id,
                 'recipient_id': recipient_id,
+                'conversation_id': conversation_id,
                 'conversation': [[0, message]]
                 #'conversation': content
                 #make a new list containing an item that has the first message, as well as who sent it
@@ -57,4 +59,3 @@ class MessagesDatabase:
             return response["Items"]
         print("Unable to query content")
         return None
-"""
