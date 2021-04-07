@@ -21,17 +21,17 @@ class MessagesDatabase:
 
     def insert_conversation(self, conversation_id, sender_id, recipient_id, message):
         """
+        conversation_id -> required, string \n
         sender_id -> required, string \n
         recipient_id -> required, string \n
-        conversation_id -> required, string \n
         conversation -> required, list
         """
         self.check_database()
         response = self.messages_table.put_item(
             Item = {
+                'conversation_id': conversation_id,
                 'sender_id': sender_id,
                 'recipient_id': recipient_id,
-                'conversation_id': conversation_id,
                 'conversation': [[0, message]]
                 #'conversation': content
                 #make a new list containing an item that has the first message, as well as who sent it
@@ -43,17 +43,25 @@ class MessagesDatabase:
     def get_conversation_by_id(self, conversation_id):
         self.check_database()
         response = self.messages_table.scan(
-            FilterExpression = Attr('conversation_id').eq(conversation_id)
+            FilterExpression = Key('conversation_id').eq(conversation_id)
         )
         if 'Items' in response:
             return response["Items"]
         print("Unable to query content")
         return None
 
+    def delete_conversation(self, id):
+        self.check_database()
+        self.messages_table.delete_item(
+            Key = {
+                'conversation_id': id,
+            }
+        )
+
     def get_client_conversations(self, email):
         self.check_database()
         response = self.messages_table.scan(
-            FilterExpression = Key('sender_id').eq(email)
+            FilterExpression = Attr('sender_id').eq(email)
         )
         if 'Items' in response:
             return response["Items"]
@@ -79,4 +87,24 @@ class MessagesDatabase:
             return response["Items"]
         print("Unable to query content")
         return None
+
+    def add_message(self, id, sender, message):
+        current_conversation = self.get_conversation_by_id(id)
+        sender_value = 0
+        if sender != (current_conversation[0]['sender_id']):
+            sender_value = 1
+        conversation = current_conversation[0]['conversation']
+        new_message = [sender_value, message]
+        conversation.append(new_message)
+        current_conversation[0]['conversation'] = conversation
+        result = self.messages_table.update_item(
+            Key = {
+                'conversation_id' : id,
+            },
+            UpdateExpression = 'SET conversation = :val',
+            ExpressionAttributeValues = {
+                ':val' : current_conversation[0]['conversation']
+            }
+        )
+
     
