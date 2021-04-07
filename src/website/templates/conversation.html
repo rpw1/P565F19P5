@@ -17,8 +17,16 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script> -->
     </head>
     <body>
+    <div class="container-xl">
+        {{conversation['conversation']}}
         {{conversation}}
-        {{conversation['sender_id']}}
+        {% for x in range(0,conversation['conversation']|length) %}
+        <div class="row ml-1">
+            <p><b>{% if conversation['conversation'][x][0] == 0 %}{{conversation['sender_id']}} {% else %} {{conversation['recipient_id']}} {% endif %}</b></p>
+            <p>{{conversation['conversation'][x][1]}}</p>
+            </hr>
+        </div>
+        {% endfor %}
         <div class="fixed-bottom">
             <div class ="navbar navbar-expand-sm bg-light">
                 <form class="mx-2 my-auto d-inline w-100">

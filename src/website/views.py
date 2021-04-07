@@ -353,7 +353,13 @@ def messages():
     #get a list of all conversations user is involved in
     #all senders are clients, so we can check the user's role to see what fields to look for
     #pass that list of conversations to the template
-    conversations = messages_db.get_client_conversations(current_user.email)
+    conversations = None
+    if current_user.role == roles[0]:
+        conversations = messages_db.get_client_conversations(current_user.email)
+    elif current_user.role == roles[1]:
+        conversations = messages_db.get_professional_conversations(current_user.email)
+    elif current_user.role == roles[2]:
+        conversations = messages_db.get_admin_conversations()
     return render_template("messages.html", conversations=conversations)
 
 

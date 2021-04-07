@@ -59,3 +59,24 @@ class MessagesDatabase:
             return response["Items"]
         print("Unable to query content")
         return None
+
+    def get_professional_conversations(self, email):
+        self.check_database()
+        response = self.messages_table.scan(
+            FilterExpression = Attr('recipient_id').eq(email)
+        )
+        if 'Items' in response:
+            return response["Items"]
+        print("Unable to query content")
+        return None
+
+    def get_admin_conversations(self):
+        self.check_database()
+        response = self.messages_table.scan(
+            FilterExpression = Attr('recipient_id').eq('admin')
+        )
+        if 'Items' in response:
+            return response["Items"]
+        print("Unable to query content")
+        return None
+    
