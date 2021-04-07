@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from .models import User
 from src.database.content_database import ContentDatabase
+from src.database.messages_database import MessagesDatabase
 from src.buckets.content_bucket import ContentBucket
 from src.buckets.metrics_bucket import MetricsBucket
 import uuid, os, shutil
@@ -17,6 +18,7 @@ from src.database.progress_tracking_database import ProgressTrackingDatabase
 nav_bar = Blueprint("nav_bar", __name__)
 user_db = UserDatabase()
 content_db = ContentDatabase()
+messages_db = MessagesDatabase()
 content_bucket = ContentBucket()
 metrics_bucket = MetricsBucket()
 scan_tb = ScanTables()
@@ -184,4 +186,5 @@ def search():
 @nav_bar.route("/conversation/<id>")
 @login_required
 def conversation(id):
-    return render_template("conversation.html", id=id)
+    #conversation = messages_db.get_conversation_by_id(id)
+    return render_template("conversation.html", id=id, conversation=None)

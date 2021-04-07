@@ -1,5 +1,5 @@
 import boto3
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key, Attr
 from decouple import config
 
 
@@ -7,7 +7,7 @@ class MessagesDatabase:
 
     def __init__(self, dynamodb = None):
         self.dynamodb = dynamodb
-        self.user_table = None
+        self.messages_table = None
 
     def check_database(self):
         if not self.dynamodb:
@@ -18,8 +18,12 @@ class MessagesDatabase:
                 region_name = config('AWS_REGION')
                 )
         self.messages_table = self.dynamodb.Table('conversations')
-
+"""
     def insert_conversation(self, conversation_id, sender_id, recipient_id, message):
+            conversation_id -> required, string \n
+            sender_id -> required, string \n
+            recipient_id -> required, string \n
+            conversation -> required, list
         self.check_database()
         response = self.messages_table.put_item(
             Item = {
@@ -33,3 +37,24 @@ class MessagesDatabase:
                 #messages can be "added" to the conversation by anyone, but only clients can create new conversations
             }
         )
+
+    def get_conversation_by_id(self, conversation_id):
+        self.check_database()
+        response = self.messages_table.scan(
+            FilterExpression = Attr('conversation_id').eq(conversation_id)
+        )
+        if 'Items' in response:
+            return response["Items"]
+        print("Unable to query content")
+        return None
+
+    def get_client_conversations(self, email):
+        self.check_database()
+        response = self.messages_table.scan(
+            FilterExpression = Key('sender_id').eq(email)
+        )
+        if 'Items' in response:
+            return response["Items"]
+        print("Unable to query content")
+        return None
+"""
