@@ -103,7 +103,7 @@ def delete_custom_workout(delete_workout, client_content):
             current_content_content['workout_plans'] = current_content_content['workout_plans'].remove(delete_workout)
             content_db.update_content(current_content['content_id'], current_content['email'], current_content_content)
     del client_content['custom_workout'][delete_workout]
-    del client_content['current_workout_plans'][delete_workout]
+    del client_content['current_custom_workout'][delete_workout]
     user_db.update_client_content(current_user.get_id(), client_content)
     return client_content['current_custom_workout']
 
