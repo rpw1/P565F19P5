@@ -5,9 +5,17 @@
     <div class="col-xl-4">
         <div class="list-group" style="height:80vh; overflow:scroll;" id="messages">
             {% for x in conversations %}
+            {% set last_message_index = x['conversation']|length - 1%}
             <a class="list-group-item list-group-item-action" data-toggle="list" href="#conv_{{x['conversation_id']}}" role="tab">
-                <h5>person {{x}}</h5>
-                <p class="text-muted mb-1">latest message</p>
+                <div class="row">
+                    <div class="col-md-10">
+                        <h5>{{x['sender_id']}}, {{x['recipient_id']}}</h5>
+                        <p class="text-muted mb-1">{{x['conversation'][last_message_index][1]}}</p>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" notif_id="{{x['conversation_id']}}" class="btn deleteButton">&times;</button>
+                    </div>
+                </div>
             </a>
             {% endfor %}
         </div>
