@@ -159,26 +159,32 @@ def calendar():
         complete_workout = request.form.get("complete_workout")
         if complete_workout:
             current_custom_workouts = complete_custom_workout(complete_workout, client_content)
-            return render_template("calendar.html", user=current_user, isWorkout=True, 
+            return render_template("calendar.html", user=current_user, tab="workout", 
                 custom_workouts=current_custom_workouts)
         delete_workout = request.form.get("delete_workout")
         if delete_workout:
             current_custom_workouts = delete_custom_workout(delete_workout, client_content)
-            return render_template("calendar.html", user=current_user, isWorkout=True, 
+            return render_template("calendar.html", user=current_user, tab="workout", 
                 custom_workouts=current_custom_workouts)
         url_content = request.form.get("content_button")
         if url_content:
             return redirect(url_for('views.content', id=url_content))
-        title = request.form.get("title")
-        description = request.form.get("description2")
-        difficulty = request.form.get("difficulty")
-        duration = request.form.get("duration")
-        training_type = request.form.get("training_type")
-        content_id = request.form.get("content_id")
-        client_content = add_custom_workout(title, description, difficulty, duration, training_type, content_id, client_content)
-        return render_template("calendar.html", user=current_user, isWorkout=True, 
-            custom_workouts=client_content['current_custom_workout'])
-    return render_template("calendar.html", user=current_user, isWorkout = False, 
+        create_workout_button = request.form.get("create_workout_button")
+        create_meal_button = request.form.get("create_meal_button")
+        if create_workout_button:
+            title = request.form.get("title")
+            description = request.form.get("description2")
+            difficulty = request.form.get("difficulty")
+            duration = request.form.get("duration")
+            training_type = request.form.get("training_type")
+            content_id = request.form.get("content_id")
+            client_content = add_custom_workout(title, description, difficulty, duration, training_type, content_id, client_content)
+            return render_template("calendar.html", user=current_user, tab="workout", 
+                custom_workouts=client_content['current_custom_workout'])
+        elif create_meal_button:
+            return render_template("calendar.html", user=current_user, tab="meal", 
+                custom_workouts=client_content['current_custom_workout'])
+    return render_template("calendar.html", user=current_user, tab="appointment", 
         custom_workouts=client_content['current_custom_workout'])
     
 @views.route("/content/<id>", methods=["GET","POST"])

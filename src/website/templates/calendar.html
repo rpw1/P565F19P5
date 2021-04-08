@@ -16,11 +16,13 @@
 
     <script>
         $(document).ready(function() {
-            let isWorkout = '{{ isWorkout }}' == 'True'
-            if (isWorkout) {
+            let current_tab = '{{ tab }}'
+            if (current_tab == 'workout') {
                 tab_click(event, 'Workouts')
-            } else {
+            } else if (current_tab == 'appointment') {
                 tab_click(event, 'Appointments')
+            } else {
+                tab_click(event, 'Meals')
             }
         });
         function tab_click(evt, tabName) {
@@ -198,7 +200,7 @@
                         <button type="button" class="btn btn-warning btn-block" id="clear" onclick="clear_workout()">Clear Form</button>
                     </div>
                     <div class="col form-group">
-                        <button type="submit" class="btn btn-primary btn-block" id="submit_workout" disabled="disabled">Make Workout</button>
+                        <button type="submit" name="create_workout_button" value="pressed" class="btn btn-primary btn-block" id="submit_workout" disabled="disabled">Make Workout</button>
                     </div>
                 </div>
             </form>
@@ -280,7 +282,7 @@
                         <button type="button" class="btn btn-warning btn-block" id="clear" onclick="clear_meal()">Clear Form</button>
                     </div>
                     <div class="col form-group">
-                        <button type="submit" class="btn btn-primary btn-block" id="submit_meal" disabled="disabled">Add Meal</button>
+                        <button type="submit" name="create_meal_button" value="pressed" class="btn btn-primary btn-block" id="submit_meal" disabled="disabled">Add Meal</button>
                     </div>
                 </div>
             </form>
