@@ -107,6 +107,24 @@ def delete_custom_workout(delete_workout, client_content):
     user_db.update_client_content(current_user.get_id(), client_content)
     return client_content['current_custom_workout']
 
+def delete_meal(delete_meal, client_content):
+    """
+    This function takes a workout_id and the current client's content and removes the workout from the client and content.
+    """
+    current_workout = client_content['custom_workout'][delete_meal]
+    current_content = content_db.query_content_by_id(current_workout['content_id'])
+    if current_content:
+        current_content_content = current_content['content']
+        if 'workout_plans' not in current_content_content or not current_content_content['workout_plans']:
+            current_content_content['workout_plans'] = []
+        if delete_meal in current_content_content['workout_plans']:
+            current_content_content['workout_plans'] = current_content_content['workout_plans'].remove(delete_meal)
+            content_db.update_content(current_content['content_id'], current_content['email'], current_content_content)
+    del client_content['custom_workout'][delete_meal]
+    del client_content['current_workout_plans'][delete_meal]
+    user_db.update_client_content(current_user.get_id(), client_content)
+    return client_content['current_custom_workout']
+
 def complete_custom_workout(complete_workout, client_content):
     """
         removes complete_workout's custom workout id from the list of current custom workouts
@@ -146,6 +164,34 @@ def add_custom_workout(title, description, difficulty, duration, training_type, 
             content_db.update_content(url_content['content_id'], url_content['email'], content_url)
         return client_content
 
+def add_meal(entree, sides, drink, total_calories):
+    url_content = content_db.query_content_by_id(content_id)
+    if not url_content and content_id:
+        flash("Error: Content ID was incorrect")
+        return render_template("calendar.html", user=current_user, isWorkout=True, 
+            meals=client_content['meal'])
+    else:
+        meal_id = str(uuid.uuid4())
+        meal = {
+            "entree": entree,
+            "sides": sides,
+            "drink": drink,
+            "total_calories": total_calories,
+            "content_id_meal": content_id_meal,
+        }
+        client_content['meal'][meal_id] = meal
+        user_db.update_client_content(current_user.get_id(), client_content)
+        if url_content:
+            content_url = url_content['content']
+            if 'meal_plans' in content_url and content_url['meal_plans']:
+                meal_plans = content_url['meal_plans']
+                meal_plans.append(meal_id)
+                content_url['meal_plans'] = meal_plans
+            else:
+                content_url['meal_plans'] = [meal_id]
+            content_db.update_content(url_content['content_id'], url_content['email'], content_url)
+        return client_content
+
 @views.route("/calendar", methods=["GET","POST"])
 @login_required
 def calendar():
@@ -155,6 +201,7 @@ def calendar():
         client_content['custom_workout'] = dict()
     if 'current_custom_workout' not in client_content:
         client_content['current_custom_workout'] = dict()
+    
     if request.method == 'POST':
         complete_workout = request.form.get("complete_workout")
         if complete_workout:
