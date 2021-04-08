@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from .models import User
 from src.database.content_database import ContentDatabase
+from src.database.messages_database import MessagesDatabase
 from src.buckets.content_bucket import ContentBucket
 from src.buckets.metrics_bucket import MetricsBucket
 import uuid, os, shutil
@@ -17,6 +18,7 @@ from src.database.progress_tracking_database import ProgressTrackingDatabase
 views = Blueprint("views", __name__)
 user_db = UserDatabase()
 content_db = ContentDatabase()
+messages_db = MessagesDatabase()
 content_bucket = ContentBucket()
 metrics_bucket = MetricsBucket()
 scan_tb = ScanTables()
@@ -398,7 +400,14 @@ def messages():
     #get a list of all conversations user is involved in
     #all senders are clients, so we can check the user's role to see what fields to look for
     #pass that list of conversations to the template
-    return render_template("messages.html")
+    conversations = None
+    if current_user.role == roles[0]:
+        conversations = messages_db.get_client_conversations(current_user.email)
+    elif current_user.role == roles[1]:
+        conversations = messages_db.get_professional_conversations(current_user.email)
+    elif current_user.role == roles[2]:
+        conversations = messages_db.get_admin_conversations()
+    return render_template("messages.html", conversations=conversations)
 
 
 @views.route("/progress_tracking", methods=["GET","POST"])

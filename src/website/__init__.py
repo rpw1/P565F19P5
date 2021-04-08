@@ -2,6 +2,7 @@ from flask import Flask, Markup
 from flask_login import LoginManager, current_user
 from src.database.user_database import UserDatabase
 from src.database.content_database import ContentDatabase
+from src.database.messages_database import MessagesDatabase
 from .models import User
 from flask_mail import Mail, Message
 from oauthlib.oauth2 import WebApplicationClient

@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from .models import User
 from src.database.content_database import ContentDatabase
+from src.database.messages_database import MessagesDatabase
 from src.buckets.content_bucket import ContentBucket
 from src.buckets.metrics_bucket import MetricsBucket
 import uuid, os, shutil
@@ -17,6 +18,7 @@ from src.database.progress_tracking_database import ProgressTrackingDatabase
 nav_bar = Blueprint("nav_bar", __name__)
 user_db = UserDatabase()
 content_db = ContentDatabase()
+messages_db = MessagesDatabase()
 content_bucket = ContentBucket()
 metrics_bucket = MetricsBucket()
 scan_tb = ScanTables()
@@ -53,6 +55,8 @@ def delete_notification(email, notification_id):
 @nav_bar.route("/notifs", methods=['GET', 'POST'])
 @login_required
 def notifications():
+    #messages_db.insert_conversation(str(uuid.uuid4()), 'testuser@iu.edu', 'testprof@iu.edu', 'hello')
+    #messages_db.delete_conversation('2ad62398-4c8f-49fe-8d7e-40a8a73da0f3')
     if request.method == 'POST':
         notification_id = request.form['id']
         delete_notification(current_user.email, notification_id)
@@ -181,7 +185,12 @@ def search():
         else:
             return render_template("search.html", query=query, results=list(), results_len=0, item_len = 0)
 
-@nav_bar.route("/conversation/<id>")
+@nav_bar.route("/conversation/<id>", methods=["GET", "POST"])
 @login_required
 def conversation(id):
-    return render_template("conversation.html", id=id)
+    if request.method == "POST":
+        message = request.form.get("message")
+        messages_db.add_message(id, current_user.email, message)
+    conversation = messages_db.get_conversation_by_id(id)
+    print(conversation[0])
+    return render_template("conversation.html", id=id, conversation=conversation[0])

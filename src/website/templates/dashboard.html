@@ -84,7 +84,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <canvas id="user_chart"></canvas>
+                        <canvas id="user_chart" style="display: block; margin: 0 auto;"></canvas>
                         <h4>User data</h4>
                         <li>Total user count: {{total_users}}</li>
                         <li>Trainee users: {{type_count[0]}}</li>
@@ -92,6 +92,45 @@
                         <li>Admin users: {{type_count[2]}}</li>
                     </div>
                     <div class="col-md-6">
+                        <canvas id="myChart" width="400" height="250"></canvas>
+            <script>
+                Chart.defaults.global.responsive = false;
+                var djangoData = "{{total_views}}, {{todays_views}}";
+                var split = djangoData.split(",")
+
+            // define the chart data
+            var chartData = {
+                labels : ['Total views', 'Views today'],
+            datasets : [{
+                label: "Views",
+                fill: true,
+                lineTension: 0.1,
+                backgroundColor: "rgba(75,192,192,0.4)",
+                borderColor: "rgba(75,192,192,1)",
+                borderCapStyle: 'butt',
+                borderDash: [],
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "rgba(75,192,192,1)",
+                pointBackgroundColor: "#fff",
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                pointHoverBorderColor: "rgba(220,220,220,1)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                data: split,
+                spanGaps: false
+            }]
+            }
+            
+            // get chart canvas
+            var ctx = document.getElementById("myChart").getContext("2d");
+            
+            // create the chart using the chart canvas
+            var myChart = new Chart(ctx, {type: 'line', data: chartData,});
+            </script>
                         <h4>Content data</h4>
                         <li>Total content count: {{total_content}}</li>
                         <li>Uploaded today: {{uploaded_today_len}}</li>
@@ -185,7 +224,7 @@
     <script>
         var user_chart = document.getElementById("user_chart");
         user_chart.width = 300;
-        user_chart.height = 300;
+        user_chart.height = 250;
  
         var ctx = user_chart.getContext("2d");
 
@@ -256,10 +295,9 @@
             {
                 canvas:user_chart,
                 data:user_data,
-                colors:["#fde23e","#f16e23", "#57d9ff"]
+                colors:["#588C87","#C5D9D7", "#F2F2F2"]
             }
         );
 myPiechart.draw();
     </script>
-    <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 {% endblock %}

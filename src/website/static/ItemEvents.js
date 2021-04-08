@@ -5,11 +5,10 @@ let arrMeal;
 $(function () {
     if (typeof (Storage) !== "undefined") {
         arrAppointment = localStorage.getItem("tbAppointment");
-        arrWorkout = localStorage.getItem("tbWorkout");
-        arrWorkout = localStorage.getItem("tbMeal");
+        // arrWorkout = localStorage.getItem("tbWorkout");
+        // arrWorkout = localStorage.getItem("tbMeal");
         arrAppointment = JSON.parse(arrAppointment);
-        arrWorkout = JSON.parse(arrWorkout);
-        arrMeal = JSON.parse(arrMeal);
+        // arrWorkout = JSON.parse(arrWorkout);
         $("#btn_clear_storage").prop('disabled', false);
         $(`#btn_clear_storage`).show();
         $("#btn_clear_storageWorkout").prop('disabled', false);
@@ -23,20 +22,20 @@ $(function () {
             arrAppointment.push(JSON.parse(localStorage.getItem('tbAppointment')));
             localStorage.setItem('tbAppointment', JSON.stringify(arrAppointment));
         }
-        if(arrWorkout == null || arrWorkout == "[null]"){
-            $("#btn_clear_storageWorkout").prop('disabled', true);
-            $(`#btn_clear_storageWorkout`).hide();
-            arrWorkout = [];
-            arrWorkout.push(JSON.parse(localStorage.getItem('tbWorkout')));
-            localStorage.setItem('tbWorkout', JSON.stringify(arrWorkout));
-        }
-        if(arrMeal == null || arrMeal == "[null]"){
-            $("#btn_clear_storage_Meal").prop('disabled', true);
-            $(`#btn_clear_storage_Meal`).hide();
-            arrMeal = [];
-            arrMeal.push(JSON.parse(localStorage.getItem('tbMeal')));
-            localStorage.setItem('tbMeal', JSON.stringify(arrMeal));
-        }
+    //     if(arrWorkout == null || arrWorkout == "[null]"){
+    //         $("#btn_clear_storageWorkout").prop('disabled', true);
+    //         $(`#btn_clear_storageWorkout`).hide();
+    //         arrWorkout = [];
+    //         arrWorkout.push(JSON.parse(localStorage.getItem('tbWorkout')));
+    //         localStorage.setItem('tbWorkout', JSON.stringify(arrWorkout));
+    //     }
+    //     if(arrMeal == null || arrMeal == "[null]"){
+    //         $("#btn_clear_storage_Meal").prop('disabled', true);
+    //         $(`#btn_clear_storage_Meal`).hide();
+    //         arrMeal = [];
+    //         arrMeal.push(JSON.parse(localStorage.getItem('tbMeal')));
+    //         localStorage.setItem('tbMeal', JSON.stringify(arrMeal));
+    //     }
     } 
         
 
@@ -104,6 +103,12 @@ $(function () {
        });
 
     $('[data-toggle="popover"]').popover();
+
+    $("#total_calories").inputmask('Regex', {
+        max_length: 4,
+        regex: "^([0-9]){1,4}",
+        clearIncomplete: true,
+    });
 
     print(false, true);
 
@@ -296,6 +301,14 @@ $("#difficulty, #title, #duration, #training_type").keyup(function () {
 });
 
 
+$("#total_calories, #entree, #sides, #drink").keyup(function () {
+    if (is_emptyMeal()) {
+        $("#submit_meal").prop('disabled', true);
+    } else {
+        $("#submit_meal").prop('disabled', false);
+    }
+});
+
 function clear_input() {
     $("#date").val('');
     $("#description").val('');
@@ -343,6 +356,18 @@ function is_emptyWorkout() {
         ($("#difficulty").val() == null || $("#difficulty").val() == '') ||
         ($("#duration").val() == null || $("#duration").val() == '') ||
         ($("#training_type").val() == null || $("#training_type").val() == '')
+    ) {
+        return true;
+    }
+    return false;
+}
+
+function is_emptyMeal() {
+    if (
+        (($("#entree").val() == null || $("#entree").val() == '') &&
+        ($("#sides").val() == null || $("#sides").val() == '') &&
+        ($("#drink").val() == null || $("#drink").val() == '')) ||
+        ($("#total_calories").val() == null || $("#total_calories").val() == '')
     ) {
         return true;
     }
