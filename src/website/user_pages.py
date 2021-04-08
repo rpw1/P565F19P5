@@ -98,14 +98,17 @@ def profile():
     subscriber_list = user_db.scan_for_subscribers(current_user.email)
     if request.method == "POST":
         bio = request.form.get("bio")
-        if bio != "":
+        if bio:
             user_db._update_bio(user_email, bio, current_user.get_role())
+        print(request.files)
+        if 'profile_picture' in request.files:
+            update_profile_picture(user_email)
         if current_user.get_role() == roles[1]:
             country_code = request.form.get("country")
             gender = request.form.get("gender")
             specialty = request.form.get("specialty")
             # info on flags found on https://flagpedia.net/download/api
-            if country_code != "":
+            if country_code:
                 chosen_country = countries_by_alpha2[country_code]
                 country_info = {
                     "code": country_code,
@@ -113,9 +116,9 @@ def profile():
                     "flag": "https://flagcdn.com/16x12/" + country_code.lower() + ".png"
                 }
                 user_db.update_fitness_professional_country(user_email, country_info)
-            if specialty != "":
+            if specialty:
                 user_db.update_fitness_professional_specialty(user_email, specialty)
-            if gender != "":
+            if gender:
                 user_db.update_fitness_professional_gender(user_email, gender)
         flash("Successfully edited profile!", category="success")
         return redirect(url_for("users.profile"))
@@ -156,3 +159,26 @@ def profile():
         uploads=uploads, countries=countries_by_alpha2, country_codes=country_codes, length=len(country_codes),
         specialty = specialty, gender = gender, bio = bio, flag_src = flag_src, country_name=country_name, subscriber_count=subscriber_count, 
         subscriber_list=subscriber_list, pending=pending, subscriptions=subscriptions, subscriptions_count=subscriptions_count)
+
+
+def update_profile_picture(email):
+    try:
+        os.mkdir(config('UPLOAD_FOLDER'))
+    except Exception as e:
+        print('Failed to create folder %s. Reason: %s' % (config('UPLOAD_FOLDER'), e))
+    profile_picture_name = None
+    profile_picture = request.files['profile_picture']
+    if profile_picture:
+        profile_picture_name = secure_filename(profile_picture.filename)
+        profile_picture_path = os.path.join(config('UPLOAD_FOLDER'), profile_picture_name)
+        profile_picture.save(profile_picture_path)
+    else:
+        flash("Content file was not uploaded successfully", category="error")
+        return render_template("upload.html")
+    profile_picture_link = content_bucket.add_profile_picture(email, profile_picture_name)
+    print(profile_picture_link)
+    user_db.query_update_image(email, profile_picture_link)
+    try:
+        shutil.rmtree(config('UPLOAD_FOLDER'))
+    except Exception as e:
+        print('Failed to delete %s. Reason: %s' % (config('UPLOAD_FOLDER'), e))

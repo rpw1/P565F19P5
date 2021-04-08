@@ -78,5 +78,16 @@ class ContentBucket:
         return False
 
     
-
-        
+    def add_profile_picture(self, email, profile_picture):
+        self.check_bucket()
+        image_type = profile_picture.split(".")
+        object_name = email + "/profile"
+        try:
+            self.transfer.upload_file(os.path.join(config('UPLOAD_FOLDER'), profile_picture), self.bucket_name, object_name + "/" + profile_picture, extra_args = {
+                'ContentType': "image/" + image_type[len(image_type) - 1],
+            })
+        except Exception as e:
+            print(e)
+        self.client.put_object_acl(ACL='public-read', Bucket=self.bucket_name, Key=object_name + "/" + profile_picture)
+        print("successfully added file")
+        return "https://" + self.bucket_name + ".s3." + config('AWS_REGION') + ".amazonaws.com/" + object_name + "/" + profile_picture
