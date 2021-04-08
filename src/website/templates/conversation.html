@@ -17,25 +17,31 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script> -->
     </head>
     <body>
-    <div class="container-xl pt-1">
+    <div class="container-xl pt-1 mb-2">
         {% for x in range(0,conversation['conversation']|length) %}
             {% if conversation['conversation'][x][0] == 0 %}
             <div class="row ml-1 w-100">
                 <span class="float-right badge badge-primary">{{conversation['sender_id']}}</span>
             </div>
             <div class="row ml-1 w-100">
-                <p class="float-right">test message</p>
+                <p class="float-right">{{conversation['conversation'][x][1]}}</p>
             </div>
             <hr/>
             {% else %}
-            <p>test</p>
+            <div class="row ml-1 w-100">
+                <span class="float-right badge badge-primary">{{conversation['recipient_id']}}</span>
+            </div>
+            <div class="row ml-1 w-100">
+                <p class="float-right">{{conversation['conversation'][x][1]}}</p>
+            </div>
+            <hr/>
             {% endif %}
         {% endfor %}
         <div class="fixed-bottom">
             <div class ="navbar navbar-expand-sm bg-light">
                 <form method="POST" class="mx-2 my-auto d-inline w-100">
                     <div class="input-group">
-                       <input type="text" class="form-control" placeholder="message for {{id}}">
+                       <input id="message" name="message" type="text" class="form-control" placeholder="message for {{id}}">
                         <button class="btn btn-primary" type="submit">Send</button>
                      </div>
                  </form>
@@ -43,4 +49,7 @@
             </div>
         </div>
     </body>
+    <script>
+        $("body").scrollTop(100);
+    </script>
 </html>

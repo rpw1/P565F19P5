@@ -16,7 +16,7 @@
         <div class="tab-content" id="nav-tabContent">
             {% for x in conversations %}
             <div class="tab-pane" id="conv_{{x['conversation_id']}}" role="tabpanel">
-                <iframe src="/conversation/{{x['conversation_id']}}" style="height: 80vh; border:none;" width="100%"></iframe>
+                <iframe src="/conversation/{{x['conversation_id']}}#end" style="height: 80vh; border:none;" width="100%"></iframe>
                 test{{x}}
             </div>
             {% endfor %}

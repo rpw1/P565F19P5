@@ -189,7 +189,8 @@ def search():
 @login_required
 def conversation(id):
     if request.method == "POST":
-        messages_db.add_message(id, current_user.email, 'hellooo')
+        message = request.form.get("message")
+        messages_db.add_message(id, current_user.email, message)
     conversation = messages_db.get_conversation_by_id(id)
     print(conversation[0])
     return render_template("conversation.html", id=id, conversation=conversation[0])
