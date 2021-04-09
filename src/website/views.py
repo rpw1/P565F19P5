@@ -400,12 +400,20 @@ def upload():
     return render_template("upload.html")
 
 
-@views.route("/messages")
+@views.route("/messages", methods=['GET', 'POST'])
 @login_required
 def messages():
     #get a list of all conversations user is involved in
     #all senders are clients, so we can check the user's role to see what fields to look for
     #pass that list of conversations to the template
+    if request.method == 'POST':
+        action = request.form['action']
+        if action == 'new':
+            message = request.form.get("message")
+            messages_db.insert_conversation(str(uuid.uuid4()), current_user.email, 'admin', message)
+        if action == 'delete':
+            conversation_id = request.form['id']
+            messages_db.delete_conversation(conversation_id)
     conversations = None
     if current_user.role == roles[0]:
         conversations = messages_db.get_client_conversations(current_user.email)

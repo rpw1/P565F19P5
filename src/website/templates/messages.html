@@ -15,10 +15,12 @@
                         <h3>New admin chat</h3>
                     </div>
                     <div class="modal-body">
-                        <div class="form-group">
-                            <textarea class="form-control" name="message" id="message" placeholder="message"></textarea>
-                        </div>
-                        <button class="btn btn-block btn-primary" type="submit">Send</button>
+                        <form method="POST">
+                            <div class="form-group">
+                                <textarea class="form-control" name="message" id="message" placeholder="message"></textarea>
+                            </div>
+                            <button class="btn btn-block btn-primary" name="action" value="new" type="submit">Send</button>
+                        </form>
                     </div>
                 </div>
             </div>
