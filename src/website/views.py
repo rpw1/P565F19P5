@@ -421,6 +421,7 @@ def messages():
         conversations = messages_db.get_professional_conversations(current_user.email)
     elif current_user.role == roles[2]:
         conversations = messages_db.get_admin_conversations()
+    conversations = sorted(conversations, key = lambda i: i['update_time'], reverse=True)
     return render_template("messages.html", conversations=conversations)
 
 
