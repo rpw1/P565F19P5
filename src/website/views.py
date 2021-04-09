@@ -422,7 +422,16 @@ def messages():
     elif current_user.role == roles[2]:
         conversations = messages_db.get_admin_conversations()
     conversations = sorted(conversations, key = lambda i: i['update_time'], reverse=True)
-    return render_template("messages.html", conversations=conversations)
+    names = []
+    for conv in conversations:
+        sender_info = user_db.query_user(conv['sender_id'])
+        sender_name = '{} {}'.format(sender_info['first_name'], sender_info['last_name'])
+        recipient_name = 'Admin'
+        if(conv['recipient_id'] != 'admin'):
+            recipient_info = user_db.query_user(conv['recipient_id'])
+            recipient_name = '{} {}'.format(recipient_info['first_name'], recipient_info['last_name'])
+        names.append([sender_name, recipient_name])
+    return render_template("messages.html", conversations=conversations, names=names)
 
 
 @views.route("/progress_tracking", methods=["GET","POST"])
