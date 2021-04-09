@@ -198,4 +198,5 @@ def conversation(id):
     if request.method == "POST":
         message = request.form.get("message")
         messages_db.add_message(id, current_user.email, message)
+        return redirect(url_for("nav_bar.conversation", id=id))
     return render_template("conversation.html", id=id, conversation=conversation[0])
