@@ -286,6 +286,48 @@
                     </div>
                 </div>
             </form>
+            <div class="col offset-md-0">
+                <div class="row">
+                    <div class="col">
+                        <h3>Meals</h3>
+                    </div>
+                </div>
+                <table class="table table-bordered table-hover table-striped table-sm" id="meal_list">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col" class="text-center align-middle">Entree</th>
+                            <th scope="col" class="text-center align-middle">Sides</th>
+                            <th scope="col" class="text-center align-middle">Drink</th>
+                            <th scope="col" class="text-center align-middle">Total Calories</th>
+                            <th scope="col" class="text-center align-middle">Content ID</th>
+                            <th scope="col" class="text-center align-middle">Complete/Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for id, meal in meal.items() %}
+                        <tr>
+                            <td scope="col" class="text-center align-middle">{{ meal['entree'] }}</td>
+                            <td scope="col" class="text-center align-middle">{{ meal['sides'] }}</td>
+                            <td scope="col" class="text-center align-middle">{{ meal['drink'] }}</td>
+                            <td scope="col" class="text-center align-middle">{{ meal['total_calories'] }}</td>
+                            <td scope="col" class="text-center align-middle">
+                                {% if meal['content_id_meal'] != "" %}
+                                <form method="POST">
+                                    <button type="submit" name="content_button" class="btn btn-primary" value="{{meal['content_id']}}">Go to {{meal['content_id_meal']}}</button>
+                                </form>
+                                {% endif %}
+                            </td>
+                            <td class="text-center align-middle">
+                                <form method="POST">
+                                    <button type="submit" class="btn btn-secondary btn-sm" name="complete_meal" value="{{meal['meal_id']}}"></button><i class="fas"></i></button>
+                                    <button type="submit" class="btn btn-danger btn-sm" name="delete_meal" value="{{meal['meal_id']}}"></button><i class="fas fa-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
         </div>
     </div>

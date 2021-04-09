@@ -38,6 +38,7 @@ def home():
         diet_plans = []
         workout_plans = []
         fitness_videos = []
+        meal_plans = []
         calories = ""
         email = current_user.get_id()
         try :
@@ -68,6 +69,8 @@ def home():
                 workout_plans.append(current_content)
             elif item_content['mode_of_instruction'] == 'Video' and current_content['approved']:
                 fitness_videos.append(current_content)
+            elif item_content['mode_of_instruction'] == 'Meal plan' and current_content['approved']:
+                fitness_videos.append(current_content)    
         user_values = user_db.query_user(email)
         custom_workouts = dict()
         if user_values['role'] == 'client':
@@ -111,19 +114,18 @@ def delete_meal(delete_meal, client_content):
     """
     This function takes a workout_id and the current client's content and removes the workout from the client and content.
     """
-    current_workout = client_content['custom_workout'][delete_meal]
-    current_content = content_db.query_content_by_id(current_workout['content_id'])
+    current_meal = client_content['meal'][delete_meal]
+    current_content = content_db.query_content_by_id(current_meal['content_id'])
     if current_content:
         current_content_content = current_content['content']
-        if 'workout_plans' not in current_content_content or not current_content_content['workout_plans']:
-            current_content_content['workout_plans'] = []
-        if delete_meal in current_content_content['workout_plans']:
-            current_content_content['workout_plans'] = current_content_content['workout_plans'].remove(delete_meal)
+        if 'meal_plans' not in current_content_content or not current_content_content['meal_plans']:
+            current_content_content['meal_plans'] = []
+        if delete_meal in current_content_content['meal_plans']:
+            current_content_content['meal_plans'] = current_content_content['meal_plans'].remove(delete_meal)
             content_db.update_content(current_content['content_id'], current_content['email'], current_content_content)
-    del client_content['custom_workout'][delete_meal]
-    del client_content['current_workout_plans'][delete_meal]
+    del client_content['meal'][delete_meal]
     user_db.update_client_content(current_user.get_id(), client_content)
-    return client_content['current_custom_workout']
+    return client_content['meal']
 
 def complete_custom_workout(complete_workout, client_content):
     """
