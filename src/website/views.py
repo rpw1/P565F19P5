@@ -166,33 +166,20 @@ def add_custom_workout(title, description, difficulty, duration, training_type, 
             content_db.update_content(url_content['content_id'], url_content['email'], content_url)
         return client_content
 
-def add_meal(entree, sides, drink, total_calories):
-    url_content = content_db.query_content_by_id(content_id)
-    if not url_content and content_id:
-        flash("Error: Content ID was incorrect")
-        return render_template("calendar.html", user=current_user, isWorkout=True, 
-            meals=client_content['meal'])
-    else:
-        meal_id = str(uuid.uuid4())
-        meal = {
-            "entree": entree,
-            "sides": sides,
-            "drink": drink,
-            "total_calories": total_calories,
-            "content_id_meal": content_id_meal,
-        }
-        client_content['meal'][meal_id] = meal
-        user_db.update_client_content(current_user.get_id(), client_content)
-        if url_content:
-            content_url = url_content['content']
-            if 'meal_plans' in content_url and content_url['meal_plans']:
-                meal_plans = content_url['meal_plans']
-                meal_plans.append(meal_id)
-                content_url['meal_plans'] = meal_plans
-            else:
-                content_url['meal_plans'] = [meal_id]
-            content_db.update_content(url_content['content_id'], url_content['email'], content_url)
-        return client_content
+def add_meal(entree, sides, drink, total_calories, client_content):
+    now = datetime.now()
+    today = now.strftime("%m/%d/%Y")
+    meal_id = str(uuid.uuid4())
+    meal = {
+        "entree": entree,
+        "sides": sides,
+        "drink": drink,
+        "total_calories": total_calories,
+        "date": today
+    }
+    client_content['meals'][meal_id] = meal
+    user_db.update_client_content(current_user.get_id(), client_content)
+    return client_content
 
 @views.route("/calendar", methods=["GET","POST"])
 @login_required
@@ -203,18 +190,19 @@ def calendar():
         client_content['custom_workout'] = dict()
     if 'current_custom_workout' not in client_content:
         client_content['current_custom_workout'] = dict()
-    
+    if 'meals' not in client_content:
+        client_content['meals'] = dict()
     if request.method == 'POST':
         complete_workout = request.form.get("complete_workout")
         if complete_workout:
             current_custom_workouts = complete_custom_workout(complete_workout, client_content)
             return render_template("calendar.html", user=current_user, tab="workout", 
-                custom_workouts=current_custom_workouts)
+                custom_workouts=current_custom_workouts, meals = client_content['meals'])
         delete_workout = request.form.get("delete_workout")
         if delete_workout:
             current_custom_workouts = delete_custom_workout(delete_workout, client_content)
             return render_template("calendar.html", user=current_user, tab="workout", 
-                custom_workouts=current_custom_workouts)
+                custom_workouts=current_custom_workouts, meals = client_content['meals'])
         url_content = request.form.get("content_button")
         if url_content:
             return redirect(url_for('views.content', id=url_content))
@@ -229,12 +217,17 @@ def calendar():
             content_id = request.form.get("content_id")
             client_content = add_custom_workout(title, description, difficulty, duration, training_type, content_id, client_content)
             return render_template("calendar.html", user=current_user, tab="workout", 
-                custom_workouts=client_content['current_custom_workout'])
+                custom_workouts=client_content['current_custom_workout'], meals = client_content['meals'])
         elif create_meal_button:
+            entree = request.form.get("entree")
+            sides = request.form.get("sides")
+            drink = request.form.get("drink")
+            total_calories = request.form.get("total_calories")
+            client_content = add_meal(entree, sides, drink, total_calories, client_content)
             return render_template("calendar.html", user=current_user, tab="meal", 
-                custom_workouts=client_content['current_custom_workout'])
+                custom_workouts=client_content['current_custom_workout'], meals = client_content['meals'])
     return render_template("calendar.html", user=current_user, tab="appointment", 
-        custom_workouts=client_content['current_custom_workout'])
+        custom_workouts=client_content['current_custom_workout'], meals = client_content['meals'])
     
 @views.route("/content/<id>", methods=["GET","POST"])
 @login_required
@@ -251,7 +244,6 @@ def content(id):
             flash(message, category="success")
             return redirect(url_for("views.home"))
         elif has_editted == "edit_val":
-            print("here")
             query_content = content_db.query_content_by_id(id)
             title = request.form.get("edit_title")
             description = request.form.get("edit_description")

@@ -299,24 +299,16 @@
                             <th scope="col" class="text-center align-middle">Sides</th>
                             <th scope="col" class="text-center align-middle">Drink</th>
                             <th scope="col" class="text-center align-middle">Total Calories</th>
-                            <th scope="col" class="text-center align-middle">Content ID</th>
                             <th scope="col" class="text-center align-middle">Complete/Delete</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for id, meal in meal.items() %}
+                        {% for id, meal in meals.items() %}
                         <tr>
                             <td scope="col" class="text-center align-middle">{{ meal['entree'] }}</td>
                             <td scope="col" class="text-center align-middle">{{ meal['sides'] }}</td>
                             <td scope="col" class="text-center align-middle">{{ meal['drink'] }}</td>
                             <td scope="col" class="text-center align-middle">{{ meal['total_calories'] }}</td>
-                            <td scope="col" class="text-center align-middle">
-                                {% if meal['content_id_meal'] != "" %}
-                                <form method="POST">
-                                    <button type="submit" name="content_button" class="btn btn-primary" value="{{meal['content_id']}}">Go to {{meal['content_id_meal']}}</button>
-                                </form>
-                                {% endif %}
-                            </td>
                             <td class="text-center align-middle">
                                 <form method="POST">
                                     <button type="submit" class="btn btn-secondary btn-sm" name="complete_meal" value="{{meal['meal_id']}}"></button><i class="fas"></i></button>
