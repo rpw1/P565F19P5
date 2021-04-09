@@ -188,9 +188,14 @@ def search():
 @nav_bar.route("/conversation/<id>", methods=["GET", "POST"])
 @login_required
 def conversation(id):
+    current = current_user.email
+    if current_user.role == roles[2]:
+        current = 'admin'
+    conversation = messages_db.get_conversation_by_id(id)
+    if not(conversation[0]['sender_id'] == current or conversation[0]['recipient_id'] == current):
+        flash("You do not have access to that conversation!", category="error")
+        return redirect(url_for("views.messages"))
     if request.method == "POST":
         message = request.form.get("message")
         messages_db.add_message(id, current_user.email, message)
-    conversation = messages_db.get_conversation_by_id(id)
-    print(conversation[0])
     return render_template("conversation.html", id=id, conversation=conversation[0])
