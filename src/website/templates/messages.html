@@ -6,7 +6,7 @@
         <h3>My chats</h3>
     </div>
     <div class="col-xl-2">
-        {% if current_user.role == "client" or current_user.role == "fitness_professional" %}
+        {% if current_user.role == "client" %}
         <button type="button" data-toggle="modal" data-target="#admin_message" class="float-right btn btn-primary">+ Admin</button>
         <div class="modal fade" id="admin_message">
             <div class="modal-dialog">
