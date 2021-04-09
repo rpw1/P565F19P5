@@ -1,6 +1,7 @@
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 from decouple import config
+import time
 
 
 class MessagesDatabase:
@@ -24,15 +25,18 @@ class MessagesDatabase:
         conversation_id -> required, string \n
         sender_id -> required, string \n
         recipient_id -> required, string \n
-        conversation -> required, list
+        conversation -> required, list \n
+        update_time -> required, float
         """
         self.check_database()
+        print(time.time())
         response = self.messages_table.put_item(
             Item = {
                 'conversation_id': conversation_id,
                 'sender_id': sender_id,
                 'recipient_id': recipient_id,
-                'conversation': [[0, message]]
+                'conversation': [[0, message]],
+                'update_time': int(time.time())
                 #'conversation': content
                 #make a new list containing an item that has the first message, as well as who sent it
                 #possibly 0 for person who initiated, and 1 for recipient, and it can be stored in a list
@@ -101,9 +105,10 @@ class MessagesDatabase:
             Key = {
                 'conversation_id' : id,
             },
-            UpdateExpression = 'SET conversation = :val',
+            UpdateExpression = 'SET conversation = :val, update_time = :val2' ,
             ExpressionAttributeValues = {
-                ':val' : current_conversation[0]['conversation']
+                ':val' : current_conversation[0]['conversation'],
+                ':val2' : int(time.time())
             }
         )
 
