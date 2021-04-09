@@ -26,7 +26,9 @@ class MessagesDatabase:
         sender_id -> required, string \n
         recipient_id -> required, string \n
         conversation -> required, list \n
-        update_time -> required, float
+        update_time -> required, float \n
+        sender_unread -> required, boolean \n
+        recipient_unread -> required, boolean
         """
         self.check_database()
         print(time.time())
@@ -36,7 +38,9 @@ class MessagesDatabase:
                 'sender_id': sender_id,
                 'recipient_id': recipient_id,
                 'conversation': [[0, message]],
-                'update_time': int(time.time())
+                'update_time': int(time.time()),
+                'sender_unread': False,
+                'recipient_unread': True
                 #'conversation': content
                 #make a new list containing an item that has the first message, as well as who sent it
                 #possibly 0 for person who initiated, and 1 for recipient, and it can be stored in a list
