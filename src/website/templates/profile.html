@@ -142,14 +142,34 @@
     <div class="col-md-2 justify-content-center">
         {% if current_user.role != "admin" and not(subscribed) %}
         <form method="POST">
-            <button type="submit" name="subscribe" value="subscribe" class="btn btn-block btn-primary">Subscribe</button>
+            <button type="submit" name="action" value="subscribe" class="btn btn-block btn-primary">Subscribe</button>
         </form>
         {% elif current_user.role != "admin" and subscribed %}
         <form method="POST">
-            <button type="submit" name="subscribe" value="unsubscribe" class="btn btn-block btn-danger">Unsubscribe</button>
+            <button type="submit" name="action" value="unsubscribe" class="btn btn-block btn-danger">Unsubscribe</button>
         </form>
         {% endif %}
         <p class="text-center text-muted">{{subscriber_count}} subscriber{% if subscriber_count != 1%}s{% endif %}</p>
+        {% if current_user.role == 'client' %}
+        <button type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#new_message">+ Chat</button>
+        <div class="modal fade" id="new_message">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>New chat with {{user.first_name}}</h3>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST">
+                            <div class="form-group">
+                                <textarea class="form-control" name="message" id="message" placeholder="message"></textarea>
+                            </div>
+                            <button class="btn btn-block btn-primary" name="action" value="new_message" type="submit">Send</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
     {% endif %}
 </div>

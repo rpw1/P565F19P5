@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from .models import User
 from src.database.content_database import ContentDatabase
+from src.database.messages_database import MessagesDatabase
 from src.buckets.content_bucket import ContentBucket
 from src.buckets.metrics_bucket import MetricsBucket
 import uuid, os, shutil
@@ -17,6 +18,7 @@ from src.database.progress_tracking_database import ProgressTrackingDatabase
 users = Blueprint("users", __name__)
 user_db = UserDatabase()
 content_db = ContentDatabase()
+messages_db = MessagesDatabase()
 content_bucket = ContentBucket()
 metrics_bucket = MetricsBucket()
 scan_tb = ScanTables()
@@ -43,12 +45,17 @@ def user_page(id):
         if id in subscribed_to:
             subscribed = True
         if request.method == "POST":
-            action = request.form.get("subscribe")
+            action = request.form.get("action")
             if action == "subscribe":
                 user_db.subscribe(current_user.email, user_values['email'])
                 return redirect(url_for("users.user_page", id=id))
             elif action == "unsubscribe":
                 user_db.unsubscribe(current_user.email, user_values['email'])
+                return redirect(url_for("users.user_page", id=id))
+            elif action == "new_message":
+                message = request.form.get("message")
+                messages_db.insert_conversation(str(uuid.uuid4()), current_user.email, user_values['email'], message)
+                flash("Chat successfully created", category="success")
                 return redirect(url_for("users.user_page", id=id))
         if id == current_user.get_id():
             return redirect(url_for("users.profile"))
