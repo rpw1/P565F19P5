@@ -48,6 +48,8 @@ def user_page(id):
             action = request.form.get("action")
             if action == "subscribe":
                 user_db.subscribe(current_user.email, user_values['email'])
+                notification_message = Markup("<a href='/user/{}'>{}</a> just subscribed to you.".format(current_user.email, current_user.get_full_name()))
+                #views.add_notification(id, notification_message)
                 return redirect(url_for("users.user_page", id=id))
             elif action == "unsubscribe":
                 user_db.unsubscribe(current_user.email, user_values['email'])
