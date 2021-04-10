@@ -148,6 +148,8 @@ def add_custom_workout(title, description, difficulty, duration, training_type, 
         return render_template("calendar.html", user=current_user, isWorkout=True, 
             custom_workouts=client_content['current_custom_workout'])
     else:
+        now = datetime.now()
+        today = now.strftime("%m/%d/%Y")
         workout_id = str(uuid.uuid4())
         custom_workout = {
             "workout_id": workout_id,
@@ -157,6 +159,7 @@ def add_custom_workout(title, description, difficulty, duration, training_type, 
             "duration": duration,
             "training_type": training_type,
             "content_id": content_id,
+            "date": today
         }
         client_content['custom_workout'][workout_id] = custom_workout
         client_content['current_custom_workout'][workout_id] = custom_workout
@@ -205,12 +208,12 @@ def calendar():
         complete_workout = request.form.get("complete_workout")
         if complete_workout:
             client_content = complete_custom_workout(complete_workout, client_content)
-            return render_template("calendar.html", user=current_user, tab="workout", 
+            return render_template("calendar.html", user=current_user, tab="workout", workout_chart_data = get_workout_chart_data(1, client_content),
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
         delete_workout = request.form.get("delete_workout")
         if delete_workout:
             client_content = delete_custom_workout(delete_workout, client_content)
-            return render_template("calendar.html", user=current_user, tab="workout", 
+            return render_template("calendar.html", user=current_user, tab="workout", workout_chart_data = get_workout_chart_data(1, client_content),
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
         complete_meal = request.form.get("complete_meal")
         if complete_meal:
@@ -219,7 +222,7 @@ def calendar():
         delete_meal = request.form.get("delete_meal")
         if delete_meal:
             client_content = delete_custom_meal(delete_meal, client_content)
-            return render_template("calendar.html", user=current_user, tab="meal", 
+            return render_template("calendar.html", user=current_user, tab="meal", workout_chart_data = get_workout_chart_data(1, client_content),
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
         url_content = request.form.get("content_button")
         if url_content:
@@ -234,7 +237,7 @@ def calendar():
             training_type = request.form.get("training_type")
             content_id = request.form.get("content_id")
             client_content = add_custom_workout(title, description, difficulty, duration, training_type, content_id, client_content)
-            return render_template("calendar.html", user=current_user, tab="workout", 
+            return render_template("calendar.html", user=current_user, tab="workout", workout_chart_data = get_workout_chart_data(1, client_content),
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
         elif create_meal_button:
             entree = request.form.get("entree")
@@ -242,10 +245,30 @@ def calendar():
             drink = request.form.get("drink")
             total_calories = request.form.get("total_calories")
             client_content = add_meal(entree, sides, drink, total_calories, client_content)
-            return render_template("calendar.html", user=current_user, tab="meal", 
+            return render_template("calendar.html", user=current_user, tab="meal", workout_chart_data = get_workout_chart_data(1, client_content),
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
-    return render_template("calendar.html", user=current_user, tab="appointment", 
+    return render_template("calendar.html", user=current_user, tab="appointment", workout_chart_data = get_workout_chart_data(1, client_content),
         custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
+
+def get_workout_chart_data(month : int, client_content):
+    workout_data = client_content['custom_workout']
+    labels = ['Cardio', 'Strength Training', 'Flexibility', 'Endurance Training', 'Core Training', 'Other']
+    workout_minutes = dict()
+    workout_count = dict()
+    for label in labels:
+        workout_count[label] = 0
+        workout_minutes[label] = 0
+    present = datetime.now()
+    for key, items in workout_data.items():
+        if 'date' in items:
+            created = datetime.strptime(items['date'], "%m/%d/%Y")
+            if (present - timedelta(days=month * 30)) <= created:
+                workout_minutes[items['training_type']] += int(items['duration'])
+                workout_count[items['training_type']] += 1
+    print(workout_count)
+    print(workout_minutes)
+    return workout_count, workout_minutes
+    
     
 @views.route("/content/<id>", methods=["GET","POST"])
 @login_required
@@ -504,7 +527,7 @@ def progress_tracking():
         weekly_calorie_goal= content['content']['weekly_calorie_goal']
         weekly_calorie_total= content['content']['weekly_calorie_total']
         last_reset = str(content['content']['last_reset'])
-        print("shouldnt start with today")
+        print("shouldn't start with today")
    
     if(weekly_calorie_goal == "0"):
         calorie_string = "Try setting a weekly calorie goal!"
