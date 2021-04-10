@@ -112,7 +112,7 @@ def delete_custom_workout(delete_workout, client_content):
 
 def delete_meal(delete_meal, client_content):
     """
-    This function takes a workout_id and the current client's content and removes the workout from the client and content.
+    This function takes a meal_id and the current client's content and removes the meal from the client and content.
     """
     current_meal = client_content['meal'][delete_meal]
     current_content = content_db.query_content_by_id(current_meal['content_id'])
@@ -134,6 +134,14 @@ def complete_custom_workout(complete_workout, client_content):
     del client_content['current_custom_workout'][complete_workout]
     user_db.update_client_content(current_user.get_id(), client_content)
     return client_content['current_custom_workout']
+
+def complete_meal(complete_meal, client_content):
+    """
+        removes complete_meal's custom meal id from the list of current custom meals
+    """
+    del client_content['meal'][complete_workout]
+    user_db.update_client_content(current_user.get_id(), client_content)
+    return client_content['meal']
 
 def add_custom_workout(title, description, difficulty, duration, training_type, content_id, client_content):
     url_content = content_db.query_content_by_id(content_id)
@@ -202,6 +210,16 @@ def calendar():
         if delete_workout:
             current_custom_workouts = delete_custom_workout(delete_workout, client_content)
             return render_template("calendar.html", user=current_user, tab="workout", 
+                custom_workouts=current_custom_workouts, meals = client_content['meals'])
+        complete_meal = request.form.get("complete_meal")
+        if complete_meal:
+            current_meal = complete_meal(complete_meal, client_content)
+            return render_template("calendar.html", user=current_user, tab="meal", 
+                custom_workouts=current_custom_workouts, meals = client_content['meals'])
+        delete_meal = request.form.get("delete_meal")
+        if delete_meal:
+            current_meal = delete_meal(delete_meal, client_content)
+            return render_template("calendar.html", user=current_user, tab="meal", 
                 custom_workouts=current_custom_workouts, meals = client_content['meals'])
         url_content = request.form.get("content_button")
         if url_content:
