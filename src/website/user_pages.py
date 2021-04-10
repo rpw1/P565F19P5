@@ -48,8 +48,8 @@ def user_page(id):
             action = request.form.get("action")
             if action == "subscribe":
                 user_db.subscribe(current_user.email, user_values['email'])
-                notification_message = Markup("<a href='/user/{}'>{}</a> just subscribed to you.".format(current_user.email, current_user.get_full_name()))
-                #views.add_notification(id, notification_message)
+                notification_message = Markup("<a href='/user/{}' target='_blank'>{}</a> just subscribed to you.".format(current_user.email, current_user.get_full_name()))
+                add_notification(id, notification_message)
                 return redirect(url_for("users.user_page", id=id))
             elif action == "unsubscribe":
                 user_db.unsubscribe(current_user.email, user_values['email'])
@@ -83,6 +83,24 @@ def user_page(id):
                 specialty = specialty, gender = gender, bio = bio, flag_src = flag_src,
                 countries=dict(), country_codes=list(), length=0, subscribed=subscribed, subscriber_count=subscriber_count)
 
+def add_notification(email, message, reason = ""):
+    message = str(message).replace("<b>", "").replace("</b>", "")
+    user = user_db.query_user(email)
+    notification_id = str(uuid.uuid4())
+    now = datetime.now()
+    user_content = user['content']
+    if 'notification' not in user_content:
+        user_content['notification'] = dict()
+    if 'len' not in user_content['notification']:
+        user_content['notification']['len'] = 0
+    user_content['notification']['len'] += 1
+    user_content['notification'][notification_id] = {
+        'time_stamp': now.strftime("%m/%d/%Y %H:%M:%S"),
+        'has_read': False,
+        'message': message,
+        'reason': reason
+    }
+    user_db.query_update_content(user['email'], user_content)
 
 @users.route("/update_password", methods=["GET","POST"])
 @login_required
