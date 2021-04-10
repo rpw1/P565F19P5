@@ -108,24 +108,16 @@ def delete_custom_workout(delete_workout, client_content):
     del client_content['custom_workout'][delete_workout]
     del client_content['current_custom_workout'][delete_workout]
     user_db.update_client_content(current_user.get_id(), client_content)
-    return client_content['current_custom_workout']
+    return client_content
 
-def delete_meal(delete_meal, client_content):
+def delete_custom_meal(delete_meal, client_content):
     """
     This function takes a meal_id and the current client's content and removes the meal from the client and content.
     """
-    current_meal = client_content['meal'][delete_meal]
-    current_content = content_db.query_content_by_id(current_meal['content_id'])
-    if current_content:
-        current_content_content = current_content['content']
-        if 'meal_plans' not in current_content_content or not current_content_content['meal_plans']:
-            current_content_content['meal_plans'] = []
-        if delete_meal in current_content_content['meal_plans']:
-            current_content_content['meal_plans'] = current_content_content['meal_plans'].remove(delete_meal)
-            content_db.update_content(current_content['content_id'], current_content['email'], current_content_content)
-    del client_content['meal'][delete_meal]
+    del client_content['meals'][delete_meal]
+    del client_content['current_meals'][delete_meal]
     user_db.update_client_content(current_user.get_id(), client_content)
-    return client_content['meal']
+    return client_content
 
 def complete_custom_workout(complete_workout, client_content):
     """
@@ -133,15 +125,15 @@ def complete_custom_workout(complete_workout, client_content):
     """
     del client_content['current_custom_workout'][complete_workout]
     user_db.update_client_content(current_user.get_id(), client_content)
-    return client_content['current_custom_workout']
+    return client_content
 
-def complete_meal(complete_meal, client_content):
+def complete_custom_meal(complete_meal, client_content):
     """
         removes complete_meal's custom meal id from the list of current custom meals
     """
-    del client_content['meal'][complete_workout]
+    del client_content['current_meals'][complete_meal]
     user_db.update_client_content(current_user.get_id(), client_content)
-    return client_content['meal']
+    return client_content
 
 def add_custom_workout(title, description, difficulty, duration, training_type, content_id, client_content):
     url_content = content_db.query_content_by_id(content_id)
@@ -186,6 +178,7 @@ def add_meal(entree, sides, drink, total_calories, client_content):
         "date": today
     }
     client_content['meals'][meal_id] = meal
+    client_content['current_meals'][meal_id] = meal
     user_db.update_client_content(current_user.get_id(), client_content)
     return client_content
 
@@ -200,27 +193,29 @@ def calendar():
         client_content['current_custom_workout'] = dict()
     if 'meals' not in client_content:
         client_content['meals'] = dict()
+    if 'current_meals' not in client_content:
+        client_content['current_meals'] = dict()
     if request.method == 'POST':
         complete_workout = request.form.get("complete_workout")
         if complete_workout:
-            current_custom_workouts = complete_custom_workout(complete_workout, client_content)
+            client_content = complete_custom_workout(complete_workout, client_content)
             return render_template("calendar.html", user=current_user, tab="workout", 
-                custom_workouts=current_custom_workouts, meals = client_content['meals'])
+                custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
         delete_workout = request.form.get("delete_workout")
         if delete_workout:
-            current_custom_workouts = delete_custom_workout(delete_workout, client_content)
+            client_content = delete_custom_workout(delete_workout, client_content)
             return render_template("calendar.html", user=current_user, tab="workout", 
-                custom_workouts=current_custom_workouts, meals = client_content['meals'])
+                custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
         complete_meal = request.form.get("complete_meal")
         if complete_meal:
-            current_meal = complete_meal(complete_meal, client_content)
+            client_content = complete_custom_meal(complete_meal, client_content)
             return render_template("calendar.html", user=current_user, tab="meal", 
-                custom_workouts=current_custom_workouts, meals = client_content['meals'])
+                custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
         delete_meal = request.form.get("delete_meal")
         if delete_meal:
-            current_meal = delete_meal(delete_meal, client_content)
+            client_content = delete_custom_meal(delete_meal, client_content)
             return render_template("calendar.html", user=current_user, tab="meal", 
-                custom_workouts=current_custom_workouts, meals = client_content['meals'])
+                custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
         url_content = request.form.get("content_button")
         if url_content:
             return redirect(url_for('views.content', id=url_content))
@@ -235,7 +230,7 @@ def calendar():
             content_id = request.form.get("content_id")
             client_content = add_custom_workout(title, description, difficulty, duration, training_type, content_id, client_content)
             return render_template("calendar.html", user=current_user, tab="workout", 
-                custom_workouts=client_content['current_custom_workout'], meals = client_content['meals'])
+                custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
         elif create_meal_button:
             entree = request.form.get("entree")
             sides = request.form.get("sides")
@@ -243,9 +238,9 @@ def calendar():
             total_calories = request.form.get("total_calories")
             client_content = add_meal(entree, sides, drink, total_calories, client_content)
             return render_template("calendar.html", user=current_user, tab="meal", 
-                custom_workouts=client_content['current_custom_workout'], meals = client_content['meals'])
+                custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
     return render_template("calendar.html", user=current_user, tab="appointment", 
-        custom_workouts=client_content['current_custom_workout'], meals = client_content['meals'])
+        custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
     
 @views.route("/content/<id>", methods=["GET","POST"])
 @login_required
