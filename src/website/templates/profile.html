@@ -175,6 +175,36 @@
 </div>
 <hr/>
 <p>{{user.bio}}</p>
+{% if class == "Trainee" %}
+<div class="row flex-row flex-nowrap overflow-auto">
+    <div class="col-auto mb-3"></div>
+    <div class="col-auto mb-3">
+        <table class="table table-bordered table-hover table-striped table-sm" id="workout_list">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col" class="text-center align-middle">Title</th>
+                    <th scope="col" class="text-center align-middle">Description</th>
+                    <th scope="col" class="text-center align-middle">Difficulty</th>
+                    <th scope="col" class="text-center align-middle">Duration</th>
+                    <th scope="col" class="text-center align-middle">Training Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for id, workout in custom_workouts.items() %}
+                <tr>
+                    <td scope="col" class="text-center align-middle">{{ workout['title'] }}</td>
+                    <td scope="col" class="text-center align-middle">{{ workout['description'] }}</td>
+                    <td scope="col" class="text-center align-middle">{{ workout['difficulty'] }}</td>
+                    <td scope="col" class="text-center align-middle">{{ workout['duration'] }}</td>
+                    <td scope="col" class="text-center align-middle">{{ workout['training_type'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-auto mb-3"></div>
+</div>
+{% endif %}
 {% if class == "Trainer" %}
 {% if current_user.email == user.email and pending|length > 0 %}
 <h3>Pending approval</h3>

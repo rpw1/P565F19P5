@@ -31,6 +31,10 @@ roles = ['client', 'fitness_professional', 'admin']
 def user_page(id):
     user_values = user_db.query_user(id)
     if user_values != None:
+        if 'current_custom_workout' not in user_values['content']:
+            custom_workouts = dict()
+        else:
+            custom_workouts = user_values['content']['current_custom_workout']
         current_user_values = user_db.query_user(current_user.get_id())
         uploads = content_db.query_content_by_user(id)
         subscribed_to = []
@@ -79,9 +83,11 @@ def user_page(id):
     else:
         flash("That user does not exist!", category="error")
         return redirect(url_for("views.home"))
+    
     return render_template("profile.html", user=profile_user, user_image = user_image, uploads=uploads,
                 specialty = specialty, gender = gender, bio = bio, flag_src = flag_src,
-                countries=dict(), country_codes=list(), length=0, subscribed=subscribed, subscriber_count=subscriber_count)
+                countries=dict(), country_codes=list(), length=0, subscribed=subscribed,
+                 subscriber_count=subscriber_count, custom_workouts = custom_workouts)
 
 def add_notification(email, message, reason = ""):
     message = str(message).replace("<b>", "").replace("</b>", "")
@@ -182,10 +188,15 @@ def profile():
         if 'specialty' in user_values:
             specialty = user_values['specialty']
     country_codes = list(countries_by_alpha2.keys())
+    if 'current_custom_workout' not in user_values['content']:
+        custom_workouts = dict()
+    else:
+        custom_workouts = user_values['content']['current_custom_workout']
     return render_template("profile.html", user=current_user, user_image=user_image, 
         uploads=uploads, countries=countries_by_alpha2, country_codes=country_codes, length=len(country_codes),
         specialty = specialty, gender = gender, bio = bio, flag_src = flag_src, country_name=country_name, subscriber_count=subscriber_count, 
-        subscriber_list=subscriber_list, pending=pending, subscriptions=subscriptions, subscriptions_count=subscriptions_count)
+        subscriber_list=subscriber_list, pending=pending, subscriptions=subscriptions, 
+        subscriptions_count=subscriptions_count, custom_workouts = custom_workouts)
 
 
 def update_profile_picture(email):
