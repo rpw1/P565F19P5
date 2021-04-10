@@ -108,7 +108,7 @@
                 </div>
             </div>
             {% if current_user.role == "fitness_professional" %}
-            <button type="button" class="btn btn-link btn-block" data-toggle="modal" data-target="#subscribers" style="background-color: #C5D9D7;">{{subscriber_count}} subscriber{% if subscriber_count != 1%}s{% endif %}</button>
+            <button type="button" class="btn btn-link btn-block mt-3" data-toggle="modal" data-target="#subscribers" style="background-color: #C5D9D7;">{{subscriber_count}} subscriber{% if subscriber_count != 1%}s{% endif %}</button>
         </div>
         <div class="modal fade" id="subscribers">
             <div class="modal-dialog" style="overflow-y:initial;">
