@@ -304,8 +304,7 @@ def calendar():
             end_sleep = request.form.get("end_sleep")
             client_content = add_sleep(date, hours, start_sleep, end_sleep, client_content)
             return render_template("calendar.html", user=current_user, tab="sleep", 
-                custom_workouts=client_content['current_custom_workout'], meals = client_content['current_sleeps'])
-    return render_template("calendar.html", user=current_user, tab="appointment", 
+                custom_workouts=client_content['current_custom_workout'], meals = client_content['current_sleeps']) 
     return render_template("calendar.html", user=current_user, tab="appointment", workout_chart_data = get_workout_chart_data(1, client_content),
         custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
 
@@ -542,6 +541,8 @@ def progress_tracking():
     weekly_calorie_total= ""
     calorie_string = ""
     last_reset = ""
+    history = ""
+    last_30_days = ""
     try :
         progress_db.query_user(email)
         content = progress_db.query_user(email)
@@ -549,16 +550,20 @@ def progress_tracking():
         weekly_calorie_goal= content['content']['weekly_calorie_goal']
         weekly_calorie_total= content['content']['weekly_calorie_total']
         last_reset = str(content['content']['last_reset'])
+        history = content['content']['history']
+        last_30_days = get_last_30_days(history)
     except:
         weekly_cals = "0,0,0,0,0,0,0"
         weekly_calorie_goal = "0"
         weekly_calorie_total = "0"
         last_reset = str(now)
+        history = "0,0,0,0,0,0,0"
         base_content = {
             "weekly_cals": weekly_cals,
             "weekly_calorie_goal": weekly_calorie_goal,
             "weekly_calorie_total": weekly_calorie_total,
-            "last_reset": last_reset
+            "last_reset": last_reset,
+            "history":history
         }
         progress_db.insert_content(email,base_content)
         progress_db.query_user(email)
@@ -567,17 +572,20 @@ def progress_tracking():
         weekly_calorie_goal= content['content']['weekly_calorie_goal']
         weekly_calorie_total= content['content']['weekly_calorie_total']
         last_reset = str(content['content']['last_reset'])
-    print(last_reset)
+        history = content['content']['history']
+        last_30_days = get_last_30_days(history)
     if (str(last_reset).startswith(str(today)) == False) and weekday == "Monday":
         weekly_cals = "0,0,0,0,0,0,0"
         weekly_calorie_goal = "0"
         weekly_calorie_total = "0"
         last_reset = str(now)
+        history = history + ",0,0,0,0,0,0,0"
         base_content = {
             "weekly_cals": weekly_cals,
             "weekly_calorie_goal": weekly_calorie_goal,
             "weekly_calorie_total": weekly_calorie_total,
-            "last_reset": last_reset
+            "last_reset": last_reset,
+            "history":history
         }
         progress_db.insert_content(email,base_content)
         progress_db.query_user(email)
@@ -606,10 +614,14 @@ def progress_tracking():
             split = calories.split(",")
             day_of_week = request.form.get("day_of_week")
             new_cals = request.form.get("calories")
-            print(day_of_week)
-            print(new_cals)
-            print(split[0])
-            weekly_calorie_total, weekly_calorie_goal, calories, calorie_string = (email, day_of_week, new_cals, split, weekly_calorie_goal, weekly_calorie_total, last_reset)
+            my_list = add_cals(email, day_of_week, new_cals, split, weekly_calorie_goal, weekly_calorie_total, last_reset, history)
+            weekly_calorie_total = my_list[0]
+            weekly_calorie_goal = my_list[1]
+            calories = my_list[2]
+            calorie_string = my_list[3]
+            history = my_list[4]
+            last_30_days = get_last_30_days(history)
+            print("last 30 days" + last_30_days)
         elif action == "add_goal":
             calorie_goal = request.form.get("calorie_goal")
             try:
@@ -619,7 +631,8 @@ def progress_tracking():
                         "weekly_cals": calories,
                         "weekly_calorie_goal": weekly_calorie_goal,
                         "weekly_calorie_total": weekly_calorie_total,
-                        "last_reset": last_reset
+                        "last_reset": last_reset,
+                        "history": history
                     }
                     progress_db.insert_content(email,base_content)
                     if(weekly_calorie_goal == "0"):
@@ -636,32 +649,42 @@ def progress_tracking():
                     flash("Please enter a positive whole number", category="error")
             except:
                 flash("Please enter a whole number", category="error")
-    return render_template('progress_tracking.html', user=current_user, todays_date = todays_date, calories = calories, calorie_string= calorie_string, calorie_goal = weekly_calorie_goal, calorie_total = weekly_calorie_total)
+    return render_template('progress_tracking.html', user=current_user, todays_date = todays_date, calories = calories, calorie_string= calorie_string, calorie_goal = weekly_calorie_goal, calorie_total = weekly_calorie_total, last_30_days = last_30_days)
 
-def add_cals(email, day_of_week, new_cals, split, weekly_calorie_goal, weekly_calorie_total, last_reset):
+def add_cals(email, day_of_week, new_cals, split, weekly_calorie_goal, weekly_calorie_total, last_reset, history):
     weekly_calorie_total = int(weekly_calorie_total) + int(new_cals)
+    history_split = history.split(",")
+    history_length = len(history_split)
     if(day_of_week == "Monday"):
         updates_cals = int(split[0]) + int(new_cals)
         split[0] = str(updates_cals)
+        history_split[history_length-7] = split[0]
     elif(day_of_week == "Tuesday"):
         updates_cals = int(split[1]) + int(new_cals)
         split[1] = str(updates_cals)
+        history_split[history_length-6] = split[1]
     elif(day_of_week == "Wednesday"):
         updates_cals = int(split[2]) + int(new_cals)
         split[2] = str(updates_cals)
+        history_split[history_length-5] = split[2]
     elif(day_of_week == "Thursday"):
         updates_cals = int(split[3]) + int(new_cals)
         split[3] = str(updates_cals)
+        history_split[history_length -4] = split[3]
     elif(day_of_week == "Friday"):
         updates_cals = int(split[4]) + int(new_cals)
         split[4] = str(updates_cals)
+        history_split[history_length -3] = split[4]
     elif(day_of_week == "Saturday"):
         updates_cals = int(split[5]) + int(new_cals)
         split[5] = str(updates_cals)
+        history_split[history_length -2] = split[5]
     elif(day_of_week == "Sunday"):
         updates_cals = int(split[6]) + int(new_cals)
         split[6] = str(updates_cals)
+        history_split[history_length-1] = split[6]
     calories = ""
+    history = ""
     i=0
     for x in split:
         if(i==7):
@@ -669,12 +692,20 @@ def add_cals(email, day_of_week, new_cals, split, weekly_calorie_goal, weekly_ca
         else:
             calories = calories + x + ","
         i = i+1
-    print(calories)
+    i=0
+    for y in history_split:
+        if (i==history_length-1):
+            history = history + y
+        else:
+            history = history + y + ","
+        i = i+1
+    print(history)
     base_content = {
         "weekly_cals": calories,
         "weekly_calorie_goal": weekly_calorie_goal,
         "weekly_calorie_total": weekly_calorie_total,
-        "last_reset": last_reset
+        "last_reset": last_reset,
+        "history":history
     }
     progress_db.insert_content(email,base_content)
     if(weekly_calorie_goal == "0"):
@@ -687,5 +718,36 @@ def add_cals(email, day_of_week, new_cals, split, weekly_calorie_goal, weekly_ca
         calorie_string = "You're over halfway to your goal!"
     else:
         calorie_string = "Log more calories to meet your goal!"
+    return [weekly_calorie_total, weekly_calorie_goal, calories, calorie_string, history]
 
-    return weekly_calorie_total, weekly_calorie_goal, calories, calorie_string
+def get_last_30_days(history):
+    history_split = history.split(",")
+    history_length = len(history_split)
+    i = 0
+    num_of_empty_slots = 30-history_length
+    history = ""
+    last_30_days = ""
+    if history_length<30:
+        while num_of_empty_slots>0:
+            last_30_days = last_30_days +  "0,"
+            num_of_empty_slots = num_of_empty_slots-1
+            i=i+1
+            print(last_30_days)
+        for y in history_split:
+            if (i==30):
+                last_30_days = last_30_days + y
+            else:
+                last_30_days = last_30_days + y + ","
+            i=i+1
+        return last_30_days
+
+    i = history_length 
+    j=30
+    last_30_days = ""
+    while j>0:
+        if j==1:
+            last_30_days = last_30_days + history_split[i-j]
+        else:
+            last_30_days = last_30_days + history_split[i-j] + ","
+        j= j-1
+    return last_30_days
