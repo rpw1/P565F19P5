@@ -406,20 +406,16 @@
                 <div class="form-row">
                     <div class="col form-group">
                         <label class="required">Date</label>
-                        <input class="form-control" type="text" id="sleep_date" name="sleep_date">
-                    </div>
-                    <div class="col form-group">
-                        <label>Hours of Sleep</label>
-                        <input class="form-control" type="text" id="hours" name="hours">
+                        <input class="form-control" type="text" id="sleep_date" name="sleep_date" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="col form-group">
-                        <label>Planned Time for Bed</label>
-                        <input class="form-control" type="text" id="start_sleep" name="start_sleep">
+                        <label class="required">Planned Time for Bed</label>
+                        <input class="form-control" type="text" id="start_sleep" name="start_sleep" required>
                     </div>
                     <div class="col form-group">
-                        <label class="required">Planned Time for Wakeup</label>
+                        <label class="required">Planned Time for Wake-up</label>
                         <input class="form-control" type="text" id="end_sleep" name="end_sleep" required>
                     </div>
                 </div>
@@ -443,9 +439,9 @@
                     <thead class="thead-dark">
                         <tr>
                             <th scope="col" class="text-center align-middle">Date</th>
-                            <th scope="col" class="text-center align-middle">Hours</th>
+                            <th scope="col" class="text-center align-middle">Time Difference</th>
                             <th scope="col" class="text-center align-middle">Sleep Time</th>
-                            <th scope="col" class="text-center align-middle">Wakeup Time</th>
+                            <th scope="col" class="text-center align-middle">Wake-up Time</th>
                             <th scope="col" class="text-center align-middle">Complete/Delete</th>
                         </tr>
                     </thead>
@@ -453,7 +449,7 @@
                         {% for id, sleep in sleep.items() %}
                         <tr>
                             <td scope="col" class="text-center align-middle">{{ sleep['sleep_date'] }}</td>
-                            <td scope="col" class="text-center align-middle">{{ sleep['hours'] }}</td>
+                            <td scope="col" class="text-center align-middle">{{ sleep['hours']}} hours and {{sleep['minutes']}} minutes</td>
                             <td scope="col" class="text-center align-middle">{{ sleep['start_sleep'] }}</td>
                             <td scope="col" class="text-center align-middle">{{ sleep['end_sleep'] }}</td>
                             <td class="text-center align-middle">
