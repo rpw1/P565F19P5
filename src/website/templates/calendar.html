@@ -256,66 +256,65 @@
                     <div class="col-xl-6">
                         <canvas style="width:100%;" id="myChart" width="400" height="250"></canvas>
                         <script>
-                            Chart.defaults.global.responsive = false;
-                        // define the chart data
-                        var number_of_workouts = '{{workout_chart_data[0]|tojson|safe }}'
-                        var workout_minutes = '{{workout_chart_data[1]|tojson|safe }}'
-                        console.log(number_of_workouts)
-                        console.log(workout_minutes)
-                        
-                        var chartData = {
-                            labels : ['Cardio', 'Strength Training', 'Flexibility', 'Endurance Training', 'Core Training', 'Other'],
-                            datasets : [{
-                                label: "Number of Workouts",
-                                fill: true,
-                                lineTension: 0.1,
-                                backgroundColor: "rgba(75,192,192,0.4)",
-                                borderColor: "rgba(75,192,192,1)",
-                                borderCapStyle: 'butt',
-                                borderDash: [],
-                                borderDashOffset: 0.0,
-                                borderJoinStyle: 'miter',
-                                pointBorderColor: "rgba(75,192,192,1)",
-                                pointBackgroundColor: "#fff",
-                                pointBorderWidth: 1,
-                                pointHoverRadius: 5,
-                                pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                                pointHoverBorderColor: "rgba(220,220,220,1)",
-                                pointHoverBorderWidth: 2,
-                                pointRadius: 1,
-                                pointHitRadius: 10,
-                                data: number_of_workouts_list,
-                                spanGaps: false
-                            }, {
-                                label: "Workout Minutes",
-                                fill: true,
-                                lineTension: 0.1,
-                                backgroundColor: "rgba(192,75,192,0.4)",
-                                borderColor: "rgba(75,192,192,1)",
-                                borderCapStyle: 'butt',
-                                borderDash: [],
-                                borderDashOffset: 0.0,
-                                borderJoinStyle: 'miter',
-                                pointBorderColor: "rgba(75,192,192,1)",
-                                pointBackgroundColor: "#fff",
-                                pointBorderWidth: 1,
-                                pointHoverRadius: 5,
-                                pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                                pointHoverBorderColor: "rgba(220,220,220,1)",
-                                pointHoverBorderWidth: 2,
-                                pointRadius: 1,
-                                pointHitRadius: 10,
-                                data: workout_minutes_list,
-                                spanGaps: false
+                                Chart.defaults.global.responsive = false;
+                            // define the chart data
+                            var number_of_workouts = '{{workout_chart_data[0]|tojson|safe }}'
+                            var workout_minutes = '{{workout_chart_data[1]|tojson|safe }}'
+                            console.log(number_of_workouts)
+                            console.log(workout_minutes)
+                            var chartData = {
+                                labels : ['Cardio', 'Strength Training', 'Flexibility', 'Endurance Training', 'Core Training', 'Other'],
+                                datasets : [{
+                                    label: "Number of Workouts",
+                                    fill: true,
+                                    lineTension: 0.1,
+                                    backgroundColor: "rgba(75,192,192,0.4)",
+                                    borderColor: "rgba(75,192,192,1)",
+                                    borderCapStyle: 'butt',
+                                    borderDash: [],
+                                    borderDashOffset: 0.0,
+                                    borderJoinStyle: 'miter',
+                                    pointBorderColor: "rgba(75,192,192,1)",
+                                    pointBackgroundColor: "#fff",
+                                    pointBorderWidth: 1,
+                                    pointHoverRadius: 5,
+                                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                                    pointHoverBorderColor: "rgba(220,220,220,1)",
+                                    pointHoverBorderWidth: 2,
+                                    pointRadius: 1,
+                                    pointHitRadius: 10,
+                                    data: number_of_workouts,
+                                    spanGaps: false
+                                }, {
+                                    label: "Workout Minutes",
+                                    fill: true,
+                                    lineTension: 0.1,
+                                    backgroundColor: "rgba(192,75,192,0.4)",
+                                    borderColor: "rgba(75,192,192,1)",
+                                    borderCapStyle: 'butt',
+                                    borderDash: [],
+                                    borderDashOffset: 0.0,
+                                    borderJoinStyle: 'miter',
+                                    pointBorderColor: "rgba(75,192,192,1)",
+                                    pointBackgroundColor: "#fff",
+                                    pointBorderWidth: 1,
+                                    pointHoverRadius: 5,
+                                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                                    pointHoverBorderColor: "rgba(220,220,220,1)",
+                                    pointHoverBorderWidth: 2,
+                                    pointRadius: 1,
+                                    pointHitRadius: 10,
+                                    data: workout_minutes,
+                                    spanGaps: false
+                                }
+                                ]
                             }
-                            ]
-                        }
-                        
-                        // get chart canvas
-                        var ctx = document.getElementById("myChart").getContext("2d");
-                        
-                        // create the chart using the chart canvas
-                        var myChart = new Chart(ctx, {type: 'line', data: chartData,});
+                            
+                            // get chart canvas
+                            var ctx = document.getElementById("myChart").getContext("2d");
+                            
+                            // create the chart using the chart canvas
+                            var myChart = new Chart(ctx, {type: 'line', data: chartData,});
                         </script>
                     </div>
                 </div>
@@ -406,20 +405,16 @@
                 <div class="form-row">
                     <div class="col form-group">
                         <label class="required">Date</label>
-                        <input class="form-control" type="text" id="sleep_date" name="sleep_date">
-                    </div>
-                    <div class="col form-group">
-                        <label>Hours of Sleep</label>
-                        <input class="form-control" type="text" id="hours" name="hours">
+                        <input class="form-control" type="text" id="sleep_date" name="sleep_date" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="col form-group">
-                        <label>Planned Time for Bed</label>
-                        <input class="form-control" type="text" id="start_sleep" name="start_sleep">
+                        <label class="required">Planned Time for Bed</label>
+                        <input class="form-control" type="text" id="start_sleep" name="start_sleep" required>
                     </div>
                     <div class="col form-group">
-                        <label class="required">Planned Time for Wakeup</label>
+                        <label class="required">Planned Time for Wake-up</label>
                         <input class="form-control" type="text" id="end_sleep" name="end_sleep" required>
                     </div>
                 </div>
@@ -443,9 +438,9 @@
                     <thead class="thead-dark">
                         <tr>
                             <th scope="col" class="text-center align-middle">Date</th>
-                            <th scope="col" class="text-center align-middle">Hours</th>
+                            <th scope="col" class="text-center align-middle">Time Difference</th>
                             <th scope="col" class="text-center align-middle">Sleep Time</th>
-                            <th scope="col" class="text-center align-middle">Wakeup Time</th>
+                            <th scope="col" class="text-center align-middle">Wake-up Time</th>
                             <th scope="col" class="text-center align-middle">Complete/Delete</th>
                         </tr>
                     </thead>
@@ -453,7 +448,7 @@
                         {% for id, sleep in sleep.items() %}
                         <tr>
                             <td scope="col" class="text-center align-middle">{{ sleep['sleep_date'] }}</td>
-                            <td scope="col" class="text-center align-middle">{{ sleep['hours'] }}</td>
+                            <td scope="col" class="text-center align-middle">{{ sleep['hours']}} hours and {{sleep['minutes']}} minutes</td>
                             <td scope="col" class="text-center align-middle">{{ sleep['start_sleep'] }}</td>
                             <td scope="col" class="text-center align-middle">{{ sleep['end_sleep'] }}</td>
                             <td class="text-center align-middle">

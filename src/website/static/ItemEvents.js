@@ -89,8 +89,8 @@ $(function () {
         clearIncomplete: true
     });
 
-    $("#sleep_date").inputmask("dd/mm/yyyy", {
-        placeholder: "dd/mm/yyyy",
+    $("#sleep_date").inputmask("mm/dd/yyyy", {
+        placeholder: "mm/dd/yyyy",
         alias: "datetime",
         clearIncomplete: true
     });
@@ -109,12 +109,6 @@ $(function () {
 
     $("#duration").inputmask('Regex', {
         max_length: 3,
-        regex: "^([0-9]){1,3}",
-        clearIncomplete: true,
-    });
-
-    $("#hours").inputmask('Regex', {
-        max_length: 2,
         regex: "^([0-9]){1,3}",
         clearIncomplete: true,
     });
@@ -339,8 +333,8 @@ $("#total_calories, #entree, #sides, #drink").keyup(function () {
     }
 });
 
-$("#sleep_date, #hours, #start_sleep, #end_sleep").keyup(function () {
-    if (is_emptyMeal()) {
+$("#sleep_date, #start_sleep, #end_sleep").keyup(function () {
+    if (is_emptySleep()) {
         $("#submit_sleep").prop('disabled', true);
     } else {
         $("#submit_sleep").prop('disabled', false);
@@ -375,7 +369,6 @@ function clear_meal() {
 
 function clear_sleep() {
     $("#date").val('');
-    $("#hours").val('');
     $("#start_sleep").val('');
     $("#end_sleep").val('');
     $("#submit_sleep").prop('disabled', true);
@@ -402,6 +395,17 @@ function is_emptyWorkout() {
         ($("#difficulty").val() == null || $("#difficulty").val() == '') ||
         ($("#duration").val() == null || $("#duration").val() == '') ||
         ($("#training_type").val() == null || $("#training_type").val() == '')
+    ) {
+        return true;
+    }
+    return false;
+}
+
+function is_emptySleep() {
+    if (
+        (($("#sleep_date").val() == null || $("#sleep_date").val() == '') &&
+        ($("#start_sleep").val() == null || $("#start_sleep").val() == '') &&
+        ($("#end_sleep").val() == null || $("#end_sleep").val() == ''))
     ) {
         return true;
     }
