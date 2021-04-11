@@ -11,6 +11,7 @@
         {% if current_user.role == 'client' %}
         <button class="tablinks" onclick="tab_click(event, 'Workouts')">Workouts</button>
         <button class="tablinks" onclick="tab_click(event, 'Meals')">Meals</button>
+        <button class="tablinks" onclick="tab_click(event, 'Sleep')">Sleep Tracking</button>
         {% endif %}
     </div>
 
@@ -21,8 +22,10 @@
                 tab_click(event, 'Workouts')
             } else if (current_tab == 'appointment') {
                 tab_click(event, 'Appointments')
-            } else {
+            } else if (current_tab == 'meal'){
                 tab_click(event, 'Meals')
+            } else{
+                tab_click(event, 'Sleep')
             }
         });
         function tab_click(evt, tabName) {
@@ -368,6 +371,81 @@
                     </tbody>
                 </table>
             </div>
+
+        </div>
+        <div id="Sleep" class="tabcontent">
+            <div class="form-row">
+                <div class="col form-group">
+                    <h2>Track Sleep Cycle</h2>
+                </div>
+            </div>
+
+            <form id="form_create_sleep" method="POST">
+                <div class="form-row">
+                    <div class="col form-group">
+                        <label class="required">Date</label>
+                        <input class="form-control" type="text" id="sleep_date" name="sleep_date">
+                    </div>
+                    <div class="col form-group">
+                        <label>Hours of Sleep</label>
+                        <input class="form-control" type="text" id="hours" name="hours">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col form-group">
+                        <label>Planned Time for Bed</label>
+                        <input class="form-control" type="text" id="start_sleep" name="start_sleep">
+                    </div>
+                    <div class="col form-group">
+                        <label class="required">Planned Time for Wakeup</label>
+                        <input class="form-control" type="text" id="end_sleep" name="end_sleep" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col form-group">
+                        <button type="button" class="btn btn-warning btn-block" id="clear" onclick="clear_sleep()">Clear Form</button>
+                    </div>
+                    <div class="col form-group">
+                        <button type="submit" name="create_sleep_button" value="pressed" class="btn btn-primary btn-block" id="submit_sleep" disabled="disabled">Add Sleep</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="col offset-md-0">
+                <div class="row">
+                    <div class="col">
+                        <h3>Sleep Cycles</h3>
+                    </div>
+                </div>
+                <table class="table table-bordered table-hover table-striped table-sm" id="meal_list">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col" class="text-center align-middle">Date</th>
+                            <th scope="col" class="text-center align-middle">Hours</th>
+                            <th scope="col" class="text-center align-middle">Sleep Time</th>
+                            <th scope="col" class="text-center align-middle">Wakeup Time</th>
+                            <th scope="col" class="text-center align-middle">Complete/Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for id, sleep in sleep.items() %}
+                        <tr>
+                            <td scope="col" class="text-center align-middle">{{ sleep['sleep_date'] }}</td>
+                            <td scope="col" class="text-center align-middle">{{ sleep['hours'] }}</td>
+                            <td scope="col" class="text-center align-middle">{{ sleep['start_sleep'] }}</td>
+                            <td scope="col" class="text-center align-middle">{{ sleep['end_sleep'] }}</td>
+                            <td class="text-center align-middle">
+                                <form method="POST">
+                                    <button type="submit" class="btn btn-secondary btn-sm" name="complete_sleep" value="{{id}}"></button><i class="fas"></i></button>
+                                    <button type="submit" class="btn btn-danger btn-sm" name="delete_sleep" value="{{id}}"></button><i class="fas fa-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
 
         </div>
     </div>

@@ -119,6 +119,15 @@ def delete_custom_meal(delete_meal, client_content):
     user_db.update_client_content(current_user.get_id(), client_content)
     return client_content
 
+def delete_custom_sleep(delete_sleep, client_content):
+    """
+    This function takes a sleep_id and the current client's content and removes the sleep from the client and content.
+    """
+    del client_content['sleeps'][delete_sleep]
+    del client_content['current_sleeps'][delete_sleep]
+    user_db.update_client_content(current_user.get_id(), client_content)
+    return client_content
+
 def complete_custom_workout(complete_workout, client_content):
     """
         removes complete_workout's custom workout id from the list of current custom workouts
@@ -140,6 +149,14 @@ def complete_custom_meal(complete_meal, client_content):
     calorie_progress = progress_db.get_content(email)['content']
     split = calorie_progress["weekly_cals"].split(",")
     add_cals(email, day_of_week, new_cals, split, calorie_progress['weekly_calorie_goal'], calorie_progress['weekly_calorie_total'], calorie_progress['last_reset'])
+
+def complete_custom_sleep(complete_sleep, client_content):
+    """
+        removes complete_sleeps's custom sleep id from the list of current custom sleeps
+    """
+    del client_content['current_custom_sleep'][complete_sleep]
+    user_db.update_client_content(current_user.get_id(), client_content)
+    return client_content
 
 def add_custom_workout(title, description, difficulty, duration, training_type, content_id, client_content):
     url_content = content_db.query_content_by_id(content_id)
@@ -188,6 +205,21 @@ def add_meal(entree, sides, drink, total_calories, client_content):
     user_db.update_client_content(current_user.get_id(), client_content)
     return client_content
 
+def add_sleep(sleep_date, hours, start_sleep, end_sleep, client_content):
+    now = datetime.now()
+    today = now.strftime("%m/%d/%Y")
+    sleep_id = str(uuid.uuid4())
+    sleep = {
+        "sleep_date": sleep_date,
+        "hours": hours,
+        "start_sleep": hours,
+        "end_sleep": total_calories,
+    }
+    client_content['sleeps'][sleep_id] = sleep
+    client_content['current_sleeps'][sleep_id] = sleep
+    user_db.update_client_content(current_user.get_id(), client_content)
+    return client_content
+
 @views.route("/calendar", methods=["GET","POST"])
 @login_required
 def calendar():
@@ -201,6 +233,10 @@ def calendar():
         client_content['meals'] = dict()
     if 'current_meals' not in client_content:
         client_content['current_meals'] = dict()
+    if 'sleep' not in client_content:
+        client_content['sleep'] = dict()
+    if 'current_sleep' not in client_content:
+        client_content['current_sleep'] = dict()
     if request.method == 'POST':
         complete_workout = request.form.get("complete_workout")
         if complete_workout:
@@ -212,6 +248,7 @@ def calendar():
             client_content = delete_custom_workout(delete_workout, client_content)
             return render_template("calendar.html", user=current_user, tab="workout", 
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
+        
         complete_meal = request.form.get("complete_meal")
         if complete_meal:
             client_content = complete_custom_meal(complete_meal, client_content)
@@ -221,11 +258,24 @@ def calendar():
             client_content = delete_custom_meal(delete_meal, client_content)
             return render_template("calendar.html", user=current_user, tab="meal", 
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
+        
+        complete_sleep = request.form.get("complete_sleep")
+        if complete_sleep:
+            client_content = complete_custom_sleep(complete_sleep, client_content)
+            return render_template("calendar.html", user=current_user, tab="sleep",
+                custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
+        delete_sleep = request.form.get("delete_sleep")
+        if delete_sleep:
+            client_content = delete_custom_sleep(delete_sleep, client_content)
+            return render_template("calendar.html", user=current_user, tab="sleep", 
+                custom_workouts=client_content['current_custom_sleep'], sleeps = client_content['current_sleeps'])
+
         url_content = request.form.get("content_button")
         if url_content:
             return redirect(url_for('views.content', id=url_content))
         create_workout_button = request.form.get("create_workout_button")
         create_meal_button = request.form.get("create_meal_button")
+        create_sleep_button = request.form.get("create_sleep_button")
         if create_workout_button:
             title = request.form.get("title")
             description = request.form.get("description2")
@@ -244,6 +294,14 @@ def calendar():
             client_content = add_meal(entree, sides, drink, total_calories, client_content)
             return render_template("calendar.html", user=current_user, tab="meal", 
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
+        elif create_sleep_button:
+            date = request.form.get("date")
+            hours = request.form.get("hours")
+            start_sleep = request.form.get("start_sleep")
+            end_sleep = request.form.get("end_sleep")
+            client_content = add_sleep(date, hours, start_sleep, end_sleep, client_content)
+            return render_template("calendar.html", user=current_user, tab="sleep", 
+                custom_workouts=client_content['current_custom_workout'], meals = client_content['current_sleeps'])
     return render_template("calendar.html", user=current_user, tab="appointment", 
         custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'])
     

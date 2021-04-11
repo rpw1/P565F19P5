@@ -57,6 +57,14 @@ $(function () {
             $("#end_time").focus();
     }});
 
+    $("#start_sleep").inputmask("hh:mm", {
+        placeholder: "hh:mm (24h)",
+        alias: "datetime",
+        clearIncomplete: true,
+        oncomplete: function(){
+            $("#end_sleep").focus();
+    }});
+
     $("#end_time").inputmask("hh:mm", {
         placeholder: "hh:mm (24h)",
         alias: "datetime",
@@ -66,7 +74,22 @@ $(function () {
             $("#submit").focus();
     }});
 
+    $("#end_sleep").inputmask("hh:mm", {
+        placeholder: "hh:mm (24h)",
+        alias: "datetime",
+        clearIncomplete: true,
+        oncomplete: function(){
+            compare();
+            $("#submit_sleep").focus();
+    }});
+
     $(".date-input").inputmask("dd/mm/yyyy", {
+        placeholder: "dd/mm/yyyy",
+        alias: "datetime",
+        clearIncomplete: true
+    });
+
+    $("#sleep_date").inputmask("dd/mm/yyyy", {
         placeholder: "dd/mm/yyyy",
         alias: "datetime",
         clearIncomplete: true
@@ -86,6 +109,12 @@ $(function () {
 
     $("#duration").inputmask('Regex', {
         max_length: 3,
+        regex: "^([0-9]){1,3}",
+        clearIncomplete: true,
+    });
+
+    $("#hours").inputmask('Regex', {
+        max_length: 2,
         regex: "^([0-9]){1,3}",
         clearIncomplete: true,
     });
@@ -222,6 +251,7 @@ $("#days td.active").on("click", function () {
     }
 });
 
+
 $("#days td.inactive").on("click", function () {
     iziToast.error({
         title: 'Error',
@@ -309,6 +339,14 @@ $("#total_calories, #entree, #sides, #drink").keyup(function () {
     }
 });
 
+$("#sleep_date, #hours, #start_sleep, #end_sleep").keyup(function () {
+    if (is_emptyMeal()) {
+        $("#submit_sleep").prop('disabled', true);
+    } else {
+        $("#submit_sleep").prop('disabled', false);
+    }
+});
+
 function clear_input() {
     $("#date").val('');
     $("#description").val('');
@@ -333,6 +371,14 @@ function clear_meal() {
     $("#drink").val('');
     $("#total_calories").val('');
     $("#submit").prop('disabled', true);
+}
+
+function clear_sleep() {
+    $("#date").val('');
+    $("#hours").val('');
+    $("#start_sleep").val('');
+    $("#end_sleep").val('');
+    $("#submit_sleep").prop('disabled', true);
 }
 
 function is_empty() {
