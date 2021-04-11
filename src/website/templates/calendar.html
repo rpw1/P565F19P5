@@ -257,35 +257,58 @@
                         <canvas style="width:100%;" id="myChart" width="400" height="250"></canvas>
                         <script>
                             Chart.defaults.global.responsive = false;
-                            var djangoData = "{{ calories | safe }}";
-                            var split = djangoData.split(",")
-            
                         // define the chart data
+                        var number_of_workouts = '{{workout_chart_data[0]|tojson|safe }}'
+                        var workout_minutes = '{{workout_chart_data[1]|tojson|safe }}'
+                        console.log(number_of_workouts)
+                        console.log(workout_minutes)
+                        
                         var chartData = {
-                            labels : ['Cardio', 'Strength Training', 'Flexibility', 
-                            'Endurance Training', 'Core Training', 'Other'],
-                        datasets : [{
-                            label: "Number of Workouts",
-                            fill: true,
-                            lineTension: 0.1,
-                            backgroundColor: "rgba(75,192,192,0.4)",
-                            borderColor: "rgba(75,192,192,1)",
-                            borderCapStyle: 'butt',
-                            borderDash: [],
-                            borderDashOffset: 0.0,
-                            borderJoinStyle: 'miter',
-                            pointBorderColor: "rgba(75,192,192,1)",
-                            pointBackgroundColor: "#fff",
-                            pointBorderWidth: 1,
-                            pointHoverRadius: 5,
-                            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                            pointHoverBorderColor: "rgba(220,220,220,1)",
-                            pointHoverBorderWidth: 2,
-                            pointRadius: 1,
-                            pointHitRadius: 10,
-                            data: split,
-                            spanGaps: false
-                        }]
+                            labels : ['Cardio', 'Strength Training', 'Flexibility', 'Endurance Training', 'Core Training', 'Other'],
+                            datasets : [{
+                                label: "Number of Workouts",
+                                fill: true,
+                                lineTension: 0.1,
+                                backgroundColor: "rgba(75,192,192,0.4)",
+                                borderColor: "rgba(75,192,192,1)",
+                                borderCapStyle: 'butt',
+                                borderDash: [],
+                                borderDashOffset: 0.0,
+                                borderJoinStyle: 'miter',
+                                pointBorderColor: "rgba(75,192,192,1)",
+                                pointBackgroundColor: "#fff",
+                                pointBorderWidth: 1,
+                                pointHoverRadius: 5,
+                                pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                                pointHoverBorderColor: "rgba(220,220,220,1)",
+                                pointHoverBorderWidth: 2,
+                                pointRadius: 1,
+                                pointHitRadius: 10,
+                                data: number_of_workouts_list,
+                                spanGaps: false
+                            }, {
+                                label: "Workout Minutes",
+                                fill: true,
+                                lineTension: 0.1,
+                                backgroundColor: "rgba(192,75,192,0.4)",
+                                borderColor: "rgba(75,192,192,1)",
+                                borderCapStyle: 'butt',
+                                borderDash: [],
+                                borderDashOffset: 0.0,
+                                borderJoinStyle: 'miter',
+                                pointBorderColor: "rgba(75,192,192,1)",
+                                pointBackgroundColor: "#fff",
+                                pointBorderWidth: 1,
+                                pointHoverRadius: 5,
+                                pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                                pointHoverBorderColor: "rgba(220,220,220,1)",
+                                pointHoverBorderWidth: 2,
+                                pointRadius: 1,
+                                pointHitRadius: 10,
+                                data: workout_minutes_list,
+                                spanGaps: false
+                            }
+                            ]
                         }
                         
                         // get chart canvas
@@ -294,7 +317,6 @@
                         // create the chart using the chart canvas
                         var myChart = new Chart(ctx, {type: 'line', data: chartData,});
                         </script>
-                        <a class="btn btn-primary btn-block" href="/progress_tracking">Edit calories</a>
                     </div>
                 </div>
                 </row>
