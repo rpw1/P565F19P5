@@ -21,7 +21,7 @@
         {% for x in range(0,conversation['conversation']|length) %}
             {% if conversation['conversation'][x][0] == 0 %}
             <div class="row ml-1 w-100">
-                <span class="float-right badge badge-primary">{{sender}}</span>
+                <a target="_blank" href="/user/{{conversation['sender_id']}}" class="float-right badge badge-primary">{{sender}}</a>
             </div>
             <div class="row ml-1 w-100">
                 <p class="float-right">{{conversation['conversation'][x][1]}}</p>
@@ -29,7 +29,7 @@
             <hr/>
             {% else %}
             <div class="row ml-1 w-100">
-                <span class="float-right badge badge-primary">{{recipient}}</span>
+                <a target="_blank" href="/user/{{conversation['recipient_id']}}" class="float-right badge badge-primary">{{recipient}}</a>
             </div>
             <div class="row ml-1 w-100">
                 <p class="float-right">{{conversation['conversation'][x][1]}}</p>
