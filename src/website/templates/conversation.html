@@ -29,7 +29,11 @@
             <hr/>
             {% else %}
             <div class="row ml-1 w-100">
+                {% if conversation['recipient_id']% != 'admin'} 
                 <a target="_blank" href="/user/{{conversation['recipient_id']}}" class="float-right badge badge-primary">{{recipient}}</a>
+                {% else %}
+                <a class="float-right badge badge-primary">{{recipient}}</a>
+                {% endif %}
             </div>
             <div class="row ml-1 w-100">
                 <p class="float-right">{{conversation['conversation'][x][1]}}</p>
