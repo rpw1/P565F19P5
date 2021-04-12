@@ -101,6 +101,12 @@ class MessagesDatabase:
         sender_value = 0
         if sender != (current_conversation[0]['sender_id']):
             sender_value = 1
+        sender_status = current_conversation[0]['sender_unread']
+        recipient_status = current_conversation[0]['recipient_unread']
+        if sender_value == 0:
+            recipient_status = True
+        else:
+            sender_status = True
         conversation = current_conversation[0]['conversation']
         new_message = [sender_value, message]
         conversation.append(new_message)
@@ -109,10 +115,31 @@ class MessagesDatabase:
             Key = {
                 'conversation_id' : id,
             },
-            UpdateExpression = 'SET conversation = :val, update_time = :val2' ,
+            UpdateExpression = 'SET conversation = :val, update_time = :val2, sender_unread = :val3, recipient_unread = :val4' ,
             ExpressionAttributeValues = {
                 ':val' : current_conversation[0]['conversation'],
-                ':val2' : int(time.time())
+                ':val2' : int(time.time()),
+                ':val3' : sender_status,
+                ':val4' : recipient_status
+            }
+        )
+
+    def read_conversation(self, id, email):
+        current_conversation = self.get_conversation_by_id(id)
+        sender_status = current_conversation[0]['sender_unread']
+        recipient_status = current_conversation[0]['recipient_unread']
+        if email == current_conversation[0]['sender_id']:
+            sender_status = False
+        elif email == current_conversation[0]['recipient_id']:
+            recipient_status = False
+        result = self.messages_table.update_item(
+            Key = {
+                'conversation_id' : id,
+            },
+            UpdateExpression = 'SET sender_unread = :val, recipient_unread = :val2' ,
+            ExpressionAttributeValues = {
+                ':val' : sender_status,
+                ':val2' : recipient_status
             }
         )
 

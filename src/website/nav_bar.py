@@ -55,8 +55,6 @@ def delete_notification(email, notification_id):
 @nav_bar.route("/notifs", methods=['GET', 'POST'])
 @login_required
 def notifications():
-    #messages_db.insert_conversation(str(uuid.uuid4()), 'testuser@iu.edu', 'testprof@iu.edu', 'hello')
-    #messages_db.delete_conversation('2ad62398-4c8f-49fe-8d7e-40a8a73da0f3')
     if request.method == 'POST':
         notification_id = request.form['id']
         delete_notification(current_user.email, notification_id)
@@ -205,4 +203,5 @@ def conversation(id):
         message = request.form.get("message")
         messages_db.add_message(id, current_user.email, message)
         return redirect(url_for("nav_bar.conversation", id=id))
+    messages_db.read_conversation(id, current)
     return render_template("conversation.html", id=id, conversation=conversation[0], sender=sender_name, recipient=recipient_name)

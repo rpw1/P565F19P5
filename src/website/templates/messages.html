@@ -41,7 +41,9 @@
                     </div>
                     <div class="col-md-2 align-items-center">
                         <button type="button" conversation_id="{{x['conversation_id']}}" class="btn deleteButton">&times;</button>
+                        {% if (x['sender_unread'] and current_user.role == 'client') or (x['recipient_unread'] and (current_user.role == 'fitness_professional' or current_user.role == 'admin'))  %}
                         <span class="badge badge-pill badge-secondary align-self-center">!</span>
+                        {% endif %}
                     </div>
                 </div>
             </a>
