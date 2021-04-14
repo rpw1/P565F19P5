@@ -351,13 +351,13 @@ def get_workout_chart_data(month : int, client_content):
 @views.route("/content/<id>", methods=["GET","POST"])
 @login_required
 def content(id):
+    average_rating = 0.0
     if request.method == "POST":
         has_editted = request.form.get("edit_val")
         #print(has_editted)
         action = request.form.get("moderate")
         title = request.form.get("title")
         email = request.form.get("email")
-        average_rating = 0
         query_content = content_db.query_content_by_id(id)
         if action == "delete":
             content_db.delete_content(id, email)
@@ -393,6 +393,7 @@ def content(id):
     content_user = user_db.get_fitness_professional(content_email)
     total_views = 0
     reviews = {}
+    reviewer_names = []
     has_editted = request
 
     if 'total_views' in content_user['content']:
@@ -403,9 +404,13 @@ def content(id):
             current_content = query_content['content']
             if 'reviews' in current_content:
                 reviews = current_content['reviews']
+                reviews = dict(sorted(reviews.items(), key = lambda i: i[1][2], reverse=True))
                 total_rating = 0
                 for reviewer in reviews:
                     total_rating += int(reviews[reviewer][0])
+                    reviewer_info = user_db.query_user(reviewer)
+                    reviewer_name = '{} {}'.format(reviewer_info['first_name'], reviewer_info['last_name'])
+                    reviewer_names.append(reviewer_name)
                 average_rating = total_rating/(len(reviews))
             if 'views' in current_content:
                 views = current_content['views']
@@ -444,7 +449,7 @@ def content(id):
             user_path = url_for("users.user_page", id = created_user)
             return render_template("content.html", created_user = created_user, title = title, description = description, 
                 content_link = content_link, content_date = content_date, user_path = user_path, content_type = content_type, view_count=view_count, approved=approved,
-                mode_of_instruction=mode_of_instruction, workout_type=workout_type, workout_plans=plan_count, reviews=reviews, average_rating=average_rating)
+                mode_of_instruction=mode_of_instruction, workout_type=workout_type, workout_plans=plan_count, reviews=reviews, average_rating=average_rating, reviewer_names=reviewer_names)
     flash("Content did not show correctly", category="error")
     return redirect(url_for("views.home"))
 

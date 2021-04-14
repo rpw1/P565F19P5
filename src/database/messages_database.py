@@ -31,7 +31,6 @@ class MessagesDatabase:
         recipient_unread -> required, boolean
         """
         self.check_database()
-        print(time.time())
         response = self.messages_table.put_item(
             Item = {
                 'conversation_id': conversation_id,

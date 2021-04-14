@@ -116,7 +116,7 @@
                                         <div class="modal-body">
                                             {% for reviewer in reviews %}
                                             <p>
-                                                <a href="/user/{{reviewer}}" target="_blank">{{reviewer}}</a>
+                                                <a href="/user/{{reviewer}}" target="_blank">{{reviewer_names[loop.index - 1]}}</a>
                                                 &bull; 
                                                 {% for stars in range(0,reviews[reviewer][0]|int) %}
                                                 <svg class="text-primary" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">

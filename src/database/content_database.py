@@ -2,6 +2,7 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 from decouple import config
 from decimal import Decimal
+import time
 
 
 class ContentDatabase:
@@ -188,10 +189,10 @@ class ContentDatabase:
         item = self.get_content(content_id, uploader_email)
         if 'reviews' in item['content']:
             reviews = item['content']['reviews']
-            reviews[reviewer_email] = [rating, review]
+            reviews[reviewer_email] = [rating, review, int(time.time())]
             item['content']['reviews'] = reviews
         else:
-            item['content']['reviews'] = {reviewer_email: [rating, review]}
+            item['content']['reviews'] = {reviewer_email: [rating, review, int(time.time())]}
         self.update_content(content_id, uploader_email, item['content'])
 
     def update_rating(self, content_id, email, rating):
