@@ -94,6 +94,22 @@
                     <div class="row">
                         <div class="col-xl-10">
                             <h1 class="card-title">{{ title }}</h1>
+                            <p>[star rating here] <button type="button" class="btn btn-link" data-toggle="modal" data-target="#reviews">({{average_rating}})</button></p>
+                            <div class="modal fade" id="reviews">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h3>Reviews</h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            {{reviews}}
+                                            {% for reviewer in reviews %}
+                                            <p>{{reviews[reviewer]}}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <p>{{ description }}</p>
                             <p class="text-muted">Uploaded on {{ content_date }} by <a href="{{url_for('users.user_page', id=created_user)}}">{{ created_user }}</a></p>
                         </div>

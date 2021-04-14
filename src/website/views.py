@@ -384,6 +384,8 @@ def content(id):
     content_email = query_content['email']
     content_user = user_db.get_fitness_professional(content_email)
     total_views = 0
+    reviews = {}
+    average_rating = 0
     has_editted = request
 
     if 'total_views' in content_user['content']:
@@ -392,6 +394,12 @@ def content(id):
     if query_content:
         if 'content' in query_content:
             current_content = query_content['content']
+            if 'reviews' in current_content:
+                reviews = current_content['reviews']
+                total_rating = 0
+                for reviewer in reviews:
+                    total_rating += int(reviews[reviewer][0])
+                average_rating = total_rating/(len(reviews))
             if 'views' in current_content:
                 views = current_content['views']
                 if user_email not in views:
@@ -429,7 +437,7 @@ def content(id):
             user_path = url_for("users.user_page", id = created_user)
             return render_template("content.html", created_user = created_user, title = title, description = description, 
                 content_link = content_link, content_date = content_date, user_path = user_path, content_type = content_type, view_count=view_count, approved=approved,
-                mode_of_instruction=mode_of_instruction, workout_type=workout_type, workout_plans=plan_count)
+                mode_of_instruction=mode_of_instruction, workout_type=workout_type, workout_plans=plan_count, reviews=reviews, average_rating=average_rating)
     flash("Content did not show correctly", category="error")
     return redirect(url_for("views.home"))
 
