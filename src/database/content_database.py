@@ -181,6 +181,17 @@ class ContentDatabase:
             return result['Attributes']
         else:
             return dict()
+    
+    def add_review(self, content_id, uploader_email, reviewer_email, rating, review):
+        self.check_database()
+        item = self.get_content(content_id, uploader_email)
+        if 'reviews' in item['content']:
+            reviews = item['content']['reviews']
+            reviews[reviewer_email] = [rating, review]
+            item['content']['reviews'] = reviews
+        else:
+            item['content']['reviews'] = {reviewer_email: [rating, review]}
+        self.update_content(content_id, uploader_email, item['content'])
 
     def scan_content_by_instruction(self, is_diet_plan):
         self.check_database()

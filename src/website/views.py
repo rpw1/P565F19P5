@@ -353,17 +353,21 @@ def get_workout_chart_data(month : int, client_content):
 def content(id):
     if request.method == "POST":
         has_editted = request.form.get("edit_val")
-        print(has_editted)
+        #print(has_editted)
         action = request.form.get("moderate")
         title = request.form.get("title")
         email = request.form.get("email")
+        query_content = content_db.query_content_by_id(id)
         if action == "delete":
             content_db.delete_content(id, email)
             message = Markup("<b>{}</b> successfully deleted".format(title))
             flash(message, category="success")
             return redirect(url_for("views.home"))
+        if action == "rate":
+            rating = request.form.get('rating')
+            review = request.form.get('review')
+            content_db.add_review(id, query_content['email'], current_user.email, rating, review)
         elif has_editted == "edit_val":
-            query_content = content_db.query_content_by_id(id)
             title = request.form.get("edit_title")
             description = request.form.get("edit_description")
             mode_of_instruction = request.form.get("edit_mode_of_instruction")
@@ -519,6 +523,7 @@ def messages():
     #get a list of all conversations user is involved in
     #all senders are clients, so we can check the user's role to see what fields to look for
     #pass that list of conversations to the template
+    content_db.delete_content('5659bd95-4b14-4922-ae64-f345442aed6d', 'None')
     if request.method == 'POST':
         action = request.form['action']
         if action == 'new':
