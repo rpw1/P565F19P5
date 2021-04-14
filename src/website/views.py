@@ -357,6 +357,7 @@ def content(id):
         action = request.form.get("moderate")
         title = request.form.get("title")
         email = request.form.get("email")
+        average_rating = 0
         query_content = content_db.query_content_by_id(id)
         if action == "delete":
             content_db.delete_content(id, email)
@@ -367,6 +368,13 @@ def content(id):
             rating = request.form.get('rating')
             review = request.form.get('review')
             content_db.add_review(id, query_content['email'], current_user.email, rating, review)
+            total_rating = 0
+            query_content = content_db.query_content_by_id(id)
+            reviews = query_content['content']['reviews']
+            for reviewer in reviews:
+                total_rating += int(reviews[reviewer][0])
+            average_rating = total_rating/(len(reviews))
+            content_db.update_rating(id, query_content['email'], average_rating)
         elif has_editted == "edit_val":
             title = request.form.get("edit_title")
             description = request.form.get("edit_description")
@@ -385,7 +393,6 @@ def content(id):
     content_user = user_db.get_fitness_professional(content_email)
     total_views = 0
     reviews = {}
-    average_rating = 0
     has_editted = request
 
     if 'total_views' in content_user['content']:

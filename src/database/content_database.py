@@ -1,6 +1,7 @@
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 from decouple import config
+from decimal import Decimal
 
 
 class ContentDatabase:
@@ -192,6 +193,12 @@ class ContentDatabase:
         else:
             item['content']['reviews'] = {reviewer_email: [rating, review]}
         self.update_content(content_id, uploader_email, item['content'])
+
+    def update_rating(self, content_id, email, rating):
+        self.check_database()
+        item = self.get_content(content_id, email)
+        item['content']['rating'] = Decimal(rating)
+        self.update_content(content_id, email, item['content'])
 
     def scan_content_by_instruction(self, is_diet_plan):
         self.check_database()
