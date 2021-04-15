@@ -117,13 +117,15 @@ def search():
         date_filters = date_filters_temp[::-1]
         instruction_filters = ['video', 'diet_plan', 'workout_plan']
         workout_type_filters = ['home', 'gym', 'fitness_center', 'track']
+        rating_filters = ['4_stars', '3_stars', '2_stars', '1_star']
         user_filters = {
             "gender": gender_filters
             }
         content_filters = {
             "date": date_filters, 
             "mode_of_instruction": instruction_filters, 
-            "workout_type": workout_type_filters
+            "workout_type": workout_type_filters,
+            "rating": rating_filters
         }
         users_val = request.form.get('users')
         content_val = request.form.get('content')
