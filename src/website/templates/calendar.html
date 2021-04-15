@@ -262,8 +262,11 @@
                             var workout_minutes = '{{workout_chart_data[1]|tojson|safe }}'
                             console.log(number_of_workouts)
                             console.log(workout_minutes)
+<<<<<<< HEAD
                             var number_of_workouts_list
                             var workout_minutes_list
+=======
+>>>>>>> ba082e90c454e4037cd617a9a887f2617212f1e8
                             var chartData = {
                                 labels : ['Cardio', 'Strength Training', 'Flexibility', 'Endurance Training', 'Core Training', 'Other'],
                                 datasets : [{
@@ -285,7 +288,7 @@
                                     pointHoverBorderWidth: 2,
                                     pointRadius: 1,
                                     pointHitRadius: 10,
-                                    data: number_of_workouts_list,
+                                    data: number_of_workouts,
                                     spanGaps: false
                                 }, {
                                     label: "Workout Minutes",
@@ -306,7 +309,7 @@
                                     pointHoverBorderWidth: 2,
                                     pointRadius: 1,
                                     pointHitRadius: 10,
-                                    data: workout_minutes_list,
+                                    data: workout_minutes,
                                     spanGaps: false
                                 }
                                 ]

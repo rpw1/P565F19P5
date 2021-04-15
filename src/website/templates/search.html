@@ -84,6 +84,37 @@
                                 <label for="year">This Year</label>
                             </div>
                         </div>
+                    <!-- Rating -->
+                    <div class="row" onclick="show_rating_filter();">
+                        <div class="col-sm-9">
+                            <h5>Rating</h5>
+                        </div>
+                        <div class="col-sm-3">
+                            <div id="rating_filter_arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="rating_filter" style="display: none">
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="4_stars" name="4_stars">
+                            <label for="4_stars">&GreaterEqual; 4 stars</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="3_stars" name="3_stars">
+                            <label for="3_stars">&GreaterEqual; 3 stars</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="2_stars" name="2_stars">
+                            <label for="2_stars">&GreaterEqual; 2 stars</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="1_star" name="1_star">
+                            <label for="1_star">&GreaterEqual; 1 stars</label>
+                        </div>
+                    </div>
                     <!-- Mode of instruction -->
                     <div class="row" onclick="show_mode_filter();">
                         <div class="col-sm-9">
@@ -193,6 +224,22 @@
         function show_date_filter() {
             var boxes = document.getElementById('date_filter')
             var arrow = document.getElementById('date_filter_arrow')
+            if(boxes.style.display == 'block') {
+                boxes.style.display = 'none';
+                arrow.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                  </svg>`
+            } else {
+                boxes.style.display = 'block';
+                arrow.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-up" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
+                    </svg>`
+            }
+        }
+
+        function show_rating_filter() {
+            var boxes = document.getElementById('rating_filter')
+            var arrow = document.getElementById('rating_filter_arrow')
             if(boxes.style.display == 'block') {
                 boxes.style.display = 'none';
                 arrow.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">

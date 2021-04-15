@@ -351,19 +351,31 @@ def get_workout_chart_data(month : int, client_content):
 @views.route("/content/<id>", methods=["GET","POST"])
 @login_required
 def content(id):
+    average_rating = 0.0
     if request.method == "POST":
         has_editted = request.form.get("edit_val")
-        print(has_editted)
+        #print(has_editted)
         action = request.form.get("moderate")
         title = request.form.get("title")
         email = request.form.get("email")
+        query_content = content_db.query_content_by_id(id)
         if action == "delete":
             content_db.delete_content(id, email)
             message = Markup("<b>{}</b> successfully deleted".format(title))
             flash(message, category="success")
             return redirect(url_for("views.home"))
-        elif has_editted == "edit_val":
+        if action == "rate":
+            rating = request.form.get('rating')
+            review = request.form.get('review')
+            content_db.add_review(id, query_content['email'], current_user.email, rating, review)
+            total_rating = 0
             query_content = content_db.query_content_by_id(id)
+            reviews = query_content['content']['reviews']
+            for reviewer in reviews:
+                total_rating += int(reviews[reviewer][0])
+            average_rating = total_rating/(len(reviews))
+            content_db.update_rating(id, query_content['email'], average_rating)
+        elif has_editted == "edit_val":
             title = request.form.get("edit_title")
             description = request.form.get("edit_description")
             mode_of_instruction = request.form.get("edit_mode_of_instruction")
@@ -380,6 +392,8 @@ def content(id):
     content_email = query_content['email']
     content_user = user_db.get_fitness_professional(content_email)
     total_views = 0
+    reviews = {}
+    reviewer_names = []
     has_editted = request
 
     if 'total_views' in content_user['content']:
@@ -388,6 +402,16 @@ def content(id):
     if query_content:
         if 'content' in query_content:
             current_content = query_content['content']
+            if 'reviews' in current_content:
+                reviews = current_content['reviews']
+                reviews = dict(sorted(reviews.items(), key = lambda i: i[1][2], reverse=True))
+                total_rating = 0
+                for reviewer in reviews:
+                    total_rating += int(reviews[reviewer][0])
+                    reviewer_info = user_db.query_user(reviewer)
+                    reviewer_name = '{} {}'.format(reviewer_info['first_name'], reviewer_info['last_name'])
+                    reviewer_names.append(reviewer_name)
+                average_rating = total_rating/(len(reviews))
             if 'views' in current_content:
                 views = current_content['views']
                 if user_email not in views:
@@ -425,7 +449,7 @@ def content(id):
             user_path = url_for("users.user_page", id = created_user)
             return render_template("content.html", created_user = created_user, title = title, description = description, 
                 content_link = content_link, content_date = content_date, user_path = user_path, content_type = content_type, view_count=view_count, approved=approved,
-                mode_of_instruction=mode_of_instruction, workout_type=workout_type, workout_plans=plan_count)
+                mode_of_instruction=mode_of_instruction, workout_type=workout_type, workout_plans=plan_count, reviews=reviews, average_rating=average_rating, reviewer_names=reviewer_names)
     flash("Content did not show correctly", category="error")
     return redirect(url_for("views.home"))
 
@@ -504,6 +528,12 @@ def upload():
                 "bucket_info": bucket_info,
                 "amount_viewed": 0
             }
+            if moi == "Diet plan":
+                diet_cal = request.form.get("dietCal")
+                uploaded_content['diet_cal'] = diet_cal
+            elif moi == "Workout plan":
+                workout_difficulty = request.form.get("workoutDifficulty")
+                uploaded_content['workout_difficulty'] = workout_difficulty
             content_db.insert_content(content_id, email, uploaded_content)
             flash("Upload successful!", category="success")
             return redirect(url_for("views.content", id = content_id))
@@ -519,6 +549,7 @@ def messages():
     #get a list of all conversations user is involved in
     #all senders are clients, so we can check the user's role to see what fields to look for
     #pass that list of conversations to the template
+    content_db.delete_content('5659bd95-4b14-4922-ae64-f345442aed6d', 'None')
     if request.method == 'POST':
         action = request.form['action']
         if action == 'new':
@@ -561,6 +592,8 @@ def progress_tracking():
     weekly_calorie_total= ""
     calorie_string = ""
     last_reset = ""
+    history = ""
+    last_30_days = ""
     try :
         progress_db.query_user(email)
         content = progress_db.query_user(email)
@@ -568,16 +601,20 @@ def progress_tracking():
         weekly_calorie_goal= content['content']['weekly_calorie_goal']
         weekly_calorie_total= content['content']['weekly_calorie_total']
         last_reset = str(content['content']['last_reset'])
+        history = content['content']['history']
+        last_30_days = get_last_30_days(history)
     except:
         weekly_cals = "0,0,0,0,0,0,0"
         weekly_calorie_goal = "0"
         weekly_calorie_total = "0"
         last_reset = str(now)
+        history = "0,0,0,0,0,0,0"
         base_content = {
             "weekly_cals": weekly_cals,
             "weekly_calorie_goal": weekly_calorie_goal,
             "weekly_calorie_total": weekly_calorie_total,
-            "last_reset": last_reset
+            "last_reset": last_reset,
+            "history":history
         }
         progress_db.insert_content(email,base_content)
         progress_db.query_user(email)
@@ -586,17 +623,20 @@ def progress_tracking():
         weekly_calorie_goal= content['content']['weekly_calorie_goal']
         weekly_calorie_total= content['content']['weekly_calorie_total']
         last_reset = str(content['content']['last_reset'])
-    print(last_reset)
+        history = content['content']['history']
+        last_30_days = get_last_30_days(history)
     if (str(last_reset).startswith(str(today)) == False) and weekday == "Monday":
         weekly_cals = "0,0,0,0,0,0,0"
         weekly_calorie_goal = "0"
         weekly_calorie_total = "0"
         last_reset = str(now)
+        history = history + ",0,0,0,0,0,0,0"
         base_content = {
             "weekly_cals": weekly_cals,
             "weekly_calorie_goal": weekly_calorie_goal,
             "weekly_calorie_total": weekly_calorie_total,
-            "last_reset": last_reset
+            "last_reset": last_reset,
+            "history":history
         }
         progress_db.insert_content(email,base_content)
         progress_db.query_user(email)
@@ -625,10 +665,14 @@ def progress_tracking():
             split = calories.split(",")
             day_of_week = request.form.get("day_of_week")
             new_cals = request.form.get("calories")
-            print(day_of_week)
-            print(new_cals)
-            print(split[0])
-            weekly_calorie_total, weekly_calorie_goal, calories, calorie_string = (email, day_of_week, new_cals, split, weekly_calorie_goal, weekly_calorie_total, last_reset)
+            my_list = add_cals(email, day_of_week, new_cals, split, weekly_calorie_goal, weekly_calorie_total, last_reset, history)
+            weekly_calorie_total = my_list[0]
+            weekly_calorie_goal = my_list[1]
+            calories = my_list[2]
+            calorie_string = my_list[3]
+            history = my_list[4]
+            last_30_days = get_last_30_days(history)
+            print("last 30 days" + last_30_days)
         elif action == "add_goal":
             calorie_goal = request.form.get("calorie_goal")
             try:
@@ -638,7 +682,8 @@ def progress_tracking():
                         "weekly_cals": calories,
                         "weekly_calorie_goal": weekly_calorie_goal,
                         "weekly_calorie_total": weekly_calorie_total,
-                        "last_reset": last_reset
+                        "last_reset": last_reset,
+                        "history": history
                     }
                     progress_db.insert_content(email,base_content)
                     if(weekly_calorie_goal == "0"):
@@ -655,32 +700,42 @@ def progress_tracking():
                     flash("Please enter a positive whole number", category="error")
             except:
                 flash("Please enter a whole number", category="error")
-    return render_template('progress_tracking.html', user=current_user, todays_date = todays_date, calories = calories, calorie_string= calorie_string, calorie_goal = weekly_calorie_goal, calorie_total = weekly_calorie_total)
+    return render_template('progress_tracking.html', user=current_user, todays_date = todays_date, calories = calories, calorie_string= calorie_string, calorie_goal = weekly_calorie_goal, calorie_total = weekly_calorie_total, last_30_days = last_30_days)
 
-def add_cals(email, day_of_week, new_cals, split, weekly_calorie_goal, weekly_calorie_total, last_reset):
+def add_cals(email, day_of_week, new_cals, split, weekly_calorie_goal, weekly_calorie_total, last_reset, history):
     weekly_calorie_total = int(weekly_calorie_total) + int(new_cals)
+    history_split = history.split(",")
+    history_length = len(history_split)
     if(day_of_week == "Monday"):
         updates_cals = int(split[0]) + int(new_cals)
         split[0] = str(updates_cals)
+        history_split[history_length-7] = split[0]
     elif(day_of_week == "Tuesday"):
         updates_cals = int(split[1]) + int(new_cals)
         split[1] = str(updates_cals)
+        history_split[history_length-6] = split[1]
     elif(day_of_week == "Wednesday"):
         updates_cals = int(split[2]) + int(new_cals)
         split[2] = str(updates_cals)
+        history_split[history_length-5] = split[2]
     elif(day_of_week == "Thursday"):
         updates_cals = int(split[3]) + int(new_cals)
         split[3] = str(updates_cals)
+        history_split[history_length -4] = split[3]
     elif(day_of_week == "Friday"):
         updates_cals = int(split[4]) + int(new_cals)
         split[4] = str(updates_cals)
+        history_split[history_length -3] = split[4]
     elif(day_of_week == "Saturday"):
         updates_cals = int(split[5]) + int(new_cals)
         split[5] = str(updates_cals)
+        history_split[history_length -2] = split[5]
     elif(day_of_week == "Sunday"):
         updates_cals = int(split[6]) + int(new_cals)
         split[6] = str(updates_cals)
+        history_split[history_length-1] = split[6]
     calories = ""
+    history = ""
     i=0
     for x in split:
         if(i==7):
@@ -688,12 +743,20 @@ def add_cals(email, day_of_week, new_cals, split, weekly_calorie_goal, weekly_ca
         else:
             calories = calories + x + ","
         i = i+1
-    print(calories)
+    i=0
+    for y in history_split:
+        if (i==history_length-1):
+            history = history + y
+        else:
+            history = history + y + ","
+        i = i+1
+    print(history)
     base_content = {
         "weekly_cals": calories,
         "weekly_calorie_goal": weekly_calorie_goal,
         "weekly_calorie_total": weekly_calorie_total,
-        "last_reset": last_reset
+        "last_reset": last_reset,
+        "history":history
     }
     progress_db.insert_content(email,base_content)
     if(weekly_calorie_goal == "0"):
@@ -706,5 +769,36 @@ def add_cals(email, day_of_week, new_cals, split, weekly_calorie_goal, weekly_ca
         calorie_string = "You're over halfway to your goal!"
     else:
         calorie_string = "Log more calories to meet your goal!"
+    return [weekly_calorie_total, weekly_calorie_goal, calories, calorie_string, history]
 
-    return weekly_calorie_total, weekly_calorie_goal, calories, calorie_string
+def get_last_30_days(history):
+    history_split = history.split(",")
+    history_length = len(history_split)
+    i = 0
+    num_of_empty_slots = 30-history_length
+    history = ""
+    last_30_days = ""
+    if history_length<30:
+        while num_of_empty_slots>0:
+            last_30_days = last_30_days +  "0,"
+            num_of_empty_slots = num_of_empty_slots-1
+            i=i+1
+            print(last_30_days)
+        for y in history_split:
+            if (i==30):
+                last_30_days = last_30_days + y
+            else:
+                last_30_days = last_30_days + y + ","
+            i=i+1
+        return last_30_days
+
+    i = history_length 
+    j=30
+    last_30_days = ""
+    while j>0:
+        if j==1:
+            last_30_days = last_30_days + history_split[i-j]
+        else:
+            last_30_days = last_30_days + history_split[i-j] + ","
+        j= j-1
+    return last_30_days

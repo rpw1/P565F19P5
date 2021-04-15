@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block title %}Messages{% endblock %}
 {% block content %}
+<div class="row justify-content-center">
+    {% if conversations|length == 0 %}
+    <h5>You don't have any conversations!{% if current_user.role == 'client' %} Start one now!{% endif %}</h5>
+    {% endif %}
+</div>
 <div class="row mb-1">
     <div class="col-xl-2">
         <h3>My chats</h3>
@@ -41,7 +46,9 @@
                     </div>
                     <div class="col-md-2 align-items-center">
                         <button type="button" conversation_id="{{x['conversation_id']}}" class="btn deleteButton">&times;</button>
+                        {% if (x['sender_unread'] and current_user.role == 'client') or (x['recipient_unread'] and (current_user.role == 'fitness_professional' or current_user.role == 'admin'))  %}
                         <span class="badge badge-pill badge-secondary align-self-center">!</span>
+                        {% endif %}
                     </div>
                 </div>
             </a>
@@ -53,14 +60,18 @@
             {% for x in conversations %}
             <div class="tab-pane" id="conv_{{x['conversation_id']}}" role="tabpanel">
                 <iframe src="/conversation/{{x['conversation_id']}}#end" style="height: 70vh; border:none;" width="100%"></iframe>
-                test{{x}}
             </div>
             {% endfor %}
         </div>
-        <p>display conversation using javascript here (and maybe iframes)</p>
     </div>
 </div>
+{% if conversations|length > 0 %}
 <script>
+    var first_id = "{{conversations[0]['conversation_id']}}"
+</script>
+{% endif %}
+<script>
+    $('#conversation'+first_id).tab('show')
     $('#messages a').on('click', function (e) {
         e.preventDefault()
         $(this).tab('show')

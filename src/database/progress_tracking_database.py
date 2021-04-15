@@ -27,6 +27,7 @@ class ProgressTrackingDatabase:
                 weekly_calorie_goal: ""
                 weekly_calorie_total: ""
                 has_been_reset: ""
+                history: ""
             }
         """
         self.check_database()

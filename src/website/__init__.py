@@ -9,6 +9,7 @@ from oauthlib.oauth2 import WebApplicationClient
 
 user_db = UserDatabase()
 content_db = ContentDatabase()
+messages_db = MessagesDatabase()
 GOOGLE_CLIENT_ID = "133654944932-7jp5imq4u3k6ng5r8k9suue3rckcsdcf.apps.googleusercontent.com"
 GOOGLE_CLIENT_SECRET = "zSWURv4KexNnOvRRP2tDQZX2"
 GOOGLE_DISCOVERY_URL = (
@@ -46,7 +47,6 @@ def create_app():
         return dict(unapproved_count = len(content_db.query_content_unapproved()))
     @app.context_processor
     def inject_notifications():
-        print(current_user)
         if current_user.is_authenticated:
             user = user_db.query_user(current_user.get_id())
             user_content = user['content']
@@ -54,6 +54,23 @@ def create_app():
                 return dict(notification_count = 0)
             return dict(notification_count = user_content['notification']['len'])
         return dict(notification_count = 0)
+    @app.context_processor
+    def inject_unread():
+        unread = 0
+        conversations = None
+        if current_user.is_authenticated:
+            if current_user.role == 'client':
+                conversations = messages_db.get_client_conversations(current_user.email)
+            elif current_user.role == 'fitness_professional':
+                conversations = messages_db.get_professional_conversations(current_user.email)
+            elif current_user.role == 'admin':
+                conversations = messages_db.get_admin_conversations()
+            for conv in conversations:
+                if current_user.role == 'client' and conv['sender_unread']:
+                    unread += 1
+                elif (current_user.role == 'fitness_professional' and conv['recipient_unread']) or (current_user.role == 'admin' and conv['recipient_unread']):
+                    unread += 1
+        return dict(unread = unread)
     unapproved_count = len(content_db.query_content_unapproved())
     from .views import views
     from .auth import auth

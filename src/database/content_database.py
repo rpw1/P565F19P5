@@ -1,6 +1,8 @@
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 from decouple import config
+from decimal import Decimal
+import time
 
 
 class ContentDatabase:
@@ -181,6 +183,23 @@ class ContentDatabase:
             return result['Attributes']
         else:
             return dict()
+    
+    def add_review(self, content_id, uploader_email, reviewer_email, rating, review):
+        self.check_database()
+        item = self.get_content(content_id, uploader_email)
+        if 'reviews' in item['content']:
+            reviews = item['content']['reviews']
+            reviews[reviewer_email] = [rating, review, int(time.time())]
+            item['content']['reviews'] = reviews
+        else:
+            item['content']['reviews'] = {reviewer_email: [rating, review, int(time.time())]}
+        self.update_content(content_id, uploader_email, item['content'])
+
+    def update_rating(self, content_id, email, rating):
+        self.check_database()
+        item = self.get_content(content_id, email)
+        item['content']['rating'] = Decimal(rating)
+        self.update_content(content_id, email, item['content'])
 
     def scan_content_by_instruction(self, is_diet_plan):
         self.check_database()
