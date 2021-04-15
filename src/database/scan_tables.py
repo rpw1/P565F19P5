@@ -189,3 +189,6 @@ class ScanTables:
         [results.append(x) for x in new_items if x not in results]
         return results
                     
+
+    def get_recommendations(self, user_info):
+        pass

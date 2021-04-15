@@ -29,8 +29,8 @@
                 </div>
                 <div class="form-group">
                     <label for="Instruction">Mode of Instruction</label>
-                    <select name="Instruction" class="form-control" required>
-                        <option value="Video">Video</option>
+                    <select name="Instruction" class="form-control" id="moi" required>
+                        <option value="Video" selected>Video</option>
                         <option value="Diet plan">Diet plan</option>
                         <option value="Workout plan">Workout plan</option>
                     </select>
@@ -42,6 +42,24 @@
                         <option value="Gym">Gym</option>
                         <option value="Fitness Center">Fitness Center</option>
                         <option value="Track">Track</option>
+                    </select>
+                </div>
+                <div class="form-group" id="workout_difficulty">
+                    <label for="workoutDifficulty">Workout Difficulty</label>
+                    <select name="workoutDifficulty" class="form-control" required>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                <div class="form-group" id="diet_cal">
+                    <label for="dietCal">Diet Calories</label>
+                    <select name="dietCal" class="form-control" required>
+                        <option value="Low Calorie">Low Calorie</option>
+                        <option value="Medium Calorie">Medium Calorie</option>
+                        <option value="High Calorie">High Calorie</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -58,5 +76,38 @@
     </div>
 </div>
 <div class="video-display"></div>
+
+<script>
+    $(function() {
+        var workoutDifficulty = document.getElementById("workout_difficulty")
+        var dietCalories = document.getElementById("diet_cal")
+        let moi = document.getElementById("moi").value
+        if (moi === 'Diet plan') {
+            dietCalories.style.display = "block"
+        } else if (moi === 'Workout plan') {
+            workoutDifficulty.style.display = "block"
+        } else {
+            workoutDifficulty.style.display = "none"
+            dietCalories.style.display = "none"
+        }
+
+        $("#moi").on('change', function(event) {
+            console.log("here")
+                let moi = document.getElementById("moi").value
+                if (moi === 'Diet plan') {
+                    dietCalories.style.display = "block"
+                    workoutDifficulty.style.display = "none"
+                } else if (moi === 'Workout plan') {
+                    workoutDifficulty.style.display = "block"
+                    dietCalories.style.display = "none"
+                } else {
+                    workoutDifficulty.style.display = "none"
+                    dietCalories.style.display = "none"
+                }
+
+        });
+    
+    });
+</script>
       
 {% endblock %}

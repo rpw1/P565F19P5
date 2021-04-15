@@ -528,6 +528,12 @@ def upload():
                 "bucket_info": bucket_info,
                 "amount_viewed": 0
             }
+            if moi == "Diet plan":
+                diet_cal = request.form.get("dietCal")
+                uploaded_content['diet_cal'] = diet_cal
+            elif moi == "Workout plan":
+                workout_difficulty = request.form.get("workoutDifficulty")
+                uploaded_content['workout_difficulty'] = workout_difficulty
             content_db.insert_content(content_id, email, uploaded_content)
             flash("Upload successful!", category="success")
             return redirect(url_for("views.content", id = content_id))
