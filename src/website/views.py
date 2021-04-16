@@ -364,13 +364,15 @@ def get_workout_chart_data(month : int, client_content):
 @login_required
 def content(id):
     average_rating = 0.0
+    query_content = content_db.query_content_by_id(id)
+    uploader = user_db.query_user(query_content['email'])
+    uploader_name = '{} {}'.format(uploader['first_name'], uploader['last_name'])
     if request.method == "POST":
         has_editted = request.form.get("edit_val")
         #print(has_editted)
         action = request.form.get("moderate")
         title = request.form.get("title")
         email = request.form.get("email")
-        query_content = content_db.query_content_by_id(id)
         if action == "delete":
             content_db.delete_content(id, email)
             message = Markup("<b>{}</b> successfully deleted".format(title))
@@ -461,7 +463,8 @@ def content(id):
             user_path = url_for("users.user_page", id = created_user)
             return render_template("content.html", created_user = created_user, title = title, description = description, 
                 content_link = content_link, content_date = content_date, user_path = user_path, content_type = content_type, view_count=view_count, approved=approved,
-                mode_of_instruction=mode_of_instruction, workout_type=workout_type, workout_plans=plan_count, reviews=reviews, average_rating=average_rating, reviewer_names=reviewer_names)
+                mode_of_instruction=mode_of_instruction, workout_type=workout_type, workout_plans=plan_count, reviews=reviews, average_rating=average_rating, 
+                reviewer_names=reviewer_names, uploader_name=uploader_name)
     flash("Content did not show correctly", category="error")
     return redirect(url_for("views.home"))
 

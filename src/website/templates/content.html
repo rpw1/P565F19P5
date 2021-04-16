@@ -139,7 +139,7 @@
                                 </div>
                             </div>
                             <p>{{ description }}</p>
-                            <p class="text-muted">Uploaded on {{ content_date }} by <a href="{{url_for('users.user_page', id=created_user)}}">{{ created_user }}</a></p>
+                            <p class="text-muted">Uploaded on {{ content_date }} by <a href="{{url_for('users.user_page', id=created_user)}}">{{ uploader_name }}</a></p>
                         </div>
                         <div class="col-xl-2">
                             {% if current_user.role == 'client' %}
