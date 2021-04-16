@@ -386,7 +386,7 @@ def content(id):
             for reviewer in reviews:
                 total_rating += int(reviews[reviewer][0])
             average_rating = total_rating/(len(reviews))
-            content_db.update_rating(id, query_content['email'], average_rating)
+            content_db.update_rating(id, query_content['email'], str(average_rating))
         elif has_editted == "edit_val":
             title = request.form.get("edit_title")
             description = request.form.get("edit_description")
