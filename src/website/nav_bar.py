@@ -176,7 +176,10 @@ def search():
                 item_group.append(item_content['mode_of_instruction'])
                 item_group.append(item_content['workout_type'])
                 item_group.append(item_content['date'])
-                item_group.append("")
+                if 'rating' in item_content:
+                    item_group.append(Markup("{} &#9733;".format(round(float(item_content['rating']), 1))))
+                else:
+                    item_group.append("")
                 item_group.append(item_content['bucket_info']['thumbnail_link'])
                 item_group.append(url_for("views.content", id = item))
             query_results.append(item_group)
