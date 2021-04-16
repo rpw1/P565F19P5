@@ -247,6 +247,12 @@ def add_sleep(sleep_date, start_sleep, end_sleep, client_content):
     user_db.update_client_content(current_user.get_id(), client_content)
     return client_content
 
+def meal_recommend():
+        '''
+        Recommends low calorie meal for user
+        '''
+
+
 @views.route("/calendar", methods=["GET","POST"])
 @login_required
 def calendar():
@@ -288,6 +294,11 @@ def calendar():
             return render_template("calendar.html", user=current_user, tab="meal", workout_chart_data = get_workout_chart_data(1, client_content),
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'],
                 sleep=client_content['current_sleep'])
+
+        total_cal = request.form.get("total_calories")
+        weekly_goal = request.form.get("calorie_goal")
+        if total_cal > weekly_goal:
+            client_content = meal_recommend()
         
         complete_sleep = request.form.get("complete_sleep")
         if complete_sleep:
