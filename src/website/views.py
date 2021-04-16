@@ -40,6 +40,7 @@ def home():
         fitness_videos = []
         meal_plans = []
         calories = ""
+        name_dict = {}
         email = current_user.get_id()
         try :
             content = progress_db.query_user(email)
@@ -65,10 +66,19 @@ def home():
                     continue
             if item_content['mode_of_instruction'] == 'Diet plan' and current_content['approved']:
                 diet_plans.append(current_content)
+                item_email = current_content['email']
+                item_user = user_db.query_user(item_email)
+                name_dict[item_email] = '{} {}'.format(item_user['first_name'], item_user['last_name'])
             elif item_content['mode_of_instruction'] == 'Workout plan' and current_content['approved']:
                 workout_plans.append(current_content)
+                item_email = current_content['email']
+                item_user = user_db.query_user(item_email)
+                name_dict[item_email] = '{} {}'.format(item_user['first_name'], item_user['last_name'])
             elif item_content['mode_of_instruction'] == 'Video' and current_content['approved']:
                 fitness_videos.append(current_content)
+                item_email = current_content['email']
+                item_user = user_db.query_user(item_email)
+                name_dict[item_email] = '{} {}'.format(item_user['first_name'], item_user['last_name'])
             elif item_content['mode_of_instruction'] == 'Meal plan' and current_content['approved']:
                 fitness_videos.append(current_content)    
         user_values = user_db.query_user(email)
@@ -82,12 +92,14 @@ def home():
             subscribed_accounts = user_values['content']['subscribed_accounts']
             for account in subscribed_accounts:
                 subscribed_content.extend(content_db.scan_content_by_email(account))
+                item_user = user_db.query_user(account)
+                name_dict[account] = '{} {}'.format(item_user['first_name'], item_user['last_name'])
         todays_views = metrics_bucket.get_todays_views()
         total_views = metrics_bucket.get_total_view_count()
         return render_template("dashboard.html", user=current_user, total_users=total_users, total_content=total_content, 
             uploaded_today=uploaded_today_approved, type_count=type_count, subscribed_content=subscribed_content,
             diet_plans=diet_plans, workout_plans=workout_plans, fitness_videos=fitness_videos, uploaded_today_len=uploaded_today_count, 
-            calories=calories, todays_views=todays_views, total_views = total_views, custom_workouts=custom_workouts)
+            calories=calories, todays_views=todays_views, total_views = total_views, custom_workouts=custom_workouts, names=name_dict)
     else: 
         return render_template("landing.html")
 

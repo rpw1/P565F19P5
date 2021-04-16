@@ -144,6 +144,23 @@
     <hr/>
     {% endif %}
     {% if subscribed_content %}
+    <h3 class = "headings2">My recommendations</h3>
+    <div class="row flex-row flex-nowrap overflow-auto">
+        {% for item in subscribed_content%}
+        <div class="col-auto mb-3">
+            <div class="card h-100" style="width:250px">
+                <img class="card-img-top" style="height: 140.625px; object-fit:cover;" src="{{item['content']['bucket_info']['thumbnail_link']}}" alt="thumbnail">
+                <div class="card-body">
+                    <h5 class="card-title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"><a href="/content/{{item['content']['bucket_info']['object_name'][-36:]}}">{{item['content']['title']}}</a></h5>
+                    <p><small class="text-muted">Uploaded by {{names[item['email']]}} on {{item['content']['date']}}</small></p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <hr/>
+    {% endif %}
+    {% if subscribed_content %}
     <h3 class = "headings2">New from my subscriptions</h3>
     <div class="row flex-row flex-nowrap overflow-auto">
         {% for item in subscribed_content%}
@@ -152,7 +169,7 @@
                 <img class="card-img-top" style="height: 140.625px; object-fit:cover;" src="{{item['content']['bucket_info']['thumbnail_link']}}" alt="thumbnail">
                 <div class="card-body">
                     <h5 class="card-title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"><a href="/content/{{item['content']['bucket_info']['object_name'][-36:]}}">{{item['content']['title']}}</a></h5>
-                    <p><small class="text-muted">Uploaded by {{item['email']}} on {{item['content']['date']}}</small></p>
+                    <p><small class="text-muted">Uploaded by {{names[item['email']]}} on {{item['content']['date']}}</small></p>
                 </div>
             </div>
         </div>
@@ -169,7 +186,7 @@
                 <img class="card-img-top" style="height: 140.625px; object-fit:cover;" src="{{item['content']['bucket_info']['thumbnail_link']}}" alt="thumbnail">
                 <div class="card-body">
                     <h5 class="card-title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"><a href="/content/{{item['content']['bucket_info']['object_name'][-36:]}}">{{item['content']['title']}}</a></h5>
-                    <p><small class="text-muted">Uploaded by {{item['email']}} on {{item['content']['date']}}</small></p>
+                    <p><small class="text-muted">Uploaded by {{names[item['email']]}} on {{item['content']['date']}}</small></p>
                 </div>
             </div>
         </div>
@@ -185,7 +202,7 @@
                 <img class="card-img-top" style="height: 140.625px; object-fit:cover;" src="{{item['content']['bucket_info']['thumbnail_link']}}" alt="thumbnail">
                 <div class="card-body">
                     <h5 class="card-title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"><a href="/content/{{item['content']['bucket_info']['object_name'][-36:]}}">{{item['content']['title']}}</a></h5>
-                    <p><small class="text-muted">Uploaded by {{item['email']}} on {{item['content']['date']}}</small></p>
+                    <p><small class="text-muted">Uploaded by {{names[item['email']]}} on {{item['content']['date']}}</small></p>
                 </div>
             </div>
         </div>
@@ -200,7 +217,7 @@
                 <img class="card-img-top" style="height: 140.625px; object-fit:cover;" src="{{item['content']['bucket_info']['thumbnail_link']}}" alt="thumbnail">
                 <div class="card-body">
                     <h5 class="card-title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"><a href="/content/{{item['content']['bucket_info']['object_name'][-36:]}}">{{item['content']['title']}}</a></h5>
-                    <p><small class="text-muted">Uploaded by {{item['email']}} on {{item['content']['date']}}</small></p>
+                    <p><small class="text-muted">Uploaded by {{names[item['email']]}} on {{item['content']['date']}}</small></p>
                 </div>
             </div>
         </div>
@@ -215,7 +232,7 @@
                 <img class="card-img-top" style="height: 140.625px; object-fit:cover;" src="{{item['content']['bucket_info']['thumbnail_link']}}" alt="thumbnail">
                 <div class="card-body">
                     <h5 class="card-title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"><a href="/content/{{item['content']['bucket_info']['object_name'][-36:]}}">{{item['content']['title']}}</a></h5>
-                    <p><small class="text-muted">Uploaded by {{item['email']}} on {{item['content']['date']}}</small></p>
+                    <p><small class="text-muted">Uploaded by {{names[item['email']]}} on {{item['content']['date']}}</small></p>
                 </div>
             </div>
         </div>
