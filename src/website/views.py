@@ -620,6 +620,8 @@ def progress_tracking():
     last_reset = ""
     history = ""
     last_30_days = ""
+    last_100_days = ""
+    all_time = ""
     try :
         progress_db.query_user(email)
         content = progress_db.query_user(email)
@@ -629,6 +631,8 @@ def progress_tracking():
         last_reset = str(content['content']['last_reset'])
         history = content['content']['history']
         last_30_days = get_last_30_days(history)
+        last_100_days = get_last_100_days(history)
+        all_time = get_all_time(history)
     except:
         weekly_cals = "0,0,0,0,0,0,0"
         weekly_calorie_goal = "0"
@@ -698,6 +702,8 @@ def progress_tracking():
             calorie_string = my_list[3]
             history = my_list[4]
             last_30_days = get_last_30_days(history)
+            last_100_days = get_last_100_days(history)
+            all_time = get_all_time(history)
             print("last 30 days" + last_30_days)
         elif action == "add_goal":
             calorie_goal = request.form.get("calorie_goal")
@@ -726,7 +732,7 @@ def progress_tracking():
                     flash("Please enter a positive whole number", category="error")
             except:
                 flash("Please enter a whole number", category="error")
-    return render_template('progress_tracking.html', user=current_user, todays_date = todays_date, calories = calories, calorie_string= calorie_string, calorie_goal = weekly_calorie_goal, calorie_total = weekly_calorie_total, last_30_days = last_30_days)
+    return render_template('progress_tracking.html', user=current_user, todays_date = todays_date, calories = calories, calorie_string= calorie_string, calorie_goal = weekly_calorie_goal, calorie_total = weekly_calorie_total, last_30_days = last_30_days, last_100_days =last_100_days, all_time = all_time)
 
 def add_cals(email, day_of_week, new_cals, split, weekly_calorie_goal, weekly_calorie_total, last_reset, history):
     weekly_calorie_total = int(weekly_calorie_total) + int(new_cals)
@@ -809,7 +815,6 @@ def get_last_30_days(history):
             last_30_days = last_30_days +  "0,"
             num_of_empty_slots = num_of_empty_slots-1
             i=i+1
-            print(last_30_days)
         for y in history_split:
             if (i==30):
                 last_30_days = last_30_days + y
@@ -828,3 +833,46 @@ def get_last_30_days(history):
             last_30_days = last_30_days + history_split[i-j] + ","
         j= j-1
     return last_30_days
+def get_last_100_days(history):
+    history_split = history.split(",")
+    history_length = len(history_split)
+    i = 0
+    num_of_empty_slots = 100-history_length
+    history = ""
+    last_100_days = ""
+    if history_length<100:
+        while num_of_empty_slots>0:
+            last_100_days = last_100_days +  "0,"
+            num_of_empty_slots = num_of_empty_slots-1
+            i=i+1
+        for y in history_split:
+            if (i==30):
+                last_100_days = last_100_days + y
+            else:
+                last_100_days = last_100_days + y + ","
+            i=i+1
+        return last_100_days
+
+    i = history_length 
+    j=100
+    last_100_days = ""
+    while j>0:
+        if j==1:
+            last_100_days = last_100_days + history_split[i-j]
+        else:
+            last_100_days = last_100_days + history_split[i-j] + ","
+        j= j-1
+    return last_100_days
+
+def get_all_time(history):
+    history_split = history.split(",")
+    l = len(history_split)
+    all_time = ""
+    i=0
+    for x in history_split:
+        if(l==i):
+            all_time = all_time + x
+        else:
+            all_time = all_time + x + ","
+        i= i+1
+    return all_time

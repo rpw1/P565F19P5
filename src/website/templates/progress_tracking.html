@@ -47,7 +47,12 @@
         </div>
         <div class ="30day">
             <h2>My Progress</h2>
-            <h3>Last 30 Days</h3>
+            <select id="days-dropdown" name="days-dropdown" onchange="run()">
+                <option value="select" selected>- Choose Option -</option>
+                <option value="last-30" >Last 30 Days</option>
+                <option value="last-100">Last 100 Days</option>
+                <option value="all-time">All time</option>
+            </select>
             <canvas id="myChartTakeTwo" width="1000" height="500"></canvas>
         </div>
 </div>
@@ -55,8 +60,8 @@
     <script>
         Chart.defaults.global.responsive = false;
         var djangoData = "{{ calories | safe }}";
-        var split = djangoData.split(",")
-
+        var split = djangoData.split(",");
+        var strUser = run()
         // define the chart data 
         var chartData = {
             labels : ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
@@ -86,14 +91,31 @@
         var ctx = document.getElementById("myChart").getContext("2d");
         var myChart = new Chart(ctx, {type: 'line', data: chartData,});
         
-        var jangoData2 = "{{ last_30_days | safe }}";
-        var days_split = jangoData2.split(",")
         // define the chart data
-        
-        var chartData_2 = {
-            labels : ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20', '21','22','23','24','25','26','27','28','29','30'],
-            datasets : [{
-                label: "calories",
+        var jangoData2 = "{{ last_30_days | safe }}";
+        var thirty_days_split = jangoData2.split(",");
+        // last 100 days
+        var jangoData3 = "{{ last_100_days | safe }}";
+        var hundred_days_split = jangoData3.split(",");
+        // all time
+        var jangoData4 = "{{ all_time | safe }}";
+        var all_days_split = jangoData4.split(",");
+        var l = all_days_split.length;
+        var i;
+        var arr = []
+        console.log(arr)
+        for(i=0; i<l; i++){
+            arr.push(String(i+1))
+        }
+  
+        function run() {
+            var e = document.getElementById("days-dropdown");
+            var strUser = e.value;
+            if(strUser == "last-30"){
+                var chartData_2 = {
+                labels : ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20', '21','22','23','24','25','26','27','28','29','30'],
+                datasets : [{
+                label: strUser,
                 fill: true,
                 lineTension: 0.1,
                 backgroundColor: "rgba(75,192,192,0.4)",
@@ -111,11 +133,67 @@
                 pointHoverBorderWidth: 2,
                 pointRadius: 1,
                 pointHitRadius: 10,
-                data: days_split,
+                data: thirty_days_split,
                 spanGaps: false
-            }]
+                }]
+                }
+            }else if(strUser == "last-100"){            
+                var chartData_2 = {
+                labels : ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20', '21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64','65','66','67','68','69','70','71','72','73','74','75','76','77','78','79','80','81','82','83','84','85','86','87','88','89','90','91','92','93','94','95','96','97','98','99','100',],
+                datasets : [{
+                label: strUser,
+                fill: true,
+                lineTension: 0.1,
+                backgroundColor: "rgba(75,192,192,0.4)",
+                borderColor: "rgba(75,192,192,1)",
+                borderCapStyle: 'butt',
+                borderDash: [],
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "rgba(75,192,192,1)",
+                pointBackgroundColor: "#fff",
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                pointHoverBorderColor: "rgba(220,220,220,1)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                data: hundred_days_split,
+                spanGaps: false
+                }]
+                }
+            }else{
+                var chartData_2 = {
+                labels : arr,
+                datasets : [{
+                label: strUser,
+                fill: true,
+                lineTension: 0.1,
+                backgroundColor: "rgba(75,192,192,0.4)",
+                borderColor: "rgba(75,192,192,1)",
+                borderCapStyle: 'butt',
+                borderDash: [],
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "rgba(75,192,192,1)",
+                pointBackgroundColor: "#fff",
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                pointHoverBorderColor: "rgba(220,220,220,1)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                data: all_days_split,
+                spanGaps: false
+                }]
+                } 
+            }
+
+            var ctx_2 = document.getElementById("myChartTakeTwo").getContext("2d");
+            var myChartTakeTwo = new Chart(ctx_2, {type: 'line', data: chartData_2,});
         }
-        var ctx_2 = document.getElementById("myChartTakeTwo").getContext("2d");
-        var myChartTakeTwo = new Chart(ctx_2, {type: 'line', data: chartData_2,});
+
     </script>
 {% endblock %}
