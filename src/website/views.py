@@ -148,7 +148,7 @@ def home():
             fp = user_db.get_fitness_professional(workout['email'])
             if fp not in recommended_fp:
                 recommended_fp.append(fp)
-            
+        shuffle(recommended_fp)
         subscribed_content = []
         if 'subscribed_accounts' in user_values['content']:
             subscribed_accounts = user_values['content']['subscribed_accounts']

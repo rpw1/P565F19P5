@@ -188,9 +188,3 @@ class ScanTables:
         results = list()
         [results.append(x) for x in new_items if x not in results]
         return results
-                    
-
-    def get_recommendations(self, user_info):
-        scan_items = self.c_db.query_content_approved()
-        for content in scan_items:
-            pass
