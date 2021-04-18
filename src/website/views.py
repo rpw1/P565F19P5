@@ -616,7 +616,8 @@ def upload():
                 "description": description,
                 "date": current_date,
                 "bucket_info": bucket_info,
-                "amount_viewed": 0
+                "amount_viewed": 0,
+                "rating": '0.0'
             }
             if moi == "Diet plan":
                 diet_cal = request.form.get("dietCal")
