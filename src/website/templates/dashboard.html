@@ -143,10 +143,31 @@
     </div>
     <hr/>
     {% endif %}
-    {% if subscribed_content %}
-    <h3 class = "headings2">My recommendations</h3>
+    {% if recommended_diets %}
+    <h3 class = "headings2">My diet recommendations</h3>
     <div class="row flex-row flex-nowrap overflow-auto">
-        {% for item in subscribed_content%}
+        {% for item in recommended_diets%}
+        <div class="col-auto mb-3">
+            <div class="card h-100" style="width:250px">
+                <img class="card-img-top" style="height: 140.625px; object-fit:cover;" src="{{item['content']['bucket_info']['thumbnail_link']}}" alt="thumbnail">
+                <div class="card-body">
+                    <h5 class="card-title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"><a href="/content/{{item['content']['bucket_info']['object_name'][-36:]}}">{{item['content']['title']}}</a></h5>
+                    <p>
+                        <small class="text-muted">
+                            Uploaded by {{names[item['email']]}} on {{item['content']['date']}}{% if 'rating' in item['content'] %} ({{item['content']['rating']|round(1)}} &#9733;){% endif %}
+                        </small>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <hr/>
+    {% endif %}
+    {% if recommended_workouts %}
+    <h3 class = "headings2">My workout recommendations</h3>
+    <div class="row flex-row flex-nowrap overflow-auto">
+        {% for item in recommended_workouts%}
         <div class="col-auto mb-3">
             <div class="card h-100" style="width:250px">
                 <img class="card-img-top" style="height: 140.625px; object-fit:cover;" src="{{item['content']['bucket_info']['thumbnail_link']}}" alt="thumbnail">
