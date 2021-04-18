@@ -14,6 +14,9 @@ from decouple import config
 from src.database.scan_tables import ScanTables
 from iso3166 import countries_by_alpha2
 from src.database.progress_tracking_database import ProgressTrackingDatabase
+from math import ceil, floor
+from random import shuffle
+from decimal import Decimal
 
 views = Blueprint("views", __name__)
 user_db = UserDatabase()
@@ -42,9 +45,14 @@ def home():
         calories = ""
         name_dict = {}
         email = current_user.get_id()
+        calorie_goal = None
+        calorie_total = None
         try :
             content = progress_db.query_user(email)
             calories = content['content']['weekly_cals']
+            if 'weekly_calorie_total' in content['content'] and 'weekly_calorie_goal' in content['content']:
+                calorie_goal = content['content']['weekly_calorie_goal']
+                calorie_total = content['content']['weekly_calorie_total']
             print(calories)
         except:
             weekly_cals = "0,0,0,0,0,0,0"
@@ -55,6 +63,8 @@ def home():
             progress_db.query_user(email)
             content = progress_db.query_user(email)
             calories = content['content']['weekly_cals']   
+        workout_recs = dict()
+        diet_recs = dict()
         for current_content in all_content:
             item_content = current_content['content']
             uploaded_date = datetime.strptime(item_content['date'], "%m/%d/%Y")
@@ -81,12 +91,64 @@ def home():
                 name_dict[item_email] = '{} {}'.format(item_user['first_name'], item_user['last_name'])
             elif item_content['mode_of_instruction'] == 'Meal plan' and current_content['approved']:
                 fitness_videos.append(current_content)    
+            if 'workout_difficulty' in item_content and current_content['approved']:
+                if item_content['workout_difficulty'] not in workout_recs:
+                    workout_recs[item_content['workout_difficulty']] = [current_content]
+                else:
+                    workout_recs_list = workout_recs[item_content['workout_difficulty']]
+                    workout_recs_list.append(current_content)
+                    workout_recs[item_content['workout_difficulty']] = workout_recs_list
+
+            if 'diet_cal' in item_content and current_content['approved']:
+                if item_content['diet_cal'] not in diet_recs:
+                    diet_recs[item_content['diet_cal']] = [current_content]
+                else:
+                    diet_recs_list = diet_recs[item_content['diet_cal']]
+                    diet_recs_list.append(current_content)
+                    diet_recs[item_content['diet_cal']] = diet_recs_list
+
         user_values = user_db.query_user(email)
         custom_workouts = dict()
+        recommended_diets = []
+        recommended_workouts = []
         if user_values['role'] == 'client':
             client_content = user_values['content']
             if 'current_custom_workout' in client_content and client_content['current_custom_workout']:
                 custom_workouts = client_content['current_custom_workout']
+            if calorie_goal and calorie_total and Decimal(calorie_goal) > 0:
+                if ((calorie_total * 100) / Decimal(calorie_goal)) <= 33 and 'Low Calorie' in diet_recs:
+                    recommended_diets = diet_recs['Low Calorie']
+                elif ((calorie_total * 100) / Decimal(calorie_goal)) <= 66 and 'Medium Calorie' in diet_recs:
+                    recommended_diets = diet_recs['Medium Calorie']
+                elif 'High Calorie' in diet_recs:
+                    recommended_diets = diet_recs['High Calorie']
+            if 'custom_workout' in client_content:
+                custom_workouts_rec = client_content['custom_workout']
+                workout_difficulty_avg = 0.0
+                for key, item in custom_workouts_rec.items():
+                    try:
+                        workout_difficulty_avg += int(item['difficulty'])
+                    except Exception as e:
+                        continue
+                workout_difficulty_avg /= len(custom_workouts_rec)
+                difficulty_ceiling = ceil(workout_difficulty_avg)
+                difficulty_floor = floor(workout_difficulty_avg)
+                if str(difficulty_ceiling) in workout_recs:
+                    recommended_workouts.extend(workout_recs[str(difficulty_ceiling)])
+                if str(difficulty_floor) in workout_recs:
+                    recommended_workouts.extend(workout_recs[str(difficulty_floor)])
+        shuffle(recommended_diets)
+        shuffle(recommended_workouts)
+        recommended_fp = []
+        for diet in recommended_diets:
+            fp = user_db.get_fitness_professional(diet['email'])
+            if fp not in recommended_fp:
+                recommended_fp.append(fp)
+        for workout in recommended_workouts:
+            fp = user_db.get_fitness_professional(workout['email'])
+            if fp not in recommended_fp:
+                recommended_fp.append(fp)
+            
         subscribed_content = []
         if 'subscribed_accounts' in user_values['content']:
             subscribed_accounts = user_values['content']['subscribed_accounts']
@@ -96,10 +158,12 @@ def home():
                 name_dict[account] = '{} {}'.format(item_user['first_name'], item_user['last_name'])
         todays_views = metrics_bucket.get_todays_views()
         total_views = metrics_bucket.get_total_view_count()
+
         return render_template("dashboard.html", user=current_user, total_users=total_users, total_content=total_content, 
             uploaded_today=uploaded_today_approved, type_count=type_count, subscribed_content=subscribed_content,
             diet_plans=diet_plans, workout_plans=workout_plans, fitness_videos=fitness_videos, uploaded_today_len=uploaded_today_count, 
-            calories=calories, todays_views=todays_views, total_views = total_views, custom_workouts=custom_workouts, names=name_dict)
+            calories=calories, todays_views=todays_views, total_views = total_views, custom_workouts=custom_workouts, names=name_dict,
+            recommended_workouts=recommended_workouts, recommended_diets=recommended_diets, recommended_fp=recommended_fp)
     else: 
         return render_template("landing.html")
 
@@ -295,10 +359,10 @@ def calendar():
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'],
                 sleep=client_content['current_sleep'])
 
-        total_cal = request.form.get("total_calories")
-        weekly_goal = request.form.get("calorie_goal")
-        if total_cal > weekly_goal:
-            client_content = meal_recommend()
+        # total_cal = request.form.get("total_calories")
+        # weekly_goal = request.form.get("calorie_goal")
+        # if total_cal > weekly_goal:
+        #     client_content = meal_recommend()
         
         complete_sleep = request.form.get("complete_sleep")
         if complete_sleep:

@@ -191,4 +191,6 @@ class ScanTables:
                     
 
     def get_recommendations(self, user_info):
-        pass
+        scan_items = self.c_db.query_content_approved()
+        for content in scan_items:
+            pass
