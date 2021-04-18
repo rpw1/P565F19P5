@@ -132,16 +132,21 @@ def home():
                 workout_difficulty_avg /= len(custom_workouts_rec)
                 difficulty_ceiling = ceil(workout_difficulty_avg)
                 difficulty_floor = floor(workout_difficulty_avg)
-                print(difficulty_floor)
-                print(difficulty_ceiling)
                 if str(difficulty_ceiling) in workout_recs:
                     recommended_workouts.extend(workout_recs[str(difficulty_ceiling)])
                 if str(difficulty_floor) in workout_recs:
                     recommended_workouts.extend(workout_recs[str(difficulty_floor)])
-        print("Rec workouts", recommended_workouts)
-        print("Rec diets", recommended_diets)
         shuffle(recommended_diets)
         shuffle(recommended_workouts)
+        recommended_fp = []
+        for diet in recommended_diets:
+            fp = user_db.get_fitness_professional(diet['email'])
+            if fp not in recommended_fp:
+                recommended_fp.append(fp)
+        for workout in recommended_workouts:
+            fp = user_db.get_fitness_professional(workout['email'])
+            if fp not in recommended_fp:
+                recommended_fp.append(fp)
             
         subscribed_content = []
         if 'subscribed_accounts' in user_values['content']:
@@ -157,7 +162,7 @@ def home():
             uploaded_today=uploaded_today_approved, type_count=type_count, subscribed_content=subscribed_content,
             diet_plans=diet_plans, workout_plans=workout_plans, fitness_videos=fitness_videos, uploaded_today_len=uploaded_today_count, 
             calories=calories, todays_views=todays_views, total_views = total_views, custom_workouts=custom_workouts, names=name_dict,
-            recommended_workouts=recommended_workouts, recommended_diets=recommended_diets)
+            recommended_workouts=recommended_workouts, recommended_diets=recommended_diets, recommended_fp=recommended_fp)
     else: 
         return render_template("landing.html")
 
