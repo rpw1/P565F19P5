@@ -16,6 +16,7 @@ from iso3166 import countries_by_alpha2
 from src.database.progress_tracking_database import ProgressTrackingDatabase
 from math import ceil, floor
 from random import shuffle
+from decimal import Decimal
 
 views = Blueprint("views", __name__)
 user_db = UserDatabase()
@@ -114,10 +115,10 @@ def home():
             client_content = user_values['content']
             if 'current_custom_workout' in client_content and client_content['current_custom_workout']:
                 custom_workouts = client_content['current_custom_workout']
-            if calorie_goal and calorie_total :
-                if ((calorie_total * 100) / calorie_goal) <= 33 and 'Low Calorie' in diet_recs:
+            if calorie_goal and calorie_total and Decimal(calorie_goal) > 0:
+                if ((calorie_total * 100) / Decimal(calorie_goal)) <= 33 and 'Low Calorie' in diet_recs:
                     recommended_diets = diet_recs['Low Calorie']
-                elif ((calorie_total * 100) / calorie_goal) <= 66 and 'Medium Calorie' in diet_recs:
+                elif ((calorie_total * 100) / Decimal(calorie_goal)) <= 66 and 'Medium Calorie' in diet_recs:
                     recommended_diets = diet_recs['Medium Calorie']
                 elif 'High Calorie' in diet_recs:
                     recommended_diets = diet_recs['High Calorie']
