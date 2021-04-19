@@ -15,8 +15,8 @@ from src.database.scan_tables import ScanTables
 from iso3166 import countries_by_alpha2
 from src.database.progress_tracking_database import ProgressTrackingDatabase
 from math import ceil, floor
-from random import shuffle
 from decimal import Decimal
+from random import shuffle
 
 views = Blueprint("views", __name__)
 user_db = UserDatabase()
@@ -116,12 +116,12 @@ def home():
             if 'current_custom_workout' in client_content and client_content['current_custom_workout']:
                 custom_workouts = client_content['current_custom_workout']
             if calorie_goal and calorie_total and Decimal(calorie_goal) > 0:
-                if ((calorie_total * 100) / Decimal(calorie_goal)) <= 33 and 'Low Calorie' in diet_recs:
-                    recommended_diets = diet_recs['Low Calorie']
+                if ((calorie_total * 100) / Decimal(calorie_goal)) <= 33 and 'High Calorie' in diet_recs:
+                    recommended_diets = diet_recs['High Calorie']
                 elif ((calorie_total * 100) / Decimal(calorie_goal)) <= 66 and 'Medium Calorie' in diet_recs:
                     recommended_diets = diet_recs['Medium Calorie']
-                elif 'High Calorie' in diet_recs:
-                    recommended_diets = diet_recs['High Calorie']
+                elif 'Low Calorie' in diet_recs:
+                    recommended_diets = diet_recs['Low Calorie']
             if 'custom_workout' in client_content:
                 custom_workouts_rec = client_content['custom_workout']
                 workout_difficulty_avg = 0.0
@@ -137,8 +137,8 @@ def home():
                     recommended_workouts.extend(workout_recs[str(difficulty_ceiling)])
                 if str(difficulty_floor) in workout_recs:
                     recommended_workouts.extend(workout_recs[str(difficulty_floor)])
-        shuffle(recommended_diets)
-        shuffle(recommended_workouts)
+        recommended_diets.sort(key=sort_by_rating, reverse=True)
+        recommended_workouts.sort(key=sort_by_rating, reverse=True)
         recommended_fp = []
         for diet in recommended_diets:
             fp = user_db.get_fitness_professional(diet['email'])
@@ -166,6 +166,9 @@ def home():
             recommended_workouts=recommended_workouts, recommended_diets=recommended_diets, recommended_fp=recommended_fp)
     else: 
         return render_template("landing.html")
+
+def sort_by_rating(e):
+    return Decimal(e['content']['rating'])
 
 
 def delete_custom_workout(delete_workout, client_content):

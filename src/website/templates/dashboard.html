@@ -171,7 +171,7 @@
                     <h5 class="card-title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"><a href="/content/{{item['content']['bucket_info']['object_name'][-36:]}}">{{item['content']['title']}}</a></h5>
                     <p>
                         <small class="text-muted">
-                            Uploaded by {{names[item['email']]}} on {{item['content']['date']}}{% if 'rating' in item['content'] %} ({{item['content']['rating']|round(1)}} &#9733;){% endif %}
+                            Uploaded by {{names[item['email']]}} on {{item['content']['date']}}{% if 'rating' in item['content'] %} ({{item['content']['rating']}} &#9733;){% endif %}
                         </small>
                     </p>
                 </div>
@@ -192,7 +192,7 @@
                     <h5 class="card-title" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"><a href="/content/{{item['content']['bucket_info']['object_name'][-36:]}}">{{item['content']['title']}}</a></h5>
                     <p>
                         <small class="text-muted">
-                            Uploaded by {{names[item['email']]}} on {{item['content']['date']}}{% if 'rating' in item['content'] %} ({{item['content']['rating']|round(1)}} &#9733;){% endif %}
+                            Uploaded by {{names[item['email']]}} on {{item['content']['date']}}{% if 'rating' in item['content'] %} ({{item['content']['rating']}} &#9733;){% endif %}
                         </small>
                     </p>
                 </div>
