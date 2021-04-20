@@ -1,1 +1,0 @@
-web: fitness-u-prod:app
