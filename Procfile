@@ -1,1 +1,1 @@
-web: python setup.py
+web: gunicorn -b :$PORT app:app
