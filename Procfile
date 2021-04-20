@@ -1,1 +1,1 @@
-web: flask translate compile; fitness-u-prod:app
+web: fitness-u-prod:app
