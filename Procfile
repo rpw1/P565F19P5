@@ -1,1 +1,1 @@
-web: flask translate compile; gunicorn fitness-u-prod:app
+web: flask translate compile; fitness-u-prod:app
