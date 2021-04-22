@@ -115,14 +115,14 @@
     border-top: none;
   }
 
+
   .responstable {
     margin: 1em 0;
     width: 100%;
     overflow: hidden;  
-    background: background-color;
-    color: text-color;
-    border-radius: border-radius;
-    border: outer-border;
+    background-color: rgb(37, 178, 221);
+    color: rgb(255, 255, 255);
+    border: none;
 
   }
   
