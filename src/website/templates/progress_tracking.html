@@ -12,13 +12,13 @@
 
 <h2 style="text-align: center; background-color: #C5D9D7; padding: 1em;"> Help us log your calories for the week!</h2>
 
-<div class = "progress-flex">
-    <div class = "chart-form">
+<div class = "row progress-flex">
+    <div class = "col-xl-7 chart-form">
         <h2>My Progress</h2>
         <h3>Weekly Calorie Intake</h3>
         <canvas id="myChart" width="600" height="500"></canvas>
     </div>
-        <div class = "progress-form">
+        <div class = "col-xl-5 progress-form">
             <form method = "POST">
                 <h2> Today's Date: {{todays_date}}</h2>
                 <p></p>
@@ -45,16 +45,16 @@
                 </div>
             </form>
         </div>
-        <div class ="30day">
-            <h2>My Progress</h2>
-            <select id="days-dropdown" name="days-dropdown" onchange="run()">
-                <option value="select" selected>- Choose Option -</option>
-                <option value="last-30" >Last 30 Days</option>
-                <option value="last-100">Last 100 Days</option>
-                <option value="all-time">All time</option>
-            </select>
-            <canvas id="myChartTakeTwo" width="1000" height="500"></canvas>
-        </div>
+</div>
+<div class ="progress-flex row 30day">
+    <h2>My Progress</h2>
+    <select id="days-dropdown" name="days-dropdown" onchange="run()">
+        <option value="select" selected>- Choose Option -</option>
+        <option value="last-30" >Last 30 Days</option>
+        <option value="last-100">Last 100 Days</option>
+        <option value="all-time">All time</option>
+    </select>
+    <canvas id="myChartTakeTwo" width="1000" height="500"></canvas>
 </div>
 
     <script>
