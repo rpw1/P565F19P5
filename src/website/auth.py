@@ -138,7 +138,7 @@ def reset():
                 s = smtplib.SMTP('email-smtp.us-east-2.amazonaws.com', 587)
                 s.starttls()
                 s.ehlo()
-                s.login(config('SMTP_USERNAME'), config('SMTP_PASSWORD'))  # s.login('AKIAUM4QIDHR43NBTQJQ','BO83F+jckoyDBHwX+/S568Wv5wJSOWQVqFXSFI7nIA+3')
+                s.login(config('SMTP_USERNAME'), config('SMTP_PASSWORD'))
                 s.sendmail(sender, recipient, msg.as_string())
                 s.close()
                 return render_template("password_reset.html")
