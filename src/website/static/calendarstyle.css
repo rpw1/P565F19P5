@@ -115,7 +115,7 @@
     border-top: none;
   }
 
- /* .responstable {
+  .responstable {
     margin: 1em 0;
     width: 100%;
     overflow: hidden;  
@@ -126,7 +126,7 @@
 
   }
   
-  
+  /*
     th {
       display: none; 
       border: header-border;
