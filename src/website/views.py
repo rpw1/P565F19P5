@@ -130,7 +130,7 @@ def home():
                         workout_difficulty_avg += int(item['difficulty'])
                     except Exception as e:
                         continue
-                workout_difficulty_avg /= len(custom_workouts_rec)
+                workout_difficulty_avg /= (len(custom_workouts_rec) + 1)
                 difficulty_ceiling = ceil(workout_difficulty_avg)
                 difficulty_floor = floor(workout_difficulty_avg)
                 if str(difficulty_ceiling) in workout_recs:
