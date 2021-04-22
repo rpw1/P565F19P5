@@ -19,13 +19,13 @@
         $(document).ready(function() {
             let current_tab = '{{ tab }}'
             if (current_tab == 'workout') {
-                tab_click(event, 'Workouts')
+                tab_click(null, 'Workouts')
             } else if (current_tab == 'appointment') {
-                tab_click(event, 'Appointments')
+                tab_click(null, 'Appointments')
             } else if (current_tab == 'meal'){
-                tab_click(event, 'Meals')
+                tab_click(null, 'Meals')
             } else{
-                tab_click(event, 'Sleep')
+                tab_click(null, 'Sleep')
             }
         });
         function tab_click(evt, tabName) {
@@ -46,7 +46,7 @@
         
             // Show the current tab, and add an "active" class to the button that opened the tab
             document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.className += " active";
+            if (evt != null) {evt.currentTarget.className += " active";}
         } 
         document.getElementById("defaultOpen").click();
     </script>
