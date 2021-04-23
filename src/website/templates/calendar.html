@@ -19,16 +19,15 @@
         $(document).ready(function() {
             let current_tab = '{{ tab }}'
             if (current_tab == 'workout') {
-                tab_click(null, 'Workouts')
+                tab_click(event, 'Workouts')
             } else if (current_tab == 'appointment') {
-                tab_click(null, 'Appointments')
+                tab_click(event, 'Appointments')
             } else if (current_tab == 'meal'){
-                tab_click(null, 'Meals')
+                tab_click(event, 'Meals')
             } else{
-                tab_click(null, 'Sleep')
+                tab_click(event, 'Sleep')
             }
         });
-        
         function tab_click(evt, tabName) {
             // Declare all variables
             var i, tabcontent, tablinks;
@@ -47,7 +46,7 @@
         
             // Show the current tab, and add an "active" class to the button that opened the tab
             document.getElementById(tabName).style.display = "block";
-            if (evt != null) {evt.currentTarget.className += " active";}
+            evt.currentTarget.className += " active";
         } 
         document.getElementById("defaultOpen").click();
     </script>
@@ -132,7 +131,7 @@
                             <h3>Appointments</h3>
                         </div>
                     </div>
-                    <table class="responstable" id="appointment_list">
+                    <table class="styled-table" id="appointment_list">
                         <thead class="thead-dark">
                             <tr>
                                 <th scope="col" class="text-center align-middle">Date</th>
@@ -216,7 +215,7 @@
                                 <h3>Workouts</h3>
                             </div>
                         </div>
-                        <table class="table table-bordered table-hover table-striped table-sm" id="workout_list">
+                        <table class="styled-table" id="workout_list">
                             <thead class="thead-dark">
                                 <tr>
                                     <th scope="col" class="text-center align-middle">Title</th>
@@ -366,7 +365,7 @@
                         <h3>Meals</h3>
                     </div>
                 </div>
-                <table class="table table-bordered table-hover table-striped table-sm" id="meal_list">
+                <table class="styled-table" id="meal_list">
                     <thead class="thead-dark">
                         <tr>
                             <th scope="col" class="text-center align-middle">Entree</th>
@@ -436,7 +435,7 @@
                         <h3>Sleep Cycles</h3>
                     </div>
                 </div>
-                <table class="table table-bordered table-hover table-striped table-sm" id="meal_list">
+                <table class="styled-table" id="meal_list">
                     <thead class="thead-dark">
                         <tr>
                             <th scope="col" class="text-center align-middle">Date</th>
