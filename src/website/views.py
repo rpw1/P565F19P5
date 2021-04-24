@@ -137,6 +137,12 @@ def home():
                     recommended_workouts.extend(workout_recs[str(difficulty_ceiling)])
                 if str(difficulty_floor) in workout_recs:
                     recommended_workouts.extend(workout_recs[str(difficulty_floor)])
+        if not recommended_diets:
+            for key, items in diet_recs.items():
+                recommended_diets.extend(items)
+        if not recommended_workouts:
+            for key, items in workout_recs.items():
+                recommended_workouts.extend(items)
         recommended_diets.sort(key=sort_by_rating, reverse=True)
         recommended_workouts.sort(key=sort_by_rating, reverse=True)
         recommended_fp = []
