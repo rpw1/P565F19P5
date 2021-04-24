@@ -176,6 +176,16 @@ def home():
 def sort_by_rating(e):
     return Decimal(e['content']['rating'])
 
+def delete_appointment(delete_appointment, client_content):
+    del client_content['appointments'][delete_appointment]
+    del client_content['current_appointments'][delete_appointment]
+    user_db.query_update_content(current_user.get_id(), client_content)
+    return client_content
+
+def complete_appointment(complete_appointment, client_content):
+    del client_content['current_appointments'][complete_appointment]
+    user_db.query_update_content(current_user.get_id(), client_content)
+    return client_content
 
 def delete_custom_workout(delete_workout, client_content):
     """
@@ -320,10 +330,19 @@ def add_sleep(sleep_date, start_sleep, end_sleep, client_content):
     user_db.update_client_content(current_user.get_id(), client_content)
     return client_content
 
-def meal_recommend():
-        '''
-        Recommends low calorie meal for user
-        '''
+def add_appointment(date, description, start_time, end_time, client_content):
+    appointment_id = str(uuid.uuid4())
+    appointment = {
+        "appointment_id": appointment_id,
+        "date": date,
+        "description": description,
+        "start_time": start_time,
+        "end_time": end_time,
+    }
+    client_content['appointments'][appointment_id] = appointment
+    client_content['current_appointments'][appointment_id] = appointment
+    user_db.query_update_content(current_user.get_id(), client_content)
+    return client_content
 
 
 @views.route("/calendar", methods=["GET","POST"])
@@ -343,48 +362,65 @@ def calendar():
         client_content['sleep'] = dict()
     if 'current_sleep' not in client_content:
         client_content['current_sleep'] = dict()
+    if 'appointments' not in client_content:
+        client_content['appointments'] = dict()
+    if 'current_appointments' not in client_content:
+        client_content['current_appointments'] = dict()
     if request.method == 'POST':
+
         complete_workout = request.form.get("complete_workout")
         if complete_workout:
             client_content = complete_custom_workout(complete_workout, client_content)
             return render_template("calendar.html", user=current_user, tab="workout", workout_chart_data = get_workout_chart_data(1, client_content),
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'],
-                sleep=client_content['current_sleep'])
+                sleep=client_content['current_sleep'], appointment=client_content['current_appointments'])
+
         delete_workout = request.form.get("delete_workout")
         if delete_workout:
             client_content = delete_custom_workout(delete_workout, client_content)
             return render_template("calendar.html", user=current_user, tab="workout", workout_chart_data = get_workout_chart_data(1, client_content),
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'],
-                sleep=client_content['current_sleep'])
-        
+                sleep=client_content['current_sleep'], appointment=client_content['current_appointments'])
+
+        complete_appointment = request.form.get("complete_appointment")
+        if complete_appointment:
+            client_content = complete_appointment(complete_workout, client_content)
+            return render_template("calendar.html", user=current_user, tab="appointment", workout_chart_data = get_workout_chart_data(1, client_content),
+                custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'],
+                sleep=client_content['current_sleep'], appointment=client_content['current_appointments'])
+
+        delete_appointment = request.form.get("delete_appointment")
+        if delete_appointment:
+            client_content = delete_appointment(delete_workout, client_content)
+            return render_template("calendar.html", user=current_user, tab="appointment", workout_chart_data = get_workout_chart_data(1, client_content),
+                custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'],
+                sleep=client_content['current_sleep'], appointment=client_content['current_appointments'])
+
         complete_meal = request.form.get("complete_meal")
         if complete_meal:
             client_content = complete_custom_meal(complete_meal, client_content)
             return redirect(url_for('views.progress_tracking'))
+
         delete_meal = request.form.get("delete_meal")
         if delete_meal:
             client_content = delete_custom_meal(delete_meal, client_content)
             return render_template("calendar.html", user=current_user, tab="meal", workout_chart_data = get_workout_chart_data(1, client_content),
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'],
-                sleep=client_content['current_sleep'])
-
-        # total_cal = request.form.get("total_calories")
-        # weekly_goal = request.form.get("calorie_goal")
-        # if total_cal > weekly_goal:
-        #     client_content = meal_recommend()
+                sleep=client_content['current_sleep'], appointment=client_content['current_appointments'])
         
         complete_sleep = request.form.get("complete_sleep")
         if complete_sleep:
             client_content = complete_custom_sleep(complete_sleep, client_content)
             return render_template("calendar.html", user=current_user, tab="sleep", workout_chart_data = get_workout_chart_data(1, client_content),
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'],
-                sleep=client_content['current_sleep'])
+                sleep=client_content['current_sleep'], appointment=client_content['current_appointments'])
+
         delete_sleep = request.form.get("delete_sleep")
         if delete_sleep:
             client_content = delete_custom_sleep(delete_sleep, client_content)
             return render_template("calendar.html", user=current_user, tab="sleep", workout_chart_data = get_workout_chart_data(1, client_content),
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'],
-                sleep=client_content['current_sleep'])
+                sleep=client_content['current_sleep'], appointment=client_content['current_appointments'])
 
         url_content = request.form.get("content_button")
         if url_content:
@@ -392,6 +428,16 @@ def calendar():
         create_workout_button = request.form.get("create_workout_button")
         create_meal_button = request.form.get("create_meal_button")
         create_sleep_button = request.form.get("create_sleep_button")
+        create_appointment_button = request.form.get("submit_appointment")
+        if create_appointment_button:
+            start_time = request.form.get("appointment_start_time")
+            end_time = request.form.get("appointment_end_time")
+            description = request.form.get("appointment_description")
+            date = request.form.get("appointment_date")
+            client_content = add_appointment(date, description, start_time, end_time, client_content)
+            return render_template("calendar.html", user=current_user, tab="appointment", workout_chart_data = get_workout_chart_data(1, client_content),
+                custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'],
+                sleep=client_content['current_sleep'], appointment=client_content['current_appointments'])
         if create_workout_button:
             title = request.form.get("title")
             description = request.form.get("description2")
@@ -402,7 +448,7 @@ def calendar():
             client_content = add_custom_workout(title, description, difficulty, duration, training_type, content_id, client_content)
             return render_template("calendar.html", user=current_user, tab="workout", workout_chart_data = get_workout_chart_data(1, client_content),
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'],
-                sleep=client_content['current_sleep'])
+                sleep=client_content['current_sleep'], appointment=client_content['current_appointments'])
         elif create_meal_button:
             entree = request.form.get("entree")
             sides = request.form.get("sides")
@@ -411,7 +457,7 @@ def calendar():
             client_content = add_meal(entree, sides, drink, total_calories, client_content)
             return render_template("calendar.html", user=current_user, tab="meal", workout_chart_data = get_workout_chart_data(1, client_content),
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'],
-                sleep=client_content['current_sleep'])
+                sleep=client_content['current_sleep'], appointment=client_content['current_appointments'])
         elif create_sleep_button:
             date = request.form.get("sleep_date")
             start_sleep = request.form.get("start_sleep")
@@ -419,10 +465,10 @@ def calendar():
             client_content = add_sleep(date, start_sleep, end_sleep, client_content)
             return render_template("calendar.html", user=current_user, tab="sleep", workout_chart_data = get_workout_chart_data(1, client_content),
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'],
-                sleep=client_content['current_sleep'])
+                sleep=client_content['current_sleep'], appointment=client_content['current_appointments'])
     return render_template("calendar.html", user=current_user, tab="appointment", workout_chart_data = get_workout_chart_data(1, client_content),
         custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'],
-            sleep=client_content['current_sleep'])
+            sleep=client_content['current_sleep'], appointment=client_content['current_appointments'])
 
 def get_workout_chart_data(month : int, client_content):
     workout_data = client_content['custom_workout']
@@ -439,8 +485,6 @@ def get_workout_chart_data(month : int, client_content):
             if (present - timedelta(days=month * 30)) <= created:
                 workout_minutes[items['training_type']] += int(items['duration'])
                 workout_count[items['training_type']] += 1
-    # print(workout_count)
-    # print(workout_minutes)
     return workout_count, workout_minutes
     
     
@@ -453,7 +497,6 @@ def content(id):
     uploader_name = '{} {}'.format(uploader['first_name'], uploader['last_name'])
     if request.method == "POST":
         has_editted = request.form.get("edit_val")
-        #print(has_editted)
         action = request.form.get("moderate")
         title = request.form.get("title")
         email = request.form.get("email")

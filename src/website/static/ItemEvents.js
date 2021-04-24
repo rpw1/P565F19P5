@@ -3,42 +3,7 @@ let arrWorkout;
 let arrMeal;
 
 $(function () {
-    if (typeof (Storage) !== "undefined") {
-        arrAppointment = localStorage.getItem("tbAppointment");
-        // arrWorkout = localStorage.getItem("tbWorkout");
-        // arrWorkout = localStorage.getItem("tbMeal");
-        arrAppointment = JSON.parse(arrAppointment);
-        // arrWorkout = JSON.parse(arrWorkout);
-        $("#btn_clear_storage").prop('disabled', false);
-        $(`#btn_clear_storage`).show();
-        $("#btn_clear_storageWorkout").prop('disabled', false);
-        $(`#btn_clear_storageWorkout`).show();
-        $("#btn_clear_storage_Meal").prop('disabled', false);
-        $(`#btn_clear_storage_Meal`).show();
-        if (arrAppointment == null || arrAppointment == "[null]"){
-            $("#btn_clear_storage").prop('disabled', true);
-            $(`#btn_clear_storage`).hide();
-            arrAppointment = [];
-            arrAppointment.push(JSON.parse(localStorage.getItem('tbAppointment')));
-            localStorage.setItem('tbAppointment', JSON.stringify(arrAppointment));
-        }
-    //     if(arrWorkout == null || arrWorkout == "[null]"){
-    //         $("#btn_clear_storageWorkout").prop('disabled', true);
-    //         $(`#btn_clear_storageWorkout`).hide();
-    //         arrWorkout = [];
-    //         arrWorkout.push(JSON.parse(localStorage.getItem('tbWorkout')));
-    //         localStorage.setItem('tbWorkout', JSON.stringify(arrWorkout));
-    //     }
-    //     if(arrMeal == null || arrMeal == "[null]"){
-    //         $("#btn_clear_storage_Meal").prop('disabled', true);
-    //         $(`#btn_clear_storage_Meal`).hide();
-    //         arrMeal = [];
-    //         arrMeal.push(JSON.parse(localStorage.getItem('tbMeal')));
-    //         localStorage.setItem('tbMeal', JSON.stringify(arrMeal));
-    //     }
-    } 
         
-
     $('#description').inputmask('Regex', {
         regex: "(?:[\\w\\d]+(\\s)*){1,5}",
         clearIncomplete: true
@@ -71,7 +36,7 @@ $(function () {
         clearIncomplete: true,
         oncomplete: function(){
             compare();
-            $("#submit").focus();
+            $("#submit_appointment").focus();
     }});
 
     $("#end_sleep").inputmask("hh:mm", {
@@ -148,7 +113,6 @@ showCalendar(currentMonth, currentYear);
 
 function showCalendar(month, year) {
     let firstDay = (new Date(year, month)).getDay();
-    //let daysInMonth = 32 - new Date(year, month, 32).getDate();
     let daysInMonth = new Date(year, month+1, 0).getDate();
 
     let tbl = document.getElementById("days");
@@ -183,7 +147,6 @@ function showCalendar(month, year) {
                 if (date === today.getDate() && year === today.getFullYear() && month === today.getMonth()) {
                     $(cell).addClass("text-white active bg-primary today text-center font-weight-bold");
                     $(cell).attr('data-day', date);
-                    put_badges_new(cell);
                 } else if (date < today.getDate() && year <= today.getFullYear() && month <= today.getMonth()){
                     $(cell).addClass("inactive disabled text-white bg-light text-muted text-center font-weight-light");
                     $(cell).attr('data-day', date);
@@ -191,7 +154,6 @@ function showCalendar(month, year) {
                 } else if (date >= today.getDate() && year >= today.getFullYear() && month >= today.getMonth()) {
                     $(cell).addClass("active text-dark bg-white text-center font-weight-bold");
                     $(cell).attr('data-day', date);
-                    put_badges_new(cell);
                 } else {
                     $(cell).addClass("text-center text-secondary");
                 }
@@ -208,14 +170,14 @@ function showCalendar(month, year) {
 $("#days td.active").on("click", function () {
     $('#date').val($(this).text() + "/" + ($('#month').data('val') + 1) + "/" + $('#year').text());
     if (is_empty() == true) {
-        $("#submit").prop('disabled', true);
+        $("#submit_appointment").prop('disabled', true);
     } else {
-        $("#submit").prop('disabled', false);
+        $("#submit_appointment").prop('disabled', false);
     }
     if ($("#description").val() == null || $("#description").val() == '') {
         $("#description").focus();
     } else {
-        $("#submit").focus();
+        $("#submit_appointment").focus();
     }
 });
 
@@ -257,51 +219,6 @@ $("#days td.inactive").on("click", function () {
     });
 });
 
-function make_appointment() {
-    if (is_empty() == false) {
-        is_past_date();
-        compare();
-        if (is_overlap() == false) {
-            var appointment = {
-                id: $("#date").inputmask('unmaskedvalue')+$("#start_time").inputmask('unmaskedvalue')+$("#end_time").inputmask('unmaskedvalue'),
-                date: $("#date").val(),
-                description: $("#description").val(),
-                start_time: $("#start_time").val(),
-                end_time: $("#end_time").val(),
-            };
-
-            SaveDataToLocalStorage(appointment);
-            $("#btn_clear_storage").prop('disabled', false);
-            $(`#btn_clear_storage`).show();
-            print();
-
-            clear_input();
-            iziToast.success({
-                title: 'Success',
-                message: 'Appointment created',
-            });
-        } else {
-            clear_input();
-            iziToast.error({
-                title: 'Error',
-                message: "This appointment is overlaping another one",
-                overlay: true,
-                zindex: 999,
-                position: 'center',
-                timeout: 3000,
-            });
-        }
-    } else {
-        iziToast.error({
-            title: 'Error',
-            message: "All input fields are needed in order to make an appointment",
-            overlay: true,
-            zindex: 999,
-            position: 'center',
-            timeout: 3000,
-        });
-    }
-}
 
 
 $("#end_time, #start_time").focusout(function () {
@@ -310,9 +227,9 @@ $("#end_time, #start_time").focusout(function () {
 
 $("#end_time, #start_time, #date").keyup(function () {
     if (is_empty() == true) {
-        $("#submit").prop('disabled', true);
+        $("#submit_appointment").prop('disabled', true);
     } else {
-        $("#submit").prop('disabled', false);
+        $("#submit_appointment").prop('disabled', false);
     }
 });
 
@@ -346,7 +263,7 @@ function clear_input() {
     $("#description").val('');
     $("#start_time").val('');
     $("#end_time").val('');
-    $("#submit").prop('disabled', true);
+    $("#submit_appointment").prop('disabled', true);
 }
 
 function clear_workout(){
@@ -364,7 +281,7 @@ function clear_meal() {
     $("#sides").val('');
     $("#drink").val('');
     $("#total_calories").val('');
-    $("#submit").prop('disabled', true);
+    $("#submit_meal").prop('disabled', true);
 }
 
 function clear_sleep() {
@@ -386,10 +303,6 @@ function is_empty() {
 }
 
 function is_emptyWorkout() {
-    // console.log($("#title").val())
-    // console.log($("#difficulty").val())
-    // console.log($("#duration").val())
-    // console.log($("#training_type").val())
     if (
         ($("#title").val() == null || $("#title").val() == '') ||
         ($("#difficulty").val() == null || $("#difficulty").val() == '') ||
@@ -429,7 +342,7 @@ function compare() {
     var endTime = Date.parse(get_Date( $("#end_time").val()));
 
     if (startTime > endTime) {
-        $("#submit").prop('disabled', true);
+        $("#submit_appointment").prop('disabled', true);
         clear_input();
         iziToast.warning({
             title: 'Caution',
@@ -441,7 +354,7 @@ function compare() {
         });
     }
     if (startTime == endTime) {
-        $("#submit").prop('disabled', true);
+        $("#submit_appointment").prop('disabled', true);
         clear_input();
         iziToast.warning({
             title: 'Caution',
@@ -559,54 +472,6 @@ function print(clear = false, init = false, edit = false) {
     }
 }
 
-
-function edit_appointment(id){
-    var data = localStorage.getItem("tbAppointment");
-    data = JSON.parse(data);
-    if (data[0] !== null) {
-        for (let i = 0; i < data.length; i++) {
-            const element = data[i];
-            if (element.id == id) {
-                $("#date").val(element.date);
-                $("#description").val(element.description);
-                $("#start_time").val(element.start_time);
-                $("#end_time").val(element.end_time);
-                $("#submit").prop('disabled', false);
-                delete_appointment(id);
-            }
-        }
-    }
-};
-
-
-function delete_appointment(id){
-    var data = localStorage.getItem("tbAppointment");
-    data = JSON.parse(data);
-    if (data[0] !== null) {
-        for (let i = 0; i < data.length; i++) {
-            const element = data[i];
-            if (element == null) {
-                data.splice(i, 1);
-            }
-            if (element.id == id) {
-                data.splice(i, 1);
-            }
-        }
-        data = data.filter(function (el) {
-            return el != null;
-        });
-
-        localStorage.setItem('tbAppointment', JSON.stringify(data));
-        print(false, false, true);
-        iziToast.success({
-            title: 'Success',
-            message: 'Appointment deleted',
-        });
-
-    }
-};
-
-
 function put_badges_new(cell) {
     var data = localStorage.getItem("tbAppointment");
     data = JSON.parse(data);
@@ -631,17 +496,3 @@ function put_badges_new(cell) {
     }
 }
 
-function sort_database(data){
-    return data.sort(function (sTime1, sTime2) {
-        let temp3 = parseInt(sTime1.date.slice(0,1))
-        let temp4 = parseInt(sTime2.date.slice(0,1))
-        let temp1 = Date.parse(get_Date(sTime1.start_time));
-        let temp2 = Date.parse(get_Date(sTime2.start_time));
-
-
-        if (temp3 > temp4) return 1;
-        if (temp3 < temp4) return -1;
-        if (temp1 > temp2) return -1;
-        if (temp1 < temp2) return 1;
-    });
-}

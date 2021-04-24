@@ -62,25 +62,25 @@
             </div>
             <div class="row">
                 <div class="col-md-4">
-                    <form id="form_create_appointment">
+                    <form id="form_create_appointment" method="POST">
                         <div class="form-row">
                             <div class="col form-group">
                                 <label class="required">Date</label>
-                                <input class="form-control date-input" type="text" id="date" data-trigger="hover" data-toggle="popover" title="Date" data-content="You can select any date from today clicking on the number in the calendar" required>
+                                <input class="form-control date-input" name="appointment_date" type="text" id="date" data-trigger="hover" data-toggle="popover" title="Date" data-content="You can select any date from today clicking on the number in the calendar" required>
                             </div>
                             <div class="col form-group">
                                 <label>Description</label>
-                                <input class="form-control" type="text" id="description">
+                                <input name="appointment_description" class="form-control" type="text" id="description">
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="col form-group">
                                 <label class="required">Start Time</label>
-                                <input class="form-control time-input" type="text" id="start_time" required>
+                                <input name="appointment_start_time" class="form-control time-input" type="text" id="start_time" required>
                             </div>
                             <div class="col form-group">
                                 <label class="required">End Time</label>
-                                <input class="form-control time-input" type="text" id="end_time" required>
+                                <input name="appointment_end_time" class="form-control time-input" type="text" id="end_time" required>
                             </div>
                         </div>
                         <div class="form-row">
@@ -88,7 +88,7 @@
                                 <button type="button" class="btn btn-warning btn-block" id="clear" onclick="clear_input()">Clear Form</button>
                             </div>
                             <div class="col form-group">
-                                <button type="button" class="btn btn-primary btn-block" id="submit" onclick="make_appointment()" disabled="disabled">Make Appointment</button>
+                                <button type="submit" name="submit_appointment" value="pressed" class="btn btn-primary btn-block" id="submit_appointment" disabled="disabled">Make Appointment</button>
                             </div>
                         </div>
                     </form>
@@ -138,10 +138,24 @@
                                 <th scope="col" class="text-center align-middle">Description</th>
                                 <th scope="col" class="text-center align-middle">Start time</th>
                                 <th scope="col" class="text-center align-middle">End time</th>
-                                <th scope="col" class="text-center align-middle">Action</th>
+                                <th scope="col" class="text-center align-middle">Complete/Delete</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {% for id, app in appointment.items() %}
+                            <tr>
+                                <td scope="col" class="text-center align-middle">{{ app['date'] }}</td>
+                                <td scope="col" class="text-center align-middle">{{ app['description'] }}</td>
+                                <td scope="col" class="text-center align-middle">{{ app['start_time'] }}</td>
+                                <td scope="col" class="text-center align-middle">{{ app['end_time'] }}</td>
+                                <td class="text-center align-middle">
+                                    <form method="POST">
+                                        <button type="submit" class="btn btn-secondary btn-sm" name="complete_appointment" value="{{app['appointment_id']}}"></button><i class="fas"></i></button>
+                                        <button type="submit" class="btn btn-danger btn-sm" name="delete_appointment" value="{{app['appointment_id']}}"></button><i class="fas fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
