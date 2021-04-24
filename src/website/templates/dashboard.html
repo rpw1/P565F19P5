@@ -160,7 +160,7 @@
     </div>
     <hr/>
     {% endif %}
-    {% if recommended_diets %}
+    {% if recommended_diets and current_user.role == 'client' %}
     <h3 class = "headings2">My diet recommendations</h3>
     <div class="row flex-row flex-nowrap overflow-auto">
         {% for item in recommended_diets%}
@@ -181,7 +181,7 @@
     </div>
     <hr/>
     {% endif %}
-    {% if recommended_workouts %}
+    {% if recommended_workouts and current_user.role == 'client' %}
     <h3 class = "headings2">My workout recommendations</h3>
     <div class="row flex-row flex-nowrap overflow-auto">
         {% for item in recommended_workouts%}
@@ -202,7 +202,7 @@
     </div>
     <hr/>
     {% endif %}
-    {% if recommended_fp %}
+    {% if recommended_fp and current_user.role == 'client' %}
     <h3 class = "headings2">My fitness professional recommendations</h3>
     <div class="row flex-row flex-nowrap overflow-auto">
         {% for fp in recommended_fp %}

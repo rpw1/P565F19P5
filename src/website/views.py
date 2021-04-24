@@ -137,14 +137,13 @@ def home():
                     recommended_workouts.extend(workout_recs[str(difficulty_ceiling)])
                 if str(difficulty_floor) in workout_recs:
                     recommended_workouts.extend(workout_recs[str(difficulty_floor)])
-        """
         if not recommended_diets:
             for key, items in diet_recs.items():
                 recommended_diets.extend(items)
         if not recommended_workouts:
             for key, items in workout_recs.items():
                 recommended_workouts.extend(items)
-        """
+
         recommended_diets.sort(key=sort_by_rating, reverse=True)
         recommended_workouts.sort(key=sort_by_rating, reverse=True)
         recommended_fp = []
@@ -384,16 +383,16 @@ def calendar():
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'],
                 sleep=client_content['current_sleep'], appointment=client_content['current_appointments'])
 
-        complete_appointment = request.form.get("complete_appointment")
-        if complete_appointment:
-            client_content = complete_appointment(complete_workout, client_content)
+        complete_current_appointment = request.form.get("complete_appointment")
+        if complete_current_appointment:
+            client_content = complete_appointment(complete_current_appointment, client_content)
             return render_template("calendar.html", user=current_user, tab="appointment", workout_chart_data = get_workout_chart_data(1, client_content),
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'],
                 sleep=client_content['current_sleep'], appointment=client_content['current_appointments'])
 
-        delete_appointment = request.form.get("delete_appointment")
-        if delete_appointment:
-            client_content = delete_appointment(delete_workout, client_content)
+        delete_current_appointment = request.form.get("delete_appointment")
+        if delete_current_appointment:
+            client_content = delete_appointment(delete_current_appointment, client_content)
             return render_template("calendar.html", user=current_user, tab="appointment", workout_chart_data = get_workout_chart_data(1, client_content),
                 custom_workouts=client_content['current_custom_workout'], meals = client_content['current_meals'],
                 sleep=client_content['current_sleep'], appointment=client_content['current_appointments'])
