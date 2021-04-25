@@ -137,7 +137,7 @@ def reset():
             message_body = MIMEText(body, 'plain')
             msg.attach(message_body)
             try:
-                s = smtplib.SMTP('email-smtp.us-east-2.amazonaws.com', 587)
+                s = smtplib.SMTP('smtp-mail.outlook.com', 587)
                 s.starttls()
                 s.ehlo()
                 s.login(config('SMTP_USERNAME'), config('SMTP_PASSWORD'))
