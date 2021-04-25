@@ -81,7 +81,7 @@ def register():
             return redirect(url_for("views.home"))
     return render_template("register.html")
 
-"""
+
 @auth.route("/update_password", methods=["GET","POST"])
 @login_required
 def update_password():
@@ -90,12 +90,14 @@ def update_password():
         confirm = request.form.get("confirm")
         email = current_user.get_id()
         password = generate_password_hash(new_password, method="sha256")
-        if password != confirm:
+        if new_password != confirm:
             flash("Password must equal confirmation", category="error")
         else:
-            user_db.update_password(email, password)
+            user_db.query_update_password(email, password)
+            flash("Password successfully changed", category="success")
+            return redirect(url_for("users.profile"))
     return render_template("update_password.html", user=current_user)
-"""
+
 
 @auth.route("/logout")
 @login_required
@@ -110,7 +112,7 @@ def reset():
         recipient = request.form.get("email") 
         sender = 'fitness-u@outlook.com'
         sender_name = 'Fitness U'
-        user = user_db.get_client(recipient)
+        user = user_db.query_user(recipient)
 
         if not user:
             flash("Account with this email does not exist", category="error")
@@ -119,7 +121,7 @@ def reset():
             alphabet = string.ascii_letters + string.digits
             temp_password = ''.join(secrets.choice(alphabet) for i in range(20))
             password = generate_password_hash(temp_password, method="sha256")
-            user_db.update_client_password(recipient, password)
+            user_db.query_update_password(recipient, password)
             print(temp_password)
             msg = MIMEMultipart('alternative')
             msg['Subject'] = "Password Reset for your FitnessU account"
