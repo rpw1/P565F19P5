@@ -137,13 +137,13 @@ class ScanTables:
                             continue
                     elif key == 'rating':
                         if key in content: 
-                            if filter_item == '4_stars' and content[key] >= 4:
+                            if filter_item == '4_stars' and float(content[key]) >= 4:
                                 continue
-                            elif filter_item == '3_stars' and content[key] >= 3:
+                            elif filter_item == '3_stars' and float(content[key]) >= 3:
                                 continue
-                            elif filter_item == '2_stars' and content[key] >= 2:
+                            elif filter_item == '2_stars' and float(content[key]) >= 2:
                                 continue
-                            elif filter_item == '1_star' and content[key] >= 1:
+                            elif filter_item == '1_star' and float(content[key]) >= 1:
                                 continue
                     if filter_items[len(filter_items) - 1] == filter_item:
                         isGood = False

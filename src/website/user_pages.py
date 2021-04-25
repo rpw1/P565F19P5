@@ -37,6 +37,10 @@ def user_page(id):
             custom_workouts = user_values['content']['current_custom_workout']
         current_user_values = user_db.query_user(current_user.get_id())
         uploads = content_db.query_content_by_user(id)
+        progress = progress_db.query_user(user_values['email'])
+        calories = ""
+        if progress:
+            calories = progress['content']['weekly_cals']
         subscribed_to = []
         subscriber_count = 0
         if current_user_values['content'] and current_user.role != roles[2]:
@@ -87,7 +91,7 @@ def user_page(id):
     return render_template("profile.html", user=profile_user, user_image = user_image, uploads=uploads,
                 specialty = specialty, gender = gender, bio = bio, flag_src = flag_src,
                 countries=dict(), country_codes=list(), length=0, subscribed=subscribed,
-                 subscriber_count=subscriber_count, custom_workouts = custom_workouts)
+                 subscriber_count=subscriber_count, custom_workouts = custom_workouts, calories=calories)
 
 def add_notification(email, message, reason = ""):
     message = str(message).replace("<b>", "").replace("</b>", "")
@@ -171,6 +175,10 @@ def profile():
     subscriptions = []
     subscriptions_count = 0
     subscription_emails = []
+    progress = progress_db.query_user(user_email)
+    calories = ""
+    if progress:
+        calories = progress['content']['weekly_cals']
     if 'subscribed_accounts' in user_values['content']:
         subscription_emails = user_values['content']['subscribed_accounts']
         for subscription in subscription_emails:
@@ -196,7 +204,7 @@ def profile():
         uploads=uploads, countries=countries_by_alpha2, country_codes=country_codes, length=len(country_codes),
         specialty = specialty, gender = gender, bio = bio, flag_src = flag_src, country_name=country_name, subscriber_count=subscriber_count, 
         subscriber_list=subscriber_list, pending=pending, subscriptions=subscriptions, 
-        subscriptions_count=subscriptions_count, custom_workouts = custom_workouts)
+        subscriptions_count=subscriptions_count, custom_workouts = custom_workouts, calories=calories)
 
 
 def update_profile_picture(email):
