@@ -272,12 +272,14 @@
                         <script>
                                 Chart.defaults.global.responsive = false;
                             // define the chart data
-                            var number_of_workouts = '{{workout_chart_data[0]|tojson|safe }}'
-                            var workout_minutes = '{{workout_chart_data[1]|tojson|safe }}'
-                            console.log(number_of_workouts)
-                            console.log(workout_minutes)
-                            var number_of_workouts_list
-                            var workout_minutes_list
+                            var number_of_workouts = JSON.parse('{{workout_chart_data[0]|tojson|safe }}')
+                            var workout_minutes = JSON.parse('{{workout_chart_data[1]|tojson|safe }}')
+
+                            var number_of_workouts_list = [number_of_workouts.Cardio, number_of_workouts['Core Training'], number_of_workouts['Endurance Training'], 
+                                number_of_workouts.Flexibility, number_of_workouts.Other, number_of_workouts['Strength Training']]
+                            var workout_minutes_list = [workout_minutes.Cardio, workout_minutes['Core Training'], workout_minutes['Endurance Training'], 
+                                workout_minutes.Flexibility, workout_minutes.Other, workout_minutes['Strength Training']]
+ 
                             var chartData = {
                                 labels : ['Cardio', 'Strength Training', 'Flexibility', 'Endurance Training', 'Core Training', 'Other'],
                                 datasets : [{
@@ -299,7 +301,7 @@
                                     pointHoverBorderWidth: 2,
                                     pointRadius: 1,
                                     pointHitRadius: 10,
-                                    data: number_of_workouts,
+                                    data: number_of_workouts_list,
                                     spanGaps: false
                                 }, {
                                     label: "Workout Minutes",
@@ -320,7 +322,7 @@
                                     pointHoverBorderWidth: 2,
                                     pointRadius: 1,
                                     pointHitRadius: 10,
-                                    data: workout_minutes,
+                                    data: workout_minutes_list,
                                     spanGaps: false
                                 }
                                 ]
