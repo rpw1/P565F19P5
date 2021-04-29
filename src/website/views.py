@@ -116,9 +116,9 @@ def home():
             if 'current_custom_workout' in client_content and client_content['current_custom_workout']:
                 custom_workouts = client_content['current_custom_workout']
             if calorie_goal and calorie_total and Decimal(calorie_goal) > 0:
-                if ((calorie_total * 100) / Decimal(calorie_goal)) <= 33 and 'High Calorie' in diet_recs:
+                if ((Decimal(calorie_total) * 100) / Decimal(calorie_goal)) <= 33 and 'High Calorie' in diet_recs:
                     recommended_diets = diet_recs['High Calorie']
-                elif ((calorie_total * 100) / Decimal(calorie_goal)) <= 66 and 'Medium Calorie' in diet_recs:
+                elif ((Decimal(calorie_total) * 100) / Decimal(calorie_goal)) <= 66 and 'Medium Calorie' in diet_recs:
                     recommended_diets = diet_recs['Medium Calorie']
                 elif 'Low Calorie' in diet_recs:
                     recommended_diets = diet_recs['Low Calorie']
