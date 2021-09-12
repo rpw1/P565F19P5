@@ -1,6 +1,2 @@
-# P565F19P5
-Installing project dependencies:
-```
-$ pip install -r requirements.txt
-```
-
+# Fitness-U: Wellness Tracking System
+Link to project: https://fitness-u-prod.herokuapp.com/
